@@ -179,7 +179,7 @@ export function RegionalPerformance() {
       .map(([name, data]) => {
         const sortedDates = Array.from(data.dateMap.entries())
           .sort((a: any, b: any) => new Date(a[0]).getTime() - new Date(b[0]).getTime());
-        const sparkData = sortedDates.map(d => d[1] as number);
+        const sparkData = sortedDates.map((d: any) => d[1] as number);
         const change = sparkData.length >= 2 
           ? (((sparkData[sparkData.length - 1] - sparkData[0]) / (sparkData[0] || 1)) * 100) 
           : 0;
