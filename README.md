@@ -59,3 +59,7 @@ While our current BuildFest prototype uses edge-memory to ensure a flawless and 
 * **Phase 2 (Agentic Orchestration & Cloud Storage):** Integrating with Supabase to securely store historical data, while deploying autonomous agents that can automatically re-order inventory via API integrations with local suppliers when stock hits a critical threshold.
 * **Phase 3 (Multimodal Ledger Digitization):** Allowing SME owners to simply take a smartphone photo of their traditional physical ledgers ("Khatas") or paper receipts. Using advanced OCR and Vision capabilities, the system will automatically extract handwriting/text into structured CSV data for instant dashboard analysis.
 * **Phase 4 (Cross-Border Expansion):** Expanding the geographic JSON mapping to support SMEs in neighboring emerging markets across South Asia.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
