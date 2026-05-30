@@ -59,7 +59,7 @@ const CustomTooltip = ({ active, payload }: any) => {
       <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-lg">
         <p className="text-sm font-medium text-foreground">{payload[0].name}</p>
         <p className="text-lg font-semibold text-foreground">
-          ${(payload[0].value / 1000).toFixed(1)}k
+          ৳{(payload[0].value / 1000).toFixed(1)}k
         </p>
       </div>
     )
@@ -228,7 +228,7 @@ export function RegionalPerformance() {
             </div>
             <div className="flex items-center gap-6">
               <span className="text-sm font-bold tabular-nums text-foreground">
-                ${(region.value / 1000).toFixed(1)}k
+                ৳{(region.value / 1000).toFixed(1)}k
               </span>
               <div className={cn(
                 "flex items-center gap-1 text-sm font-medium tabular-nums",

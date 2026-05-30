@@ -8,7 +8,7 @@ import { RegionalDistribution } from "@/components/data-visualizations"
 import { BangladeshMap } from "@/components/bangladesh-map"
 import { 
   Package, 
-  DollarSign, 
+  Coins, 
   TrendingUp, 
   Users,
 } from "lucide-react"
@@ -42,7 +42,7 @@ export default function Dashboard() {
       value: `৳${totalRevenue.toLocaleString()}`,
       change: 12.5,
       changeLabel: "vs last month",
-      icon: <DollarSign className="h-5 w-5" />,
+      icon: <Coins className="h-5 w-5" />,
     },
     {
       title: "Active Products",
