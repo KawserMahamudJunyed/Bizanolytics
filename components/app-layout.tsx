@@ -18,12 +18,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       />
 
       <main className={cn(
-        "relative z-10 flex-1 transition-all duration-300",
+        "relative z-10 flex flex-col min-w-0 flex-1 transition-all duration-300",
         isCollapsed ? "lg:pl-16" : "lg:pl-64"
       )}>
         <Header />
 
-        <div className="p-6 lg:p-8">
+        <div className="p-6 lg:p-8 min-w-0 w-full flex-1">
           <DataGuard>
             {children}
           </DataGuard>

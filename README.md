@@ -8,7 +8,7 @@ Built for **The Infinity AI Buildfest 2026** (Track 4: Online Commerce, Category
 
 **The Problem:** SMEs suffer from severe stock inefficiency, low margins, and poor analytics. Because they rely on intuition rather than data to manage inventory, they face massive revenue loss from stockouts and capital tied up in dead stock. As the digital economy scales, SMEs without access to predictive analytics cannot compete with large enterprises and desperately need an accessible, low-friction tool to democratize data intelligence.
 
-**The Solution:** We built a serverless, real-time intelligence dashboard. SMEs simply upload their raw sales data (CSV) and the system instantly provides:
+**The Solution:** We built a serverless, real-time intelligence dashboard. SMEs simply upload their raw sales data (CSV or Excel) and the system instantly provides:
 1. **Dynamic Demand Forecasting:** Mathematical modeling of future sales trends.
 2. **Regional Analytics Map:** An interactive Bangladesh map detailing district and upazila-level demand hotspots.
 3. **LPU-Powered AI Insights:** Integrated with Meta's **Llama 3** model (via Groq API) to act as a digital Chief Operating Officer, providing real-time, plain-English inventory and pricing recommendations.
@@ -16,7 +16,7 @@ Built for **The Infinity AI Buildfest 2026** (Track 4: Online Commerce, Category
 ## 🧠 AI Architecture (System Flow)
 
 Our system utilizes a modern Edge-AI architecture to ensure lightning-fast speed and zero hosting costs:
-* **Input Layer:** User uploads raw, unstructured CSV sales data.
+* **Input Layer:** User uploads raw, unstructured CSV or Excel sales data.
 * **Processing Layer (Zero-Latency):** A Next.js client-side engine parses the data, calculates moving averages, and aggregates metrics instantly in-memory.
 * **AI Intelligence Layer:** A structured data summary is securely routed to the **Meta Llama 3 API via Groq** using a serverless endpoint. The LLM performs lightning-fast reasoning to generate high-value business insights.
 * **Data Privacy:** Raw transaction data never leaves the user's browser. Only high-level, anonymized mathematical summaries are transmitted to the AI layer, ensuring full compliance with commercial privacy standards.
@@ -57,7 +57,7 @@ This project is perfectly optimized for Vercel edge deployment.
 
 While our current BuildFest prototype uses edge-memory to ensure a flawless and blazing-fast demo, our architecture is designed for enterprise-scale evolution:
 * **Phase 2 (Agentic Orchestration & Cloud Storage):** Integrating with Supabase to securely store historical data, while deploying autonomous agents that can automatically re-order inventory via API integrations with local suppliers when stock hits a critical threshold.
-* **Phase 3 (Multimodal Ledger Digitization):** Allowing SME owners to simply take a smartphone photo of their traditional physical ledgers ("Khatas") or paper receipts. Using advanced OCR and Vision capabilities, the system will automatically extract handwriting/text into structured CSV data for instant dashboard analysis.
+* **Phase 3 (Multimodal Ledger Digitization):** Allowing SME owners to simply take a smartphone photo of their traditional physical ledgers ("Khatas") or paper receipts. Using advanced OCR and Vision capabilities, the system will automatically extract handwriting/text into structured CSV/Excel data for instant dashboard analysis.
 * **Phase 4 (Cross-Border Expansion):** Expanding the geographic JSON mapping to support SMEs in neighboring emerging markets across South Asia.
 
 ## 📄 License

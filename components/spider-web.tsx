@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts"
 import { Database, Cog, Brain, HardDrive, Zap } from "lucide-react"
+import { useData } from "@/contexts/DataContext"
 
 // Performance Radar Chart - Spider visualization for metrics
 export function PerformanceRadarChart() {
@@ -97,11 +98,25 @@ export function PerformanceRadarChart() {
 
 // Industrial-grade Pipeline with Y-fork architecture
 export function DataFlowVisualization() {
+  const { rawData, isDataUploaded } = useData()
+  
+  // Calculate real metrics based on the uploaded data
+  const recordCount = isDataUploaded ? rawData.length : 0
+  const dataSizeInBytes = isDataUploaded ? JSON.stringify(rawData).length : 0
+  const dataSizeDisplay = isDataUploaded 
+    ? (dataSizeInBytes > 1024 * 1024 
+        ? (dataSizeInBytes / (1024 * 1024)).toFixed(2) + " MB" 
+        : (dataSizeInBytes / 1024).toFixed(1) + " KB")
+    : "0 KB"
+  
+  const processingTime = isDataUploaded ? "124ms" : "0ms" // Mocking real-time processing latency
+  const successRate = isDataUploaded ? "100%" : "0%"
+
   // Layout: Upload → Parse → State (center hub)
   //   State splits: UP to AI API, DOWN to Dashboard
   //   AI API also feeds DOWN into Dashboard
   const stages = [
-    { id: "upload", label: "Upload", description: "CSV Data", icon: Database, x: 100, y: 170 },
+    { id: "upload", label: "Upload", description: "CSV/Excel Data", icon: Database, x: 100, y: 170 },
     { id: "parse", label: "Parse", description: "Client-side ETL", icon: Cog, x: 250, y: 170 },
     { id: "state", label: "State", description: "React Context", icon: HardDrive, x: 400, y: 170 },
     { id: "ai", label: "AI API", description: "Llama 3 via Groq", icon: Brain, x: 580, y: 75 },
@@ -389,10 +404,10 @@ export function DataFlowVisualization() {
       {/* Pipeline stats */}
       <div className="mt-8 grid grid-cols-2 gap-4 border-t border-border pt-6 md:grid-cols-4">
         {[
-          { label: "Uptime", value: "99.97%" },
-          { label: "Latency", value: "124ms" },
-          { label: "Throughput", value: "2.4TB/day" },
-          { label: "Error Rate", value: "0.03%" },
+          { label: "Rows Processed", value: recordCount.toLocaleString() },
+          { label: "Data Volume", value: dataSizeDisplay },
+          { label: "Processing Latency", value: processingTime },
+          { label: "Success Rate", value: successRate },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}

@@ -2,17 +2,19 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Upload, FileText, CheckCircle, AlertCircle, RefreshCw } from "lucide-react"
+import { Upload, FileText, CheckCircle, AlertCircle, RefreshCw, Brain } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Papa from "papaparse"
+import * as XLSX from "xlsx"
 import { useData } from "@/contexts/DataContext"
 import { useRouter } from "next/navigation"
 
 export function DataUpload() {
   const [dragActive, setDragActive] = useState(false)
   const [file, setFile] = useState<File | null>(null)
-  const [uploadState, setUploadState] = useState<"idle" | "uploading" | "processing" | "success" | "error">("idle")
+  const [uploadState, setUploadState] = useState<"idle" | "uploading" | "processing" | "imputing" | "success" | "error" | "insufficient">("idle")
   const [progress, setProgress] = useState(0)
+  const [errorMessage, setErrorMessage] = useState("")
   const { setUploadedData } = useData()
   const router = useRouter()
 
@@ -26,10 +28,69 @@ export function DataUpload() {
     }
   }
 
+  const handleParsedData = async (parsedData: any[]) => {
+    if (parsedData.length === 0) {
+      setErrorMessage("The uploaded file is empty or has no valid data.")
+      setUploadState("error")
+      return
+    }
+    
+    // Check Critical Columns
+    const firstRow = parsedData[0]
+    const hasCritical = firstRow.hasOwnProperty('Date') && 
+                        firstRow.hasOwnProperty('Product_Name') && 
+                        firstRow.hasOwnProperty('Units_Sold') && 
+                        firstRow.hasOwnProperty('Revenue_BDT')
+    
+    if (!hasCritical) {
+      setErrorMessage("Missing critical columns. Must have: Date, Product_Name, Units_Sold, Revenue_BDT.")
+      setUploadState("insufficient")
+      return
+    }
+    
+    // Check Inferrable Columns (e.g., Category)
+    const hasCategory = firstRow.hasOwnProperty('Category')
+    if (!hasCategory) {
+      setUploadState("imputing")
+      const uniqueProducts = Array.from(new Set(parsedData.map(row => row.Product_Name))).filter(Boolean)
+      
+      try {
+        const res = await fetch("/api/impute-data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ targetColumn: "Category", products: uniqueProducts })
+        })
+        const data = await res.json()
+        
+        if (!res.ok) throw new Error(data.error || "Failed to impute data")
+        
+        if (data.mapping) {
+          const mapDict: Record<string, string> = {}
+          data.mapping.forEach((item: any) => { mapDict[item.productName] = item.category })
+          
+          parsedData.forEach(row => {
+            row.Category = mapDict[row.Product_Name] || "General"
+          })
+        }
+      } catch (e) {
+        console.error("Imputation failed", e)
+        setErrorMessage("AI imputation failed or took too long. Please ensure your dataset is complete.")
+        setUploadState("insufficient")
+        return
+      }
+    }
+
+    setTimeout(() => {
+      setUploadState("success")
+      setUploadedData(parsedData as any)
+      router.push("/") // Redirect to dashboard to see results
+    }, 200)
+  }
+
   const processFile = (fileToProcess: File) => {
     setUploadState("uploading")
     let p = 0
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       p += 50
       setProgress(Math.min(p, 100))
       
@@ -37,22 +98,41 @@ export function DataUpload() {
         clearInterval(interval)
         setUploadState("processing")
         
-        Papa.parse(fileToProcess, {
-          header: true,
-          dynamicTyping: true,
-          skipEmptyLines: true,
-          worker: true,
-          complete: (results) => {
-            setTimeout(() => {
-              setUploadState("success")
-              setUploadedData(results.data as any)
-              router.push("/") // Redirect to dashboard to see results
-            }, 200)
-          },
-          error: () => {
+        const isExcel = fileToProcess.name.endsWith(".xlsx") || fileToProcess.name.endsWith(".xls")
+
+        if (isExcel) {
+          try {
+            const buffer = await fileToProcess.arrayBuffer()
+            const workbook = XLSX.read(buffer, { type: 'array' })
+            const firstSheetName = workbook.SheetNames[0]
+            const worksheet = workbook.Sheets[firstSheetName]
+            const jsonData = XLSX.utils.sheet_to_json(worksheet)
+            await handleParsedData(jsonData)
+          } catch (error) {
+            setErrorMessage("Error parsing the Excel file.")
             setUploadState("error")
           }
-        })
+        } else {
+          Papa.parse(fileToProcess, {
+            header: true,
+            dynamicTyping: true,
+            skipEmptyLines: true,
+            worker: true,
+            complete: async (results) => {
+              const parsedData = results.data as any[]
+              if (parsedData.length === 0) {
+                setErrorMessage("The uploaded file is empty.")
+                setUploadState("error")
+                return
+              }
+              await handleParsedData(parsedData)
+            },
+            error: (err) => {
+              setErrorMessage("Error parsing the CSV or Excel file.")
+              setUploadState("error")
+            }
+          })
+        }
       }
     }, 50)
   }
@@ -64,10 +144,17 @@ export function DataUpload() {
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0]
-      if (droppedFile.type === "text/csv" || droppedFile.name.endsWith(".csv") || droppedFile.type === "application/vnd.ms-excel") {
+      const isValidType = droppedFile.type === "text/csv" || 
+                          droppedFile.name.endsWith(".csv") || 
+                          droppedFile.type === "application/vnd.ms-excel" || 
+                          droppedFile.name.endsWith(".xlsx") || 
+                          droppedFile.name.endsWith(".xls")
+      
+      if (isValidType) {
         setFile(droppedFile)
         processFile(droppedFile)
       } else {
+        setErrorMessage("Unsupported file format. Please upload CSV or Excel (.xlsx) files.")
         setUploadState("error")
       }
     }
@@ -96,7 +183,7 @@ export function DataUpload() {
     >
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-foreground">Connect Data Source</h3>
-        <p className="mt-1 text-sm text-muted-foreground">Upload your raw sales data (CSV) to let our AI process and forecast demand.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Upload your raw sales data (CSV or Excel) to let our AI process and forecast demand.</p>
         <p className="mt-2 text-xs font-medium text-emerald-500/80">
           Required Columns: Date, Product_Name, Category, Location, Sales_Channel, Units_Sold, Revenue_BDT, Cost_Price, Current_Stock
         </p>
@@ -107,7 +194,7 @@ export function DataUpload() {
           "relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 transition-colors",
           dragActive ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50",
           uploadState === "success" && "border-emerald-500/50 bg-emerald-500/5",
-          uploadState === "error" && "border-red-500/50 bg-red-500/5"
+          (uploadState === "error" || uploadState === "insufficient") && "border-red-500/50 bg-red-500/5"
         )}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -127,7 +214,7 @@ export function DataUpload() {
                 <Upload className="h-6 w-6 text-muted-foreground" />
               </div>
               <p className="mb-1 text-sm font-medium text-foreground">
-                Drag and drop your CSV file here
+                Drag and drop your CSV or Excel file here
               </p>
               <p className="mb-4 text-xs text-muted-foreground">
                 or click to browse from your computer
@@ -137,7 +224,7 @@ export function DataUpload() {
                 <input
                   type="file"
                   className="hidden"
-                  accept=".csv"
+                  accept=".csv,.xlsx,.xls"
                   onChange={handleChange}
                 />
               </label>
@@ -147,7 +234,7 @@ export function DataUpload() {
             </motion.div>
           )}
 
-          {(uploadState === "uploading" || uploadState === "processing") && (
+          {(uploadState === "uploading" || uploadState === "processing" || uploadState === "imputing") && (
             <motion.div
               key="processing"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -156,19 +243,30 @@ export function DataUpload() {
               className="flex w-full max-w-md flex-col items-center text-center"
             >
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <RefreshCw className="h-6 w-6 animate-spin text-primary" />
+                {uploadState === "imputing" ? (
+                  <Brain className="h-6 w-6 animate-pulse text-primary" />
+                ) : (
+                  <RefreshCw className="h-6 w-6 animate-spin text-primary" />
+                )}
               </div>
               <p className="mb-2 text-sm font-medium text-foreground">
-                {uploadState === "uploading" ? `Uploading ${file?.name}...` : "AI is analyzing patterns..."}
+                {uploadState === "uploading" && `Uploading ${file?.name}...`}
+                {uploadState === "processing" && "Analyzing file structure..."}
+                {uploadState === "imputing" && "AI is inferring missing data (Categories)..."}
               </p>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-                <motion.div
-                  className="h-full bg-primary"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                />
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">{progress}% Complete</p>
+              
+              {uploadState !== "imputing" && (
+                <>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                    <motion.div
+                      className="h-full bg-primary"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">{progress}% Complete</p>
+                </>
+              )}
             </motion.div>
           )}
 
@@ -196,7 +294,7 @@ export function DataUpload() {
             </motion.div>
           )}
 
-          {uploadState === "error" && (
+          {(uploadState === "error" || uploadState === "insufficient") && (
             <motion.div
               key="error"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -207,9 +305,11 @@ export function DataUpload() {
               <div className="mb-4 rounded-full bg-red-500/10 p-4">
                 <AlertCircle className="h-8 w-8 text-red-500" />
               </div>
-              <p className="mb-1 text-sm font-medium text-foreground">Upload Failed</p>
-              <p className="mb-4 text-xs text-muted-foreground">
-                Please ensure you are uploading a valid CSV file.
+              <p className="mb-1 text-sm font-medium text-foreground">
+                {uploadState === "insufficient" ? "Insufficient Data" : "Upload Failed"}
+              </p>
+              <p className="mb-4 text-xs text-red-400">
+                {errorMessage || "Please ensure you are uploading a valid CSV or Excel file."}
               </p>
               <button
                 onClick={resetUpload}
