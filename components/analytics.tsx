@@ -291,7 +291,7 @@ export function ParetoChart() {
 }
 import { useMemo } from "react";
 
-const ProphetTooltip = ({ active, payload, label, capacity }: any) => {
+const ForecastTooltip = ({ active, payload, label, capacity }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     const isFuture = data.actual === null;
@@ -333,13 +333,12 @@ const ProphetTooltip = ({ active, payload, label, capacity }: any) => {
   return null
 }
 
-export function ProphetForecastChart() {
-  const { rawData } = useData()
+export function DemandForecastChart() {
+  const { rawData, isDataUploaded } = useData();
 
-  // Dynamic forecast logic
-  const { processedProphetData, inventoryCapacity, restockMonth } = useMemo(() => {
-    if (!rawData || rawData.length === 0) {
-      return { processedProphetData: [], inventoryCapacity: 0, restockMonth: null };
+  const { processedForecastData, inventoryCapacity, restockMonth } = useMemo(() => {
+    if (!isDataUploaded || rawData.length === 0) {
+      return { processedForecastData: [], inventoryCapacity: 0, restockMonth: null };
     }
 
     // 1. Aggregate by month
@@ -363,7 +362,7 @@ export function ProphetForecastChart() {
       const labelIndex = 4 - recentMonths.length + i;
       const data = monthlyData.get(m)!;
       return {
-        date: labels[labelIndex],
+        month: labels[labelIndex],
         actual: data.demand,
         yhat: data.demand,
         lower: Math.round(data.demand * 0.95),
@@ -372,7 +371,7 @@ export function ProphetForecastChart() {
       };
     });
 
-    if (baseData.length === 0) return { processedProphetData: [], inventoryCapacity: 0, restockMonth: null };
+    if (baseData.length === 0) return { processedForecastData: [], inventoryCapacity: 0, restockMonth: null };
 
     // 2. Generate future forecasts (M+1 to M+4)
     const forecasts = [];
@@ -389,7 +388,7 @@ export function ProphetForecastChart() {
     for (let i = 1; i <= 4; i++) {
       lastVal = lastVal * growthFactor;
       forecasts.push({
-        date: `M+${i}`,
+        month: `M+${i}`,
         actual: null,
         yhat: Math.round(lastVal),
         lower: Math.round(lastVal * 0.85), 
@@ -406,10 +405,10 @@ export function ProphetForecastChart() {
     const capacity = Math.round(latestStock * 1.2); // Simulated capacity constraint
 
     const restockItem = forecasts.find(f => f.upper > capacity);
-    const rMonth = restockItem ? restockItem.date : null;
+    const rMonth = restockItem ? restockItem.month : null;
 
-    return { processedProphetData: combined, inventoryCapacity: capacity, restockMonth: rMonth };
-  }, [rawData]);
+    return { processedForecastData: combined, inventoryCapacity: capacity, restockMonth: rMonth };
+  }, [rawData, isDataUploaded]);
 
   return (
     <motion.div
@@ -430,22 +429,22 @@ export function ProphetForecastChart() {
 
         <div className="flex flex-row items-start justify-between pb-4">
           <div>
-            <h3 className="text-base font-semibold text-foreground">Demand Forecast (Prophet)</h3>
+            <h3 className="text-base font-semibold text-foreground">Demand Forecast</h3>
             <p className="mt-0.5 text-xs text-muted-foreground">Projected demand vs. inventory capacity</p>
           </div>
         </div>
         
         <div className="min-h-[260px] w-full flex-1 mt-4">
-          {processedProphetData.length > 0 ? (
+          {processedForecastData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
-                data={processedProphetData}
-                margin={{ top: 20, right: 10, left: -10, bottom: 0 }}
+                data={processedForecastData}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                <XAxis dataKey="date" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(value) => `${(value/1000).toFixed(1)}k`} />
-                <Tooltip content={<ProphetTooltip capacity={inventoryCapacity} />} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} />
+                <Tooltip content={<ForecastTooltip capacity={inventoryCapacity} />} />
                 
                 <ReferenceLine y={inventoryCapacity} stroke="var(--amber-500)" strokeDasharray="4 4" strokeWidth={2} label={{ value: 'Capacity', position: 'insideTopLeft', fill: 'var(--amber-500)', fontSize: 11 }} />
                 

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { MetricsGrid } from "@/components/metric-card"
-import { ProphetForecastChart, ParetoChart } from "@/components/analytics"
+import { DemandForecastChart, ParetoChart } from "@/components/analytics"
 import { BangladeshForecastTable, AIInsights } from "@/components/forecast-table"
 import { RegionalDistribution } from "@/components/data-visualizations"
 import { BangladeshMap } from "@/components/bangladesh-map"
@@ -78,7 +78,7 @@ export default function Dashboard() {
         <MetricsGrid metrics={metrics} />
       </section>
 
-      {/* Main Charts: Prophet Forecast & AI Insights */}
+      {/* Main Charts: Demand Forecast & AI Insights */}
       <div className="grid gap-6 lg:grid-cols-2 items-stretch">
         <div className="h-full">
           {isDataUploaded ? (
@@ -97,7 +97,7 @@ export default function Dashboard() {
       {/* Distributions and Pareto */}
       <div className="grid gap-6 lg:grid-cols-2 mt-8 items-stretch">
         <div className="lg:col-span-1 h-full">
-          <ProphetForecastChart />
+          <DemandForecastChart />
         </div>
         <div className="lg:col-span-1 h-full">
           <ParetoChart />

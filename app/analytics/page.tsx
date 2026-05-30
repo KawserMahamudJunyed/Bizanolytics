@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { AIInsights } from "@/components/forecast-table"
-import { TrendAnalysis, ForecastAccuracy, ParetoChart, ProphetForecastChart } from "@/components/analytics"
+import { TrendAnalysis, ForecastAccuracy, ParetoChart, DemandForecastChart } from "@/components/analytics"
 
 export default function AnalyticsPage() {
   return (
@@ -29,7 +29,7 @@ export default function AnalyticsPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <ParetoChart />
-        <ProphetForecastChart />
+        <DemandForecastChart />
       </div>
     </motion.div>
   )
