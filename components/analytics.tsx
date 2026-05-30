@@ -206,7 +206,7 @@ const ParetoTooltip = ({ active, payload, label }: any) => {
         <div className="flex items-center gap-2 text-sm mb-1">
           <div className="h-2 w-2 rounded-full bg-purple-500" />
           <span className="text-muted-foreground">Profit:</span>
-          <span className="font-medium text-foreground">${payload[0]?.value?.toLocaleString()}</span>
+          <span className="font-medium text-foreground">৳{payload[0]?.value?.toLocaleString()}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
@@ -272,7 +272,7 @@ export function ParetoChart() {
             >
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
               <XAxis dataKey="category" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} angle={-45} textAnchor="end" height={60} />
-              <YAxis yAxisId="left" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value/1000}k`} />
+              <YAxis yAxisId="left" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(value) => `৳${value/1000}k`} />
               <YAxis yAxisId="right" orientation="right" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}%`} />
               <Tooltip content={<ParetoTooltip />} />
               <ReferenceLine yAxisId="right" y={80} stroke="var(--chart-4)" strokeDasharray="4 4" label={{ value: '80% Threshold', position: 'insideTopLeft', fill: 'var(--chart-4)', fontSize: 11 }} />
