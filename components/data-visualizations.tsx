@@ -13,45 +13,7 @@ import { ArrowUpDown, ArrowUp, ArrowDown, Download, Filter } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
 
-// Raw dataset - comprehensive demand data
-export const rawDemandData = [
-  { id: 1, date: "2024-01-01", region: "North", product: "Widget A", units: 1250, revenue: 31250, cost: 18750, margin: 40 },
-  { id: 2, date: "2024-01-01", region: "South", product: "Widget A", units: 890, revenue: 22250, cost: 13350, margin: 40 },
-  { id: 3, date: "2024-01-01", region: "East", product: "Widget A", units: 1100, revenue: 27500, cost: 16500, margin: 40 },
-  { id: 4, date: "2024-01-01", region: "West", product: "Widget A", units: 960, revenue: 24000, cost: 14400, margin: 40 },
-  { id: 5, date: "2024-01-01", region: "North", product: "Widget B", units: 2100, revenue: 42000, cost: 27300, margin: 35 },
-  { id: 6, date: "2024-01-01", region: "South", product: "Widget B", units: 1800, revenue: 36000, cost: 23400, margin: 35 },
-  { id: 7, date: "2024-01-01", region: "East", product: "Widget B", units: 2400, revenue: 48000, cost: 31200, margin: 35 },
-  { id: 8, date: "2024-01-01", region: "West", product: "Widget B", units: 1950, revenue: 39000, cost: 25350, margin: 35 },
-  { id: 9, date: "2024-01-08", region: "North", product: "Widget A", units: 1320, revenue: 33000, cost: 19800, margin: 40 },
-  { id: 10, date: "2024-01-08", region: "South", product: "Widget A", units: 940, revenue: 23500, cost: 14100, margin: 40 },
-  { id: 11, date: "2024-01-08", region: "East", product: "Widget A", units: 1180, revenue: 29500, cost: 17700, margin: 40 },
-  { id: 12, date: "2024-01-08", region: "West", product: "Widget A", units: 1010, revenue: 25250, cost: 15150, margin: 40 },
-  { id: 13, date: "2024-01-08", region: "North", product: "Widget B", units: 2250, revenue: 45000, cost: 29250, margin: 35 },
-  { id: 14, date: "2024-01-08", region: "South", product: "Widget B", units: 1920, revenue: 38400, cost: 24960, margin: 35 },
-  { id: 15, date: "2024-01-08", region: "East", product: "Widget B", units: 2580, revenue: 51600, cost: 33540, margin: 35 },
-  { id: 16, date: "2024-01-08", region: "West", product: "Widget B", units: 2080, revenue: 41600, cost: 27040, margin: 35 },
-  { id: 17, date: "2024-01-15", region: "North", product: "Widget C", units: 3200, revenue: 48000, cost: 35200, margin: 27 },
-  { id: 18, date: "2024-01-15", region: "South", product: "Widget C", units: 2800, revenue: 42000, cost: 30800, margin: 27 },
-  { id: 19, date: "2024-01-15", region: "East", product: "Widget C", units: 3500, revenue: 52500, cost: 38500, margin: 27 },
-  { id: 20, date: "2024-01-15", region: "West", product: "Widget C", units: 2950, revenue: 44250, cost: 32450, margin: 27 },
-]
-
-// Aggregated data for visualizations
-const regionData = [
-  { name: "North", value: 35200, fill: "var(--chart-1)" },
-  { name: "South", value: 28400, fill: "var(--chart-2)" },
-  { name: "East", value: 42800, fill: "var(--chart-3)" },
-  { name: "West", value: 31200, fill: "var(--chart-4)" },
-]
-
-// Sparkline data for each region
-const sparklineData = {
-  North: [12, 15, 18, 22, 19, 24, 28, 32],
-  South: [8, 12, 10, 15, 18, 16, 20, 24],
-  East: [15, 18, 22, 25, 28, 32, 35, 42],
-  West: [10, 12, 14, 18, 16, 20, 22, 28],
-}
+// Removed static rawDemandData, regionData, and sparklineData
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
@@ -99,7 +61,7 @@ export function RegionalDistribution() {
   const { rawData, isDataUploaded } = useData()
 
   const dynamicRegionData = useMemo(() => {
-    if (!isDataUploaded || !rawData.length) return regionData;
+    if (!isDataUploaded || !rawData || !rawData.length) return [];
 
     const grouped: Record<string, number> = {}
     rawData.forEach((row: any) => {
@@ -193,12 +155,45 @@ export function RegionalDistribution() {
 
 // Regional Performance with Sparklines
 export function RegionalPerformance() {
-  const regions = [
-    { name: "North", value: 35200, change: 12.4, data: sparklineData.North },
-    { name: "South", value: 28400, change: 8.2, data: sparklineData.South },
-    { name: "East", value: 42800, change: 18.6, data: sparklineData.East },
-    { name: "West", value: 31200, change: -2.1, data: sparklineData.West },
-  ]
+  const { rawData } = useData();
+  
+  const regions = useMemo(() => {
+    if (!rawData || rawData.length === 0) return [];
+    
+    const locMap = new Map();
+    // Group by location and date to generate sparkline data
+    rawData.forEach(row => {
+      const loc = row.Location || "Unknown";
+      const date = row.Date || "Unknown";
+      
+      if (!locMap.has(loc)) {
+        locMap.set(loc, { totalValue: 0, dateMap: new Map() });
+      }
+      
+      const locData = locMap.get(loc);
+      locData.totalValue += (row.Revenue_BDT || 0);
+      locData.dateMap.set(date, (locData.dateMap.get(date) || 0) + (row.Revenue_BDT || 0));
+    });
+    
+    return Array.from(locMap.entries())
+      .map(([name, data]) => {
+        const sortedDates = Array.from(data.dateMap.entries())
+          .sort((a: any, b: any) => new Date(a[0]).getTime() - new Date(b[0]).getTime());
+        const sparkData = sortedDates.map(d => d[1] as number);
+        const change = sparkData.length >= 2 
+          ? (((sparkData[sparkData.length - 1] - sparkData[0]) / (sparkData[0] || 1)) * 100) 
+          : 0;
+          
+        return {
+          name,
+          value: data.totalValue,
+          change: parseFloat(change.toFixed(1)),
+          data: sparkData.length > 0 ? sparkData : [0, 0]
+        };
+      })
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 4); // Show top 4 regions
+  }, [rawData]);
 
   return (
     <motion.div
