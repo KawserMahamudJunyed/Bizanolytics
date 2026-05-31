@@ -1,0 +1,31 @@
+Date,Product_ID,Product_Name,Category,Location,Sales_Channel,Units_Sold,Revenue_BDT,Unit_Price,Cost_Price,Current_Stock,Customer_Segment
+2024-05-01,P-101,Cotton Panjabi,Apparel,Dhaka,Retail,45,67500,1500,900,150,B2C
+2024-05-01,P-102,Premium Jamdani Saree,Apparel,Chittagong,Online,12,180000,15000,10000,40,B2C
+2024-05-01,P-201,Wireless Earbuds,Electronics,Sylhet,Online,30,45000,1500,800,200,B2C
+2024-05-01,P-301,Organic Rice (5kg),Groceries,Dhaka,Retail,100,35000,350,250,500,B2B
+2024-05-02,P-101,Cotton Panjabi,Apparel,Khulna,Wholesale,200,280000,1400,900,150,B2B
+2024-05-02,P-202,Smart Watch,Electronics,Dhaka,Retail,25,87500,3500,2000,60,B2C
+2024-05-02,P-401,Office Chair,Furniture,Chittagong,Wholesale,15,67500,4500,2800,30,B2B
+2024-05-03,P-302,Mustard Oil (1L),Groceries,Rajshahi,Retail,80,20000,250,180,300,B2C
+2024-05-03,P-103,Denim Jeans,Apparel,Dhaka,Online,55,82500,1500,850,220,B2C
+2024-05-03,P-201,Wireless Earbuds,Electronics,Khulna,Online,40,60000,1500,800,200,B2C
+2024-05-04,P-501,Skincare Gift Set,Cosmetics,Dhaka,Online,60,120000,2000,1100,100,B2C
+2024-05-04,P-301,Organic Rice (5kg),Groceries,Sylhet,Wholesale,150,52500,350,250,500,B2B
+2024-05-04,P-102,Premium Jamdani Saree,Apparel,Dhaka,Retail,10,150000,15000,10000,40,B2C
+2024-05-05,P-202,Smart Watch,Electronics,Chittagong,Online,35,122500,3500,2000,60,B2C
+2024-05-05,P-402,Study Desk,Furniture,Dhaka,Retail,12,72000,6000,3500,25,B2C
+2024-05-05,P-502,Herbal Shampoo,Cosmetics,Rajshahi,Retail,90,36000,400,200,400,B2C
+2024-05-06,P-101,Cotton Panjabi,Apparel,Chittagong,Online,50,75000,1500,900,150,B2C
+2024-05-06,P-302,Mustard Oil (1L),Groceries,Dhaka,Wholesale,200,50000,250,180,300,B2B
+2024-05-06,P-201,Wireless Earbuds,Electronics,Rajshahi,Retail,20,30000,1500,800,200,B2C
+2024-05-07,P-103,Denim Jeans,Apparel,Sylhet,Online,45,67500,1500,850,220,B2C
+2024-05-07,P-501,Skincare Gift Set,Cosmetics,Chittagong,Retail,30,60000,2000,1100,100,B2C
+2024-05-07,P-401,Office Chair,Furniture,Dhaka,Online,8,36000,4500,2800,30,B2C
+2024-05-08,P-202,Smart Watch,Electronics,Khulna,Retail,18,63000,3500,2000,60,B2C
+2024-05-08,P-301,Organic Rice (5kg),Groceries,Chittagong,Retail,85,29750,350,250,500,B2C
+2024-05-08,P-102,Premium Jamdani Saree,Apparel,Sylhet,Online,5,75000,15000,10000,40,B2C
+2024-05-09,P-502,Herbal Shampoo,Cosmetics,Dhaka,Online,110,44000,400,200,400,B2C
+2024-05-09,P-402,Study Desk,Furniture,Chittagong,Wholesale,10,60000,6000,3500,25,B2B
+2024-05-09,P-101,Cotton Panjabi,Apparel,Rajshahi,Retail,30,45000,1500,900,150,B2C
+2024-05-10,P-201,Wireless Earbuds,Electronics,Dhaka,Wholesale,100,150000,1500,800,200,B2B
+2024-05-10,P-302,Mustard Oil (1L),Groceries,Khulna,Online,75,18750,250,180,300,B2C
