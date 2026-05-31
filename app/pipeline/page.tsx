@@ -1,17 +1,88 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { DataFlowVisualization } from "@/components/spider-web"
 import { cn } from "@/lib/utils"
 
 import { useData } from "@/contexts/DataContext"
 
+type PipelineRun = {
+  id: string
+  status: "success" | "warning" | "error"
+  duration: string
+  records: number
+  timestamp: Date
+}
+
+function generateRunId() {
+  const hex = Math.random().toString(16).slice(2, 8).toUpperCase()
+  return `RUN-${hex}`
+}
+
+function formatTimeAgo(date: Date) {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
+  if (seconds < 5) return "Just now"
+  if (seconds < 60) return `${seconds}s ago`
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `${minutes} min${minutes > 1 ? "s" : ""} ago`
+  const hours = Math.floor(minutes / 60)
+  return `${hours}h ago`
+}
+
 export default function PipelinePage() {
   const { rawData, isDataUploaded } = useData()
+  const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([])
+  const prevDataLenRef = useRef(0)
+  const [, forceUpdate] = useState(0)
   
   const recordCount = isDataUploaded ? rawData.length : 0
-  const throughput = isDataUploaded ? (recordCount * 0.002).toFixed(1) + " MB/s" : "0 MB/s"
+  
+  // Compute dynamic metrics
+  const dataSizeBytes = useMemo(() => {
+    if (!isDataUploaded || !rawData.length) return 0
+    return JSON.stringify(rawData).length
+  }, [rawData, isDataUploaded])
+  
+  const latencyMs = useMemo(() => {
+    if (!isDataUploaded) return 0
+    // Simulate latency based on data size (bigger data = more latency)
+    return Math.max(45, Math.min(500, Math.round(dataSizeBytes / 80 + Math.random() * 30)))
+  }, [dataSizeBytes, isDataUploaded])
+  
+  const throughput = useMemo(() => {
+    if (!isDataUploaded || latencyMs === 0) return "0 MB/s"
+    const mbPerSec = (dataSizeBytes / 1024 / 1024) / (latencyMs / 1000)
+    return mbPerSec >= 1 ? mbPerSec.toFixed(1) + " MB/s" : (mbPerSec * 1000).toFixed(0) + " KB/s"
+  }, [dataSizeBytes, latencyMs, isDataUploaded])
+  
   const successRate = isDataUploaded ? "100%" : "0%"
+  const latencyTrend = useMemo(() => {
+    if (pipelineRuns.length < 2) return 0
+    return -1 * parseFloat((Math.random() * 8 + 2).toFixed(1))
+  }, [pipelineRuns.length])
+
+  // Add a new pipeline run whenever data changes
+  useEffect(() => {
+    if (isDataUploaded && rawData.length > 0 && rawData.length !== prevDataLenRef.current) {
+      prevDataLenRef.current = rawData.length
+      const processingMs = Math.max(45, Math.min(500, Math.round(dataSizeBytes / 80 + Math.random() * 30)))
+      const newRun: PipelineRun = {
+        id: generateRunId(),
+        status: "success",
+        duration: processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`,
+        records: rawData.length,
+        timestamp: new Date()
+      }
+      setPipelineRuns(prev => [newRun, ...prev].slice(0, 10)) // keep last 10
+    }
+  }, [rawData, isDataUploaded, dataSizeBytes])
+
+  // Update "time ago" labels every 10 seconds
+  useEffect(() => {
+    const interval = setInterval(() => forceUpdate(n => n + 1), 10000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <motion.div
@@ -29,13 +100,13 @@ export default function PipelinePage() {
           title="Data Throughput"
           value={throughput}
           description="Average processing volume"
-          trend={isDataUploaded ? 12.4 : 0}
+          trend={isDataUploaded ? parseFloat((Math.random() * 10 + 5).toFixed(1)) : 0}
         />
         <PipelineStatCard
           title="Pipeline Latency"
-          value="124ms"
+          value={isDataUploaded ? `${latencyMs}ms` : "0ms"}
           description="End-to-end processing time"
-          trend={-12.5}
+          trend={latencyTrend}
         />
         <PipelineStatCard
           title="Success Rate"
@@ -46,7 +117,7 @@ export default function PipelinePage() {
       </div>
 
       {/* Recent Pipeline Runs */}
-      <PipelineRunsTable recordCount={recordCount} isUploaded={isDataUploaded} />
+      <PipelineRunsTable runs={pipelineRuns} />
     </motion.div>
   )
 }
@@ -87,12 +158,7 @@ function PipelineStatCard({
   )
 }
 
-function PipelineRunsTable({ recordCount, isUploaded }: { recordCount: number, isUploaded: boolean }) {
-  const runs = isUploaded ? [
-    { id: "RUN-001", status: "success", duration: "1.2s", records: recordCount.toString(), timestamp: "Just now" },
-    { id: "RUN-002", status: "success", duration: "0.8s", records: recordCount.toString(), timestamp: "2 mins ago" }
-  ] : []
-
+function PipelineRunsTable({ runs }: { runs: PipelineRun[] }) {
   const statusStyles = {
     success: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
     warning: "bg-amber-500/10 text-amber-500 border-amber-500/20",
@@ -137,9 +203,9 @@ function PipelineRunsTable({ recordCount, isUploaded }: { recordCount: number, i
                       {run.status}
                     </span>
                   </td>
-                  <td className="py-3 text-sm text-muted-foreground">{run.duration}</td>
-                  <td className="py-3 text-sm text-muted-foreground">{run.records}</td>
-                  <td className="py-3 text-sm text-muted-foreground">{run.timestamp}</td>
+                  <td className="py-3 text-sm font-mono text-muted-foreground">{run.duration}</td>
+                  <td className="py-3 text-sm font-mono text-muted-foreground">{run.records.toLocaleString()}</td>
+                  <td className="py-3 text-sm text-muted-foreground">{formatTimeAgo(run.timestamp)}</td>
                 </motion.tr>
               ))}
               {runs.length === 0 && (

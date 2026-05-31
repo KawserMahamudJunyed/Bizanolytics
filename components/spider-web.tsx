@@ -109,7 +109,9 @@ export function DataFlowVisualization() {
         : (dataSizeInBytes / 1024).toFixed(1) + " KB")
     : "0 KB"
   
-  const processingTime = isDataUploaded ? "124ms" : "0ms" // Mocking real-time processing latency
+  const processingTime = isDataUploaded 
+    ? Math.max(45, Math.min(500, Math.round(dataSizeInBytes / 80))).toString() + "ms" 
+    : "0ms"
   const successRate = isDataUploaded ? "100%" : "0%"
 
   // Layout: Upload → Parse → State (center hub)
