@@ -1,31 +1,33 @@
 Date,Product_ID,Product_Name,Category,Location,Sales_Channel,Units_Sold,Revenue_BDT,Unit_Price,Cost_Price,Current_Stock,Customer_Segment
-2024-05-01,P-101,Cotton Panjabi,Apparel,Dhaka,Retail,45,67500,1500,900,150,B2C
-2024-05-01,P-102,Premium Jamdani Saree,Apparel,Chittagong,Online,12,180000,15000,10000,40,B2C
-2024-05-01,P-201,Wireless Earbuds,Electronics,Sylhet,Online,30,45000,1500,800,200,B2C
-2024-05-01,P-301,Organic Rice (5kg),Groceries,Dhaka,Retail,100,35000,350,250,500,B2B
-2024-05-02,P-101,Cotton Panjabi,Apparel,Khulna,Wholesale,200,280000,1400,900,150,B2B
-2024-05-02,P-202,Smart Watch,Electronics,Dhaka,Retail,25,87500,3500,2000,60,B2C
-2024-05-02,P-401,Office Chair,Furniture,Chittagong,Wholesale,15,67500,4500,2800,30,B2B
-2024-05-03,P-302,Mustard Oil (1L),Groceries,Rajshahi,Retail,80,20000,250,180,300,B2C
-2024-05-03,P-103,Denim Jeans,Apparel,Dhaka,Online,55,82500,1500,850,220,B2C
-2024-05-03,P-201,Wireless Earbuds,Electronics,Khulna,Online,40,60000,1500,800,200,B2C
-2024-05-04,P-501,Skincare Gift Set,Cosmetics,Dhaka,Online,60,120000,2000,1100,100,B2C
-2024-05-04,P-301,Organic Rice (5kg),Groceries,Sylhet,Wholesale,150,52500,350,250,500,B2B
-2024-05-04,P-102,Premium Jamdani Saree,Apparel,Dhaka,Retail,10,150000,15000,10000,40,B2C
-2024-05-05,P-202,Smart Watch,Electronics,Chittagong,Online,35,122500,3500,2000,60,B2C
-2024-05-05,P-402,Study Desk,Furniture,Dhaka,Retail,12,72000,6000,3500,25,B2C
-2024-05-05,P-502,Herbal Shampoo,Cosmetics,Rajshahi,Retail,90,36000,400,200,400,B2C
-2024-05-06,P-101,Cotton Panjabi,Apparel,Chittagong,Online,50,75000,1500,900,150,B2C
-2024-05-06,P-302,Mustard Oil (1L),Groceries,Dhaka,Wholesale,200,50000,250,180,300,B2B
-2024-05-06,P-201,Wireless Earbuds,Electronics,Rajshahi,Retail,20,30000,1500,800,200,B2C
-2024-05-07,P-103,Denim Jeans,Apparel,Sylhet,Online,45,67500,1500,850,220,B2C
-2024-05-07,P-501,Skincare Gift Set,Cosmetics,Chittagong,Retail,30,60000,2000,1100,100,B2C
-2024-05-07,P-401,Office Chair,Furniture,Dhaka,Online,8,36000,4500,2800,30,B2C
-2024-05-08,P-202,Smart Watch,Electronics,Khulna,Retail,18,63000,3500,2000,60,B2C
-2024-05-08,P-301,Organic Rice (5kg),Groceries,Chittagong,Retail,85,29750,350,250,500,B2C
-2024-05-08,P-102,Premium Jamdani Saree,Apparel,Sylhet,Online,5,75000,15000,10000,40,B2C
-2024-05-09,P-502,Herbal Shampoo,Cosmetics,Dhaka,Online,110,44000,400,200,400,B2C
-2024-05-09,P-402,Study Desk,Furniture,Chittagong,Wholesale,10,60000,6000,3500,25,B2B
-2024-05-09,P-101,Cotton Panjabi,Apparel,Rajshahi,Retail,30,45000,1500,900,150,B2C
-2024-05-10,P-201,Wireless Earbuds,Electronics,Dhaka,Wholesale,100,150000,1500,800,200,B2B
-2024-05-10,P-302,Mustard Oil (1L),Groceries,Khulna,Online,75,18750,250,180,300,B2C
+2024-03-01,SKU-1001,Smart Lamp,Electronics,Savar,Online,120,180000,1500,1000,1200,Retail
+2024-03-01,SKU-1002,Desk Chair,Furniture,Gazipur,Offline,35,105000,3000,2000,300,B2B
+2024-03-02,SKU-1003,Mechanical Keyboard,Electronics,Narayanganj Sadar,Online,180,450000,2500,1800,800,Retail
+2024-03-02,SKU-1004,Office Desk,Furniture,Baghai Chhari,Offline,20,100000,5000,3500,150,B2B
+2024-03-03,SKU-1001,Smart Lamp,Electronics,Baghai Chhari,Online,150,225000,1500,1000,1200,Retail
+2024-03-04,SKU-1005,Wireless Mouse,Electronics,Feni,Online,280,336000,1200,800,2000,Retail
+2024-03-05,SKU-1002,Desk Chair,Furniture,Habiganj,Offline,25,75000,3000,2000,300,B2B
+2024-03-06,SKU-1006,Monitor Stand,Accessories,Baghai Chhari,Online,90,72000,800,500,600,Retail
+2024-03-07,SKU-1003,Mechanical Keyboard,Electronics,Bogura,Offline,110,275000,2500,1800,800,Retail
+2024-03-08,SKU-1007,USB-C Hub,Accessories,Kasba,Online,350,525000,1500,900,2500,Retail
+2024-03-09,SKU-1004,Office Desk,Furniture,Jashore,Offline,12,60000,5000,3500,150,B2B
+2024-03-10,SKU-1001,Smart Lamp,Electronics,Satkhira,Online,70,105000,1500,1000,1200,Retail
+2024-03-11,SKU-1008,Ergonomic Mouse,Electronics,Kasba,Offline,65,130000,2000,1400,450,Retail
+2024-03-12,SKU-1009,Filing Cabinet,Furniture,Patuakhali,Offline,15,120000,8000,6000,80,B2B
+2024-03-13,SKU-1005,Wireless Mouse,Electronics,Savar,Online,120,144000,1200,800,2000,Retail
+2024-03-14,SKU-1010,Webcam 1080p,Electronics,Gazipur,Online,180,540000,3000,2100,1000,Retail
+2024-03-15,SKU-1002,Desk Chair,Furniture,Cox's Bazar,Offline,50,150000,3000,2000,300,B2B
+2024-03-16,SKU-1007,USB-C Hub,Accessories,Narayanganj,Offline,140,210000,1500,900,2500,Retail
+2024-03-17,SKU-1006,Monitor Stand,Accessories,Habiganj,Online,80,64000,800,500,600,Retail
+2024-03-18,SKU-1003,Mechanical Keyboard,Electronics,Bogura,Online,100,250000,2500,1800,800,Retail
+2024-03-19,SKU-1011,Notebook Bundle,Stationery,Satkhira,Offline,400,200000,500,300,3000,B2B
+2024-03-20,SKU-1001,Smart Lamp,Electronics,Bhola,Online,110,165000,1500,1000,1200,Retail
+2024-03-21,SKU-1008,Ergonomic Mouse,Electronics,Hathazari,Online,55,110000,2000,1400,450,Retail
+2024-03-22,SKU-1012,Whiteboard,Stationery,Sunamganj,Offline,30,120000,4000,2800,200,B2B
+2024-03-23,SKU-1005,Wireless Mouse,Electronics,Natore,Online,220,264000,1200,800,2000,Retail
+2024-03-24,SKU-1004,Office Desk,Furniture,Jashore,Offline,25,125000,5000,3500,150,B2B
+2024-03-25,SKU-1009,Filing Cabinet,Furniture,Patuakhali,Offline,10,80000,8000,6000,80,B2B
+2024-03-26,SKU-1010,Webcam 1080p,Electronics,Feni,Online,130,390000,3000,2100,1000,Retail
+2024-03-27,SKU-1007,USB-C Hub,Accessories,Savar,Online,170,255000,1500,900,2500,Retail
+2024-03-28,SKU-1003,Mechanical Keyboard,Electronics,Gazipur,Offline,75,187500,2500,1800,800,Retail
+2024-03-29,SKU-1011,Notebook Bundle,Stationery,Cox's Bazar,Online,280,140000,500,300,3000,B2B
+2024-03-30,SKU-1002,Desk Chair,Furniture,Narayanganj,Offline,20,60000,3000,2000,300,B2B
