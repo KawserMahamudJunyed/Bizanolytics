@@ -63,8 +63,30 @@ export default function PipelinePage() {
   }, [pipelineRuns])
   const latencyTrend = useMemo(() => {
     if (pipelineRuns.length < 2) return 0
-    return -1 * parseFloat((Math.random() * 8 + 2).toFixed(1))
-  }, [pipelineRuns.length])
+    // Compare last run's duration to the previous one
+    const parseDuration = (d: string) => parseFloat(d.replace('ms', '').replace('s', '')) * (d.includes('s') && !d.includes('ms') ? 1000 : 1)
+    const latest = parseDuration(pipelineRuns[0].duration)
+    const previous = parseDuration(pipelineRuns[1].duration)
+    if (previous === 0) return 0
+    return parseFloat((((latest - previous) / previous) * 100).toFixed(1))
+  }, [pipelineRuns])
+
+  // Throughput trend: compare data density (bytes per record) to a baseline
+  const throughputTrend = useMemo(() => {
+    if (!isDataUploaded || !rawData.length) return 0
+    const bytesPerRecord = dataSizeBytes / rawData.length
+    // Higher density = better throughput trend (baseline ~200 bytes/record)
+    return parseFloat((((bytesPerRecord - 200) / 200) * 10).toFixed(1))
+  }, [dataSizeBytes, rawData, isDataUploaded])
+
+  // Success rate trend: based on actual data quality percentage
+  const successRateTrend = useMemo(() => {
+    if (!isDataUploaded || !rawData.length) return 0
+    const validRows = rawData.filter(r => r.Revenue_BDT > 0 && r.Units_Sold > 0).length
+    const qualityPct = (validRows / rawData.length) * 100
+    // Trend shows how far above 95% baseline the quality is
+    return parseFloat((qualityPct - 95).toFixed(1))
+  }, [rawData, isDataUploaded])
 
   // Add a new pipeline run whenever data changes
   useEffect(() => {
@@ -104,7 +126,7 @@ export default function PipelinePage() {
           title="Data Throughput"
           value={throughput}
           description="Average processing volume"
-          trend={isDataUploaded ? parseFloat((Math.random() * 10 + 5).toFixed(1)) : 0}
+          trend={throughputTrend}
         />
         <PipelineStatCard
           title="Pipeline Latency"
@@ -116,7 +138,7 @@ export default function PipelinePage() {
           title="Success Rate"
           value={successRate}
           description="Pipeline execution success"
-          trend={isDataUploaded ? 0.1 : 0}
+          trend={successRateTrend}
         />
       </div>
 
