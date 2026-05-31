@@ -112,7 +112,11 @@ export function DataFlowVisualization() {
   const processingTime = isDataUploaded 
     ? Math.max(45, Math.min(500, Math.round(dataSizeInBytes / 80))).toString() + "ms" 
     : "0ms"
-  const successRate = isDataUploaded ? "100%" : "0%"
+  const successRate = (() => {
+    if (!isDataUploaded || !rawData.length) return "0%"
+    const validRows = rawData.filter(r => r.Revenue_BDT > 0 && r.Units_Sold > 0).length
+    return ((validRows / rawData.length) * 100).toFixed(1) + "%"
+  })()
 
   // Layout: Upload → Parse → State (center hub)
   //   State splits: UP to AI API, DOWN to Dashboard

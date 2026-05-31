@@ -56,7 +56,11 @@ export default function PipelinePage() {
     return mbPerSec >= 1 ? mbPerSec.toFixed(1) + " MB/s" : (mbPerSec * 1000).toFixed(0) + " KB/s"
   }, [dataSizeBytes, latencyMs, isDataUploaded])
   
-  const successRate = isDataUploaded ? "100%" : "0%"
+  const successRate = useMemo(() => {
+    if (pipelineRuns.length === 0) return "0%"
+    const successCount = pipelineRuns.filter(r => r.status === "success").length
+    return ((successCount / pipelineRuns.length) * 100).toFixed(1) + "%"
+  }, [pipelineRuns])
   const latencyTrend = useMemo(() => {
     if (pipelineRuns.length < 2) return 0
     return -1 * parseFloat((Math.random() * 8 + 2).toFixed(1))
