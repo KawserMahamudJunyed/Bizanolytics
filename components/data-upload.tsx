@@ -229,7 +229,7 @@ export function DataUpload() {
                 />
               </label>
               <div className="mt-4 flex gap-4 text-xs text-muted-foreground">
-                <a href="/sample-sme-sales.csv" download className="text-primary hover:underline">Download Sample Dataset</a>
+                <a href="/subdistrict-sample-sales.csv" download className="text-primary hover:underline">Download Sample Dataset</a>
               </div>
             </motion.div>
           )}

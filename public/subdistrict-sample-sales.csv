@@ -1,0 +1,601 @@
+Date,Product_ID,Product_Name,Category,Location,Sales_Channel,Units_Sold,Revenue_BDT,Unit_Price,Cost_Price,Current_Stock,Customer_Segment
+2023-12-01,SKU-A03,Denim Jeans,Apparel,Gazipur Sadar,Online,4,7200,1800,1000,67,B2C
+2023-12-01,SKU-F02,Office Desk,Furniture,Gazipur Sadar,Retail,5,42500,8500,5000,179,B2C
+2023-12-01,SKU-C01,Skincare Gift Set,Cosmetics,Gazipur Sadar,Retail,15,33000,2200,1200,849,B2C
+2023-12-02,SKU-E04,Power Bank 10000mAh,Electronics,Fatullah (Narayanganj),Online,23,41400,1800,1100,864,B2C
+2023-12-02,SKU-A04,Basic T-Shirt,Apparel,Dhanmondi (Dhaka),Retail,22,8800,400,200,670,B2C
+2023-12-02,SKU-A03,Denim Jeans,Apparel,Hathazari (Chattogram),Wholesale,292,525600,1800,1000,350,B2B
+2023-12-02,SKU-G03,Lentils (1kg),Groceries,Patiya (Chattogram),Retail,76,10640,140,100,113,B2C
+2023-12-03,SKU-E03,Mechanical Keyboard,Electronics,Patiya (Chattogram),Online,27,94500,3500,2200,337,B2C
+2023-12-03,SKU-G01,Organic Rice (5kg),Groceries,Barishal Sadar,Wholesale,141,63450,450,320,289,B2B
+2023-12-04,SKU-G03,Lentils (1kg),Groceries,Motihar (Rajshahi),Retail,28,3724,140,100,322,B2C
+2023-12-04,SKU-E02,Wireless Earbuds,Electronics,Gulshan (Dhaka),Online,26,65000,2500,1500,97,B2C
+2023-12-05,SKU-A04,Basic T-Shirt,Apparel,Sadar (Mymensingh),Online,18,6840,400,200,180,B2C
+2023-12-05,SKU-A01,Cotton Panjabi,Apparel,Fatullah (Narayanganj),Online,24,36000,1500,900,904,B2C
+2023-12-05,SKU-S01,Notebook Bundle (5 pcs),Stationery,Teknaf (Cox's Bazar),Wholesale,106,63600,600,350,301,B2B
+2023-12-05,SKU-G01,Organic Rice (5kg),Groceries,Boalia (Rajshahi),Wholesale,373,167850,450,320,1013,B2B
+2023-12-05,SKU-G02,Mustard Oil (1L),Groceries,Patiya (Chattogram),Wholesale,63,17640,280,200,762,B2B
+2023-12-05,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Cox's Bazar),Retail,39,10920,280,200,948,B2C
+2023-12-06,SKU-E01,Smart Lamp,Electronics,Halishahar (Chattogram),Online,4,4800,1200,800,673,B2C
+2023-12-06,SKU-A02,Premium Jamdani Saree,Apparel,Savar (Dhaka),Retail,2,24000,12000,8000,387,B2C
+2023-12-07,SKU-C01,Skincare Gift Set,Cosmetics,Savar (Dhaka),Online,13,28600,2200,1200,162,B2C
+2023-12-08,SKU-G01,Organic Rice (5kg),Groceries,Patiya (Chattogram),Wholesale,255,109012,450,320,656,B2B
+2023-12-08,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Rangpur),Wholesale,485,218250,450,320,1251,B2B
+2023-12-08,SKU-E01,Smart Lamp,Electronics,Motihar (Rajshahi),Online,11,13200,1200,800,791,B2C
+2023-12-08,SKU-E04,Power Bank 10000mAh,Electronics,Gazipur Sadar,Online,3,5400,1800,1100,725,B2C
+2023-12-08,SKU-E03,Mechanical Keyboard,Electronics,Motihar (Rajshahi),Online,16,56000,3500,2200,38,B2C
+2023-12-09,SKU-G03,Lentils (1kg),Groceries,Narayanganj Sadar,Retail,92,12880,140,100,618,B2C
+2023-12-09,SKU-C01,Skincare Gift Set,Cosmetics,Hathazari (Chattogram),Retail,16,35200,2200,1200,881,B2C
+2023-12-10,SKU-A02,Premium Jamdani Saree,Apparel,Double Mooring (Chattogram),Online,28,336000,12000,8000,718,B2C
+2023-12-10,SKU-G03,Lentils (1kg),Groceries,Khalishpur (Khulna),Retail,83,11620,140,100,858,B2C
+2023-12-10,SKU-F03,Bookshelf,Furniture,Motihar (Rajshahi),Wholesale,224,940800,4200,2500,974,B2B
+2023-12-10,SKU-C02,Herbal Shampoo,Cosmetics,Patiya (Chattogram),Retail,30,13500,450,250,739,B2C
+2023-12-10,SKU-G02,Mustard Oil (1L),Groceries,Teknaf (Cox's Bazar),Wholesale,151,40166,280,200,456,B2B
+2023-12-10,SKU-G03,Lentils (1kg),Groceries,Fatullah (Narayanganj),Wholesale,288,40320,140,100,790,B2B
+2023-12-11,SKU-E02,Wireless Earbuds,Electronics,Mirpur (Dhaka),Online,28,70000,2500,1500,621,B2C
+2023-12-11,SKU-G03,Lentils (1kg),Groceries,Motihar (Rajshahi),Retail,43,6020,140,100,531,B2C
+2023-12-11,SKU-A03,Denim Jeans,Apparel,Motihar (Rajshahi),Wholesale,151,271800,1800,1000,444,B2B
+2023-12-12,SKU-G03,Lentils (1kg),Groceries,Fatullah (Narayanganj),Wholesale,324,45360,140,100,887,B2B
+2023-12-12,SKU-G03,Lentils (1kg),Groceries,Fatullah (Narayanganj),Retail,6,798,140,100,714,B2C
+2023-12-12,SKU-G01,Organic Rice (5kg),Groceries,Dhanmondi (Dhaka),Retail,45,20250,450,320,738,B2B
+2023-12-12,SKU-C02,Herbal Shampoo,Cosmetics,Narayanganj Sadar,Wholesale,95,40612,450,250,290,B2B
+2023-12-12,SKU-G01,Organic Rice (5kg),Groceries,Mirpur (Dhaka),Retail,76,34200,450,320,150,B2C
+2023-12-13,SKU-F03,Bookshelf,Furniture,Patiya (Chattogram),Online,8,31920,4200,2500,240,B2C
+2023-12-13,SKU-F03,Bookshelf,Furniture,Tongi (Gazipur),Retail,4,16800,4200,2500,971,B2C
+2023-12-13,SKU-G02,Mustard Oil (1L),Groceries,Tongi (Gazipur),Retail,49,13034,280,200,997,B2C
+2023-12-14,SKU-F01,Ergonomic Desk Chair,Furniture,Cumilla Sadar,Wholesale,487,2544575,5500,3500,551,B2B
+2023-12-14,SKU-F01,Ergonomic Desk Chair,Furniture,Boalia (Rajshahi),Wholesale,78,429000,5500,3500,507,B2B
+2023-12-15,SKU-A01,Cotton Panjabi,Apparel,Patiya (Chattogram),Retail,13,19500,1500,900,757,B2C
+2023-12-15,SKU-A01,Cotton Panjabi,Apparel,Boalia (Rajshahi),Retail,20,30000,1500,900,55,B2C
+2023-12-15,SKU-A03,Denim Jeans,Apparel,Dhanmondi (Dhaka),Retail,6,10800,1800,1000,734,B2C
+2023-12-16,SKU-A03,Denim Jeans,Apparel,Fatullah (Narayanganj),Wholesale,442,795600,1800,1000,1229,B2B
+2023-12-16,SKU-F03,Bookshelf,Furniture,Cumilla Sadar,Online,7,29400,4200,2500,206,B2C
+2023-12-16,SKU-E01,Smart Lamp,Electronics,Savar (Dhaka),Online,8,9600,1200,800,937,B2C
+2023-12-16,SKU-A04,Basic T-Shirt,Apparel,Bogura Sadar,Wholesale,125,50000,400,200,982,B2B
+2023-12-16,SKU-F03,Bookshelf,Furniture,Patiya (Chattogram),Retail,9,37800,4200,2500,586,B2C
+2023-12-16,SKU-C02,Herbal Shampoo,Cosmetics,Khulna Sadar,Online,2,810,450,250,295,B2C
+2023-12-17,SKU-F02,Office Desk,Furniture,Motihar (Rajshahi),Retail,1,8500,8500,5000,472,B2C
+2023-12-17,SKU-A01,Cotton Panjabi,Apparel,Sadar (Mymensingh),Retail,21,31500,1500,900,183,B2C
+2023-12-17,SKU-E02,Wireless Earbuds,Electronics,Boalia (Rajshahi),Online,26,65000,2500,1500,743,B2C
+2023-12-17,SKU-F02,Office Desk,Furniture,Fatullah (Narayanganj),Retail,5,42500,8500,5000,569,B2C
+2023-12-17,SKU-C02,Herbal Shampoo,Cosmetics,Savar (Dhaka),Online,24,10260,450,250,445,B2C
+2023-12-18,SKU-F02,Office Desk,Furniture,Feni Sadar,Retail,6,51000,8500,5000,998,B2C
+2023-12-18,SKU-A03,Denim Jeans,Apparel,Gulshan (Dhaka),Online,10,17100,1800,1000,847,B2C
+2023-12-18,SKU-A01,Cotton Panjabi,Apparel,Halishahar (Chattogram),Online,1,1500,1500,900,850,B2C
+2023-12-18,SKU-E03,Mechanical Keyboard,Electronics,Boalia (Rajshahi),Online,18,63000,3500,2200,190,B2B
+2023-12-19,SKU-C01,Skincare Gift Set,Cosmetics,Khalishpur (Khulna),Online,9,19800,2200,1200,959,B2C
+2023-12-19,SKU-C02,Herbal Shampoo,Cosmetics,Dakshin Surma (Sylhet),Wholesale,281,126450,450,250,611,B2B
+2023-12-19,SKU-E04,Power Bank 10000mAh,Electronics,Teknaf (Cox's Bazar),Retail,3,5400,1800,1100,261,B2C
+2023-12-20,SKU-A02,Premium Jamdani Saree,Apparel,Dakshin Surma (Sylhet),Retail,24,288000,12000,8000,467,B2C
+2023-12-20,SKU-A04,Basic T-Shirt,Apparel,Mirpur (Dhaka),Retail,18,7200,400,200,134,B2C
+2023-12-21,SKU-E01,Smart Lamp,Electronics,Patiya (Chattogram),Retail,6,7200,1200,800,752,B2C
+2023-12-21,SKU-A01,Cotton Panjabi,Apparel,Mirpur (Dhaka),Retail,3,4500,1500,900,87,B2C
+2023-12-21,SKU-F01,Ergonomic Desk Chair,Furniture,Cumilla Sadar,Wholesale,160,880000,5500,3500,765,B2B
+2023-12-21,SKU-A03,Denim Jeans,Apparel,Boalia (Rajshahi),Retail,18,32400,1800,1000,141,B2C
+2023-12-21,SKU-C02,Herbal Shampoo,Cosmetics,Sadar (Mymensingh),Wholesale,483,217350,450,250,790,B2B
+2023-12-22,SKU-C02,Herbal Shampoo,Cosmetics,Double Mooring (Chattogram),Wholesale,258,104490,450,250,573,B2B
+2023-12-22,SKU-G02,Mustard Oil (1L),Groceries,Patiya (Chattogram),Wholesale,127,35560,280,200,653,B2B
+2023-12-22,SKU-G03,Lentils (1kg),Groceries,Patiya (Chattogram),Retail,48,6384,140,100,74,B2B
+2023-12-22,SKU-A01,Cotton Panjabi,Apparel,Savar (Dhaka),Retail,11,16500,1500,900,666,B2C
+2023-12-22,SKU-A04,Basic T-Shirt,Apparel,Kotwali (Sylhet),Online,3,1200,400,200,936,B2C
+2023-12-23,SKU-C02,Herbal Shampoo,Cosmetics,Halishahar (Chattogram),Retail,3,1350,450,250,789,B2C
+2023-12-23,SKU-A01,Cotton Panjabi,Apparel,Bogura Sadar,Retail,16,24000,1500,900,865,B2C
+2023-12-24,SKU-G02,Mustard Oil (1L),Groceries,Dhanmondi (Dhaka),Retail,87,24360,280,200,922,B2C
+2023-12-24,SKU-G01,Organic Rice (5kg),Groceries,Boalia (Rajshahi),Retail,35,15750,450,320,348,B2C
+2023-12-24,SKU-E04,Power Bank 10000mAh,Electronics,Fatullah (Narayanganj),Online,9,14580,1800,1100,368,B2C
+2023-12-25,SKU-A02,Premium Jamdani Saree,Apparel,Gulshan (Dhaka),Online,24,273600,12000,8000,579,B2C
+2023-12-25,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Cox's Bazar),Retail,63,15876,280,200,810,B2C
+2023-12-26,SKU-A02,Premium Jamdani Saree,Apparel,Feni Sadar,Wholesale,343,4116000,12000,8000,636,B2B
+2023-12-26,SKU-C02,Herbal Shampoo,Cosmetics,Sadar (Rangpur),Retail,4,1800,450,250,818,B2C
+2023-12-26,SKU-F01,Ergonomic Desk Chair,Furniture,Gazipur Sadar,Online,7,38500,5500,3500,239,B2C
+2023-12-26,SKU-G03,Lentils (1kg),Groceries,Teknaf (Cox's Bazar),Wholesale,317,44380,140,100,842,B2B
+2023-12-27,SKU-E04,Power Bank 10000mAh,Electronics,Barishal Sadar,Online,22,39600,1800,1100,340,B2C
+2023-12-27,SKU-A01,Cotton Panjabi,Apparel,Gulshan (Dhaka),Online,10,15000,1500,900,728,B2C
+2023-12-28,SKU-G02,Mustard Oil (1L),Groceries,Cumilla Sadar,Wholesale,494,131404,280,200,743,B2B
+2023-12-28,SKU-A03,Denim Jeans,Apparel,Motihar (Rajshahi),Wholesale,83,149400,1800,1000,498,B2B
+2023-12-29,SKU-G02,Mustard Oil (1L),Groceries,Hathazari (Chattogram),Retail,46,11592,280,200,283,B2C
+2023-12-29,SKU-E01,Smart Lamp,Electronics,Khalishpur (Khulna),Retail,1,1140,1200,800,875,B2C
+2023-12-29,SKU-A01,Cotton Panjabi,Apparel,Patiya (Chattogram),Wholesale,250,375000,1500,900,424,B2B
+2023-12-30,SKU-E03,Mechanical Keyboard,Electronics,Teknaf (Cox's Bazar),Online,6,21000,3500,2200,426,B2C
+2023-12-30,SKU-G01,Organic Rice (5kg),Groceries,Savar (Dhaka),Wholesale,141,63450,450,320,629,B2B
+2023-12-30,SKU-G03,Lentils (1kg),Groceries,Teknaf (Cox's Bazar),Wholesale,169,22477,140,100,369,B2B
+2023-12-30,SKU-G01,Organic Rice (5kg),Groceries,Fatullah (Narayanganj),Wholesale,180,81000,450,320,514,B2B
+2023-12-31,SKU-E04,Power Bank 10000mAh,Electronics,Khalishpur (Khulna),Wholesale,91,155610,1800,1100,762,B2B
+2023-12-31,SKU-G03,Lentils (1kg),Groceries,Mirpur (Dhaka),Wholesale,170,23800,140,100,966,B2B
+2023-12-31,SKU-E03,Mechanical Keyboard,Electronics,Dhanmondi (Dhaka),Retail,19,63175,3500,2200,903,B2C
+2024-01-01,SKU-C01,Skincare Gift Set,Cosmetics,Boalia (Rajshahi),Online,2,4180,2200,1200,558,B2C
+2024-01-01,SKU-G01,Organic Rice (5kg),Groceries,Gulshan (Dhaka),Retail,47,21150,450,320,942,B2C
+2024-01-01,SKU-E04,Power Bank 10000mAh,Electronics,Khalishpur (Khulna),Online,23,41400,1800,1100,92,B2C
+2024-01-01,SKU-E02,Wireless Earbuds,Electronics,Gulshan (Dhaka),Online,16,40000,2500,1500,35,B2C
+2024-01-01,SKU-E04,Power Bank 10000mAh,Electronics,Bogura Sadar,Online,7,12600,1800,1100,20,B2C
+2024-01-02,SKU-G03,Lentils (1kg),Groceries,Khalishpur (Khulna),Online,82,11480,140,100,952,B2C
+2024-01-03,SKU-E03,Mechanical Keyboard,Electronics,Hathazari (Chattogram),Online,17,59500,3500,2200,499,B2C
+2024-01-03,SKU-E04,Power Bank 10000mAh,Electronics,Khulna Sadar,Online,27,48600,1800,1100,948,B2C
+2024-01-03,SKU-A02,Premium Jamdani Saree,Apparel,Khalishpur (Khulna),Retail,16,192000,12000,8000,891,B2C
+2024-01-04,SKU-A03,Denim Jeans,Apparel,Khulna Sadar,Wholesale,284,485640,1800,1000,618,B2B
+2024-01-04,SKU-G03,Lentils (1kg),Groceries,Hathazari (Chattogram),Retail,20,2800,140,100,435,B2C
+2024-01-04,SKU-A04,Basic T-Shirt,Apparel,Mirpur (Dhaka),Retail,14,5600,400,200,77,B2C
+2024-01-04,SKU-G02,Mustard Oil (1L),Groceries,Khalishpur (Khulna),Retail,16,4480,280,200,326,B2C
+2024-01-04,SKU-E01,Smart Lamp,Electronics,Double Mooring (Chattogram),Retail,7,8400,1200,800,196,B2C
+2024-01-05,SKU-C02,Herbal Shampoo,Cosmetics,Motihar (Rajshahi),Wholesale,378,153090,450,250,1029,B2B
+2024-01-05,SKU-F03,Bookshelf,Furniture,Fatullah (Narayanganj),Retail,7,29400,4200,2500,51,B2C
+2024-01-05,SKU-A03,Denim Jeans,Apparel,Kotwali (Sylhet),Online,12,21600,1800,1000,607,B2C
+2024-01-06,SKU-G03,Lentils (1kg),Groceries,Mirpur (Dhaka),Wholesale,140,19600,140,100,785,B2B
+2024-01-06,SKU-A02,Premium Jamdani Saree,Apparel,Fatullah (Narayanganj),Retail,29,348000,12000,8000,691,B2C
+2024-01-06,SKU-G02,Mustard Oil (1L),Groceries,Kotwali (Sylhet),Wholesale,246,68880,280,200,284,B2B
+2024-01-06,SKU-C02,Herbal Shampoo,Cosmetics,Narayanganj Sadar,Retail,11,4950,450,250,372,B2C
+2024-01-06,SKU-G01,Organic Rice (5kg),Groceries,Bogura Sadar,Wholesale,97,41468,450,320,242,B2B
+2024-01-06,SKU-G02,Mustard Oil (1L),Groceries,Motihar (Rajshahi),Wholesale,188,52640,280,200,773,B2B
+2024-01-07,SKU-E04,Power Bank 10000mAh,Electronics,Kotwali (Sylhet),Online,5,8550,1800,1100,286,B2C
+2024-01-08,SKU-E04,Power Bank 10000mAh,Electronics,Fatullah (Narayanganj),Online,11,18810,1800,1100,541,B2C
+2024-01-08,SKU-S01,Notebook Bundle (5 pcs),Stationery,Hathazari (Chattogram),Retail,30,18000,600,350,150,B2B
+2024-01-09,SKU-G03,Lentils (1kg),Groceries,Tongi (Gazipur),Retail,45,6300,140,100,466,B2C
+2024-01-10,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Cox's Bazar),Retail,71,19880,280,200,45,B2C
+2024-01-10,SKU-A03,Denim Jeans,Apparel,Khalishpur (Khulna),Retail,20,32400,1800,1000,700,B2C
+2024-01-10,SKU-A02,Premium Jamdani Saree,Apparel,Gulshan (Dhaka),Online,20,228000,12000,8000,408,B2C
+2024-01-11,SKU-A02,Premium Jamdani Saree,Apparel,Double Mooring (Chattogram),Online,17,193800,12000,8000,589,B2C
+2024-01-11,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Mymensingh),Retail,54,24300,450,320,403,B2C
+2024-01-11,SKU-A03,Denim Jeans,Apparel,Khulna Sadar,Wholesale,95,171000,1800,1000,782,B2B
+2024-01-11,SKU-F03,Bookshelf,Furniture,Tongi (Gazipur),Wholesale,353,1408470,4200,2500,956,B2B
+2024-01-12,SKU-E04,Power Bank 10000mAh,Electronics,Bogura Sadar,Online,8,14400,1800,1100,659,B2C
+2024-01-12,SKU-G02,Mustard Oil (1L),Groceries,Gazipur Sadar,Retail,18,4788,280,200,831,B2B
+2024-01-12,SKU-G01,Organic Rice (5kg),Groceries,Hathazari (Chattogram),Wholesale,314,141300,450,320,750,B2B
+2024-01-13,SKU-E03,Mechanical Keyboard,Electronics,Double Mooring (Chattogram),Online,13,45500,3500,2200,493,B2C
+2024-01-13,SKU-E04,Power Bank 10000mAh,Electronics,Dhanmondi (Dhaka),Retail,27,48600,1800,1100,732,B2C
+2024-01-13,SKU-E01,Smart Lamp,Electronics,Dakshin Surma (Sylhet),Retail,29,34800,1200,800,868,B2C
+2024-01-14,SKU-E04,Power Bank 10000mAh,Electronics,Feni Sadar,Online,15,27000,1800,1100,891,B2C
+2024-01-14,SKU-E01,Smart Lamp,Electronics,Double Mooring (Chattogram),Online,22,26400,1200,800,829,B2C
+2024-01-14,SKU-G02,Mustard Oil (1L),Groceries,Boalia (Rajshahi),Retail,16,4480,280,200,395,B2C
+2024-01-14,SKU-F01,Ergonomic Desk Chair,Furniture,Cumilla Sadar,Wholesale,363,1996500,5500,3500,934,B2B
+2024-01-14,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Mymensingh),Retail,44,19800,450,320,943,B2C
+2024-01-14,SKU-G03,Lentils (1kg),Groceries,Dakshin Surma (Sylhet),Retail,69,9660,140,100,778,B2C
+2024-01-16,SKU-S01,Notebook Bundle (5 pcs),Stationery,Sadar (Mymensingh),Retail,19,11400,600,350,184,B2C
+2024-01-16,SKU-E04,Power Bank 10000mAh,Electronics,Boalia (Rajshahi),Online,24,43200,1800,1100,654,B2C
+2024-01-17,SKU-G01,Organic Rice (5kg),Groceries,Halishahar (Chattogram),Retail,87,37192,450,320,775,B2C
+2024-01-17,SKU-A02,Premium Jamdani Saree,Apparel,Khulna Sadar,Wholesale,100,1080000,12000,8000,463,B2B
+2024-01-18,SKU-F03,Bookshelf,Furniture,Teknaf (Cox's Bazar),Retail,3,12600,4200,2500,50,B2C
+2024-01-18,SKU-G01,Organic Rice (5kg),Groceries,Cumilla Sadar,Retail,93,41850,450,320,405,B2C
+2024-01-19,SKU-G02,Mustard Oil (1L),Groceries,Motihar (Rajshahi),Retail,39,9828,280,200,469,B2C
+2024-01-19,SKU-G03,Lentils (1kg),Groceries,Motihar (Rajshahi),Retail,14,1960,140,100,963,B2C
+2024-01-21,SKU-A01,Cotton Panjabi,Apparel,Barishal Sadar,Retail,18,24300,1500,900,964,B2C
+2024-01-21,SKU-C01,Skincare Gift Set,Cosmetics,Narayanganj Sadar,Online,3,6600,2200,1200,79,B2C
+2024-01-22,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Rangpur),Wholesale,457,121562,280,200,798,B2B
+2024-01-22,SKU-A01,Cotton Panjabi,Apparel,Gazipur Sadar,Online,17,24225,1500,900,141,B2C
+2024-01-22,SKU-E03,Mechanical Keyboard,Electronics,Motihar (Rajshahi),Retail,27,94500,3500,2200,947,B2C
+2024-01-23,SKU-F02,Office Desk,Furniture,Gazipur Sadar,Retail,7,56525,8500,5000,576,B2B
+2024-01-24,SKU-E02,Wireless Earbuds,Electronics,Gulshan (Dhaka),Online,29,68875,2500,1500,221,B2C
+2024-01-24,SKU-A03,Denim Jeans,Apparel,Sadar (Cox's Bazar),Wholesale,61,109800,1800,1000,162,B2B
+2024-01-24,SKU-F03,Bookshelf,Furniture,Dhanmondi (Dhaka),Retail,9,37800,4200,2500,455,B2C
+2024-01-25,SKU-G03,Lentils (1kg),Groceries,Boalia (Rajshahi),Wholesale,391,54740,140,100,626,B2B
+2024-01-25,SKU-G01,Organic Rice (5kg),Groceries,Khalishpur (Khulna),Wholesale,300,135000,450,320,782,B2B
+2024-01-26,SKU-E03,Mechanical Keyboard,Electronics,Cumilla Sadar,Online,16,56000,3500,2200,215,B2C
+2024-01-26,SKU-C01,Skincare Gift Set,Cosmetics,Cumilla Sadar,Online,25,55000,2200,1200,652,B2C
+2024-01-26,SKU-A01,Cotton Panjabi,Apparel,Motihar (Rajshahi),Wholesale,284,426000,1500,900,720,B2B
+2024-01-26,SKU-G02,Mustard Oil (1L),Groceries,Fatullah (Narayanganj),Wholesale,380,106400,280,200,799,B2B
+2024-01-26,SKU-G02,Mustard Oil (1L),Groceries,Cumilla Sadar,Wholesale,169,47320,280,200,743,B2B
+2024-01-27,SKU-C01,Skincare Gift Set,Cosmetics,Hathazari (Chattogram),Retail,7,15400,2200,1200,839,B2C
+2024-01-27,SKU-G03,Lentils (1kg),Groceries,Kotwali (Sylhet),Retail,71,8946,140,100,357,B2C
+2024-01-27,SKU-S01,Notebook Bundle (5 pcs),Stationery,Dhanmondi (Dhaka),Online,3,1710,600,350,766,B2C
+2024-01-27,SKU-G03,Lentils (1kg),Groceries,Sadar (Cox's Bazar),Wholesale,198,27720,140,100,472,B2B
+2024-01-28,SKU-S01,Notebook Bundle (5 pcs),Stationery,Narayanganj Sadar,Wholesale,78,46800,600,350,623,B2B
+2024-01-28,SKU-C02,Herbal Shampoo,Cosmetics,Fatullah (Narayanganj),Wholesale,140,63000,450,250,366,B2B
+2024-01-29,SKU-G02,Mustard Oil (1L),Groceries,Dhanmondi (Dhaka),Wholesale,373,104440,280,200,993,B2B
+2024-01-29,SKU-G03,Lentils (1kg),Groceries,Dhanmondi (Dhaka),Online,13,1820,140,100,388,B2C
+2024-01-29,SKU-F02,Office Desk,Furniture,Dhanmondi (Dhaka),Wholesale,334,2697050,8500,5000,685,B2B
+2024-01-30,SKU-A01,Cotton Panjabi,Apparel,Barishal Sadar,Online,17,25500,1500,900,706,B2C
+2024-01-30,SKU-A04,Basic T-Shirt,Apparel,Gazipur Sadar,Retail,15,6000,400,200,216,B2C
+2024-01-31,SKU-F01,Ergonomic Desk Chair,Furniture,Khalishpur (Khulna),Wholesale,402,2211000,5500,3500,1037,B2B
+2024-01-31,SKU-E03,Mechanical Keyboard,Electronics,Boalia (Rajshahi),Online,18,56700,3500,2200,11,B2C
+2024-01-31,SKU-A02,Premium Jamdani Saree,Apparel,Gulshan (Dhaka),Online,2,24000,12000,8000,929,B2C
+2024-01-31,SKU-G01,Organic Rice (5kg),Groceries,Motihar (Rajshahi),Retail,29,13050,450,320,668,B2B
+2024-02-01,SKU-E03,Mechanical Keyboard,Electronics,Fatullah (Narayanganj),Retail,23,80500,3500,2200,578,B2C
+2024-02-01,SKU-S01,Notebook Bundle (5 pcs),Stationery,Cumilla Sadar,Wholesale,66,39600,600,350,388,B2B
+2024-02-01,SKU-A02,Premium Jamdani Saree,Apparel,Fatullah (Narayanganj),Wholesale,428,4879200,12000,8000,983,B2B
+2024-02-01,SKU-A02,Premium Jamdani Saree,Apparel,Hathazari (Chattogram),Retail,13,156000,12000,8000,892,B2C
+2024-02-01,SKU-F01,Ergonomic Desk Chair,Furniture,Khalishpur (Khulna),Online,10,52250,5500,3500,161,B2C
+2024-02-02,SKU-G03,Lentils (1kg),Groceries,Dakshin Surma (Sylhet),Retail,66,9240,140,100,426,B2C
+2024-02-02,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Cox's Bazar),Wholesale,422,112252,280,200,1137,B2B
+2024-02-02,SKU-G03,Lentils (1kg),Groceries,Tongi (Gazipur),Wholesale,257,34181,140,100,372,B2B
+2024-02-02,SKU-A04,Basic T-Shirt,Apparel,Motihar (Rajshahi),Retail,26,10400,400,200,49,B2C
+2024-02-02,SKU-E04,Power Bank 10000mAh,Electronics,Sadar (Cox's Bazar),Online,30,54000,1800,1100,713,B2C
+2024-02-03,SKU-E04,Power Bank 10000mAh,Electronics,Teknaf (Cox's Bazar),Online,2,3600,1800,1100,844,B2C
+2024-02-03,SKU-G03,Lentils (1kg),Groceries,Barishal Sadar,Retail,59,7847,140,100,305,B2B
+2024-02-03,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Mymensingh),Retail,71,19880,280,200,166,B2C
+2024-02-03,SKU-A02,Premium Jamdani Saree,Apparel,Patiya (Chattogram),Online,17,204000,12000,8000,996,B2C
+2024-02-03,SKU-G02,Mustard Oil (1L),Groceries,Bogura Sadar,Retail,54,15120,280,200,57,B2C
+2024-02-04,SKU-G01,Organic Rice (5kg),Groceries,Khalishpur (Khulna),Retail,88,35640,450,320,765,B2C
+2024-02-04,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Cox's Bazar),Retail,99,42322,450,320,175,B2B
+2024-02-05,SKU-G02,Mustard Oil (1L),Groceries,Dakshin Surma (Sylhet),Retail,76,20216,280,200,909,B2C
+2024-02-05,SKU-C01,Skincare Gift Set,Cosmetics,Kotwali (Sylhet),Retail,1,2090,2200,1200,290,B2C
+2024-02-05,SKU-A01,Cotton Panjabi,Apparel,Double Mooring (Chattogram),Wholesale,391,527850,1500,900,453,B2B
+2024-02-06,SKU-G03,Lentils (1kg),Groceries,Motihar (Rajshahi),Wholesale,307,40831,140,100,667,B2B
+2024-02-06,SKU-A03,Denim Jeans,Apparel,Gulshan (Dhaka),Retail,3,4860,1800,1000,266,B2C
+2024-02-06,SKU-G02,Mustard Oil (1L),Groceries,Patiya (Chattogram),Wholesale,494,131404,280,200,1147,B2B
+2024-02-07,SKU-G02,Mustard Oil (1L),Groceries,Motihar (Rajshahi),Retail,38,10640,280,200,332,B2C
+2024-02-07,SKU-C01,Skincare Gift Set,Cosmetics,Patiya (Chattogram),Retail,8,16720,2200,1200,811,B2C
+2024-02-07,SKU-C01,Skincare Gift Set,Cosmetics,Khulna Sadar,Retail,29,63800,2200,1200,522,B2C
+2024-02-09,SKU-F01,Ergonomic Desk Chair,Furniture,Khalishpur (Khulna),Online,3,15675,5500,3500,691,B2B
+2024-02-10,SKU-C01,Skincare Gift Set,Cosmetics,Patiya (Chattogram),Retail,26,57200,2200,1200,801,B2C
+2024-02-10,SKU-G03,Lentils (1kg),Groceries,Savar (Dhaka),Wholesale,404,56560,140,100,953,B2B
+2024-02-11,SKU-G02,Mustard Oil (1L),Groceries,Tongi (Gazipur),Retail,9,2520,280,200,86,B2C
+2024-02-11,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Cox's Bazar),Wholesale,411,184950,450,320,1172,B2B
+2024-02-11,SKU-A02,Premium Jamdani Saree,Apparel,Sadar (Mymensingh),Wholesale,194,2328000,12000,8000,344,B2B
+2024-02-11,SKU-G02,Mustard Oil (1L),Groceries,Gazipur Sadar,Wholesale,64,16128,280,200,209,B2B
+2024-02-11,SKU-A02,Premium Jamdani Saree,Apparel,Hathazari (Chattogram),Retail,11,125400,12000,8000,965,B2C
+2024-02-12,SKU-G03,Lentils (1kg),Groceries,Fatullah (Narayanganj),Wholesale,148,19684,140,100,715,B2B
+2024-02-12,SKU-A01,Cotton Panjabi,Apparel,Sadar (Cox's Bazar),Wholesale,403,544050,1500,900,829,B2B
+2024-02-12,SKU-E04,Power Bank 10000mAh,Electronics,Double Mooring (Chattogram),Online,14,25200,1800,1100,537,B2C
+2024-02-13,SKU-A02,Premium Jamdani Saree,Apparel,Mirpur (Dhaka),Wholesale,494,5928000,12000,8000,894,B2B
+2024-02-13,SKU-A01,Cotton Panjabi,Apparel,Khalishpur (Khulna),Wholesale,161,241500,1500,900,222,B2B
+2024-02-14,SKU-C01,Skincare Gift Set,Cosmetics,Patiya (Chattogram),Online,27,59400,2200,1200,264,B2C
+2024-02-14,SKU-A04,Basic T-Shirt,Apparel,Double Mooring (Chattogram),Online,17,6800,400,200,451,B2C
+2024-02-14,SKU-A01,Cotton Panjabi,Apparel,Tongi (Gazipur),Retail,17,25500,1500,900,565,B2C
+2024-02-14,SKU-E04,Power Bank 10000mAh,Electronics,Bogura Sadar,Online,6,10260,1800,1100,263,B2C
+2024-02-15,SKU-S01,Notebook Bundle (5 pcs),Stationery,Sadar (Mymensingh),Online,10,6000,600,350,319,B2C
+2024-02-15,SKU-S01,Notebook Bundle (5 pcs),Stationery,Khalishpur (Khulna),Retail,9,5400,600,350,998,B2C
+2024-02-16,SKU-C01,Skincare Gift Set,Cosmetics,Bogura Sadar,Retail,6,13200,2200,1200,363,B2C
+2024-02-16,SKU-E04,Power Bank 10000mAh,Electronics,Sadar (Mymensingh),Online,3,5400,1800,1100,153,B2C
+2024-02-16,SKU-A03,Denim Jeans,Apparel,Kotwali (Sylhet),Online,15,27000,1800,1000,583,B2C
+2024-02-16,SKU-G03,Lentils (1kg),Groceries,Khalishpur (Khulna),Retail,63,8820,140,100,677,B2C
+2024-02-17,SKU-A01,Cotton Panjabi,Apparel,Double Mooring (Chattogram),Retail,20,28500,1500,900,767,B2C
+2024-02-17,SKU-A02,Premium Jamdani Saree,Apparel,Gulshan (Dhaka),Wholesale,107,1284000,12000,8000,689,B2B
+2024-02-17,SKU-G03,Lentils (1kg),Groceries,Sadar (Cox's Bazar),Retail,5,700,140,100,271,B2C
+2024-02-17,SKU-E01,Smart Lamp,Electronics,Bogura Sadar,Online,22,26400,1200,800,636,B2C
+2024-02-17,SKU-F03,Bookshelf,Furniture,Savar (Dhaka),Retail,1,4200,4200,2500,955,B2C
+2024-02-17,SKU-A03,Denim Jeans,Apparel,Tongi (Gazipur),Wholesale,303,545400,1800,1000,645,B2B
+2024-02-17,SKU-E04,Power Bank 10000mAh,Electronics,Narayanganj Sadar,Retail,12,21600,1800,1100,748,B2C
+2024-02-17,SKU-A03,Denim Jeans,Apparel,Dhanmondi (Dhaka),Wholesale,271,463410,1800,1000,620,B2B
+2024-02-18,SKU-A04,Basic T-Shirt,Apparel,Dakshin Surma (Sylhet),Wholesale,320,128000,400,200,918,B2B
+2024-02-18,SKU-A01,Cotton Panjabi,Apparel,Dakshin Surma (Sylhet),Retail,20,30000,1500,900,32,B2B
+2024-02-18,SKU-G01,Organic Rice (5kg),Groceries,Savar (Dhaka),Retail,19,8122,450,320,702,B2C
+2024-02-18,SKU-A03,Denim Jeans,Apparel,Narayanganj Sadar,Online,29,52200,1800,1000,220,B2C
+2024-02-18,SKU-G02,Mustard Oil (1L),Groceries,Hathazari (Chattogram),Wholesale,106,28196,280,200,977,B2B
+2024-02-19,SKU-A03,Denim Jeans,Apparel,Gulshan (Dhaka),Online,16,28800,1800,1000,369,B2C
+2024-02-19,SKU-G01,Organic Rice (5kg),Groceries,Tongi (Gazipur),Retail,70,29925,450,320,628,B2C
+2024-02-19,SKU-A04,Basic T-Shirt,Apparel,Feni Sadar,Retail,9,3600,400,200,840,B2C
+2024-02-20,SKU-A01,Cotton Panjabi,Apparel,Sadar (Mymensingh),Online,16,24000,1500,900,870,B2C
+2024-02-20,SKU-E04,Power Bank 10000mAh,Electronics,Dhanmondi (Dhaka),Online,28,50400,1800,1100,483,B2C
+2024-02-20,SKU-F03,Bookshelf,Furniture,Feni Sadar,Retail,4,15120,4200,2500,819,B2B
+2024-02-21,SKU-G03,Lentils (1kg),Groceries,Fatullah (Narayanganj),Wholesale,329,43757,140,100,845,B2B
+2024-02-21,SKU-F03,Bookshelf,Furniture,Dhanmondi (Dhaka),Wholesale,361,1516200,4200,2500,750,B2B
+2024-02-21,SKU-A02,Premium Jamdani Saree,Apparel,Gulshan (Dhaka),Online,27,324000,12000,8000,431,B2C
+2024-02-21,SKU-F01,Ergonomic Desk Chair,Furniture,Sadar (Mymensingh),Online,4,22000,5500,3500,828,B2C
+2024-02-21,SKU-E02,Wireless Earbuds,Electronics,Dakshin Surma (Sylhet),Online,14,35000,2500,1500,479,B2C
+2024-02-22,SKU-G02,Mustard Oil (1L),Groceries,Dhanmondi (Dhaka),Retail,49,13720,280,200,206,B2C
+2024-02-22,SKU-A04,Basic T-Shirt,Apparel,Sadar (Mymensingh),Online,12,4800,400,200,287,B2C
+2024-02-22,SKU-E04,Power Bank 10000mAh,Electronics,Halishahar (Chattogram),Retail,28,50400,1800,1100,375,B2C
+2024-02-22,SKU-G01,Organic Rice (5kg),Groceries,Hathazari (Chattogram),Retail,13,5850,450,320,95,B2C
+2024-02-22,SKU-A03,Denim Jeans,Apparel,Sadar (Rangpur),Retail,18,32400,1800,1000,103,B2C
+2024-02-23,SKU-A04,Basic T-Shirt,Apparel,Gazipur Sadar,Retail,3,1200,400,200,674,B2C
+2024-02-23,SKU-G03,Lentils (1kg),Groceries,Boalia (Rajshahi),Wholesale,238,33320,140,100,966,B2B
+2024-02-24,SKU-G01,Organic Rice (5kg),Groceries,Halishahar (Chattogram),Retail,72,30780,450,320,612,B2C
+2024-02-25,SKU-G01,Organic Rice (5kg),Groceries,Double Mooring (Chattogram),Wholesale,439,197550,450,320,619,B2B
+2024-02-25,SKU-G03,Lentils (1kg),Groceries,Hathazari (Chattogram),Wholesale,480,67200,140,100,515,B2B
+2024-02-26,SKU-G02,Mustard Oil (1L),Groceries,Bogura Sadar,Wholesale,187,52360,280,200,555,B2B
+2024-02-26,SKU-C02,Herbal Shampoo,Cosmetics,Dakshin Surma (Sylhet),Wholesale,272,116280,450,250,743,B2B
+2024-02-26,SKU-G01,Organic Rice (5kg),Groceries,Kotwali (Sylhet),Wholesale,269,121050,450,320,737,B2B
+2024-02-26,SKU-C02,Herbal Shampoo,Cosmetics,Gulshan (Dhaka),Online,5,2250,450,250,784,B2B
+2024-02-27,SKU-G02,Mustard Oil (1L),Groceries,Motihar (Rajshahi),Retail,64,17920,280,200,178,B2B
+2024-02-27,SKU-E03,Mechanical Keyboard,Electronics,Double Mooring (Chattogram),Online,13,45500,3500,2200,157,B2C
+2024-02-28,SKU-A03,Denim Jeans,Apparel,Dhanmondi (Dhaka),Retail,3,5400,1800,1000,325,B2C
+2024-02-28,SKU-G02,Mustard Oil (1L),Groceries,Dakshin Surma (Sylhet),Wholesale,452,126560,280,200,656,B2B
+2024-02-29,SKU-G02,Mustard Oil (1L),Groceries,Feni Sadar,Wholesale,406,113680,280,200,641,B2B
+2024-02-29,SKU-C02,Herbal Shampoo,Cosmetics,Khalishpur (Khulna),Wholesale,369,166050,450,250,1025,B2B
+2024-02-29,SKU-E01,Smart Lamp,Electronics,Patiya (Chattogram),Online,26,31200,1200,800,442,B2C
+2024-02-29,SKU-G03,Lentils (1kg),Groceries,Teknaf (Cox's Bazar),Retail,90,12600,140,100,1000,B2C
+2024-03-01,SKU-G03,Lentils (1kg),Groceries,Sadar (Rangpur),Wholesale,68,9520,140,100,293,B2B
+2024-03-01,SKU-C01,Skincare Gift Set,Cosmetics,Boalia (Rajshahi),Retail,18,37620,2200,1200,863,B2C
+2024-03-01,SKU-F01,Ergonomic Desk Chair,Furniture,Gazipur Sadar,Online,6,33000,5500,3500,80,B2C
+2024-03-02,SKU-E04,Power Bank 10000mAh,Electronics,Motihar (Rajshahi),Online,2,3600,1800,1100,261,B2C
+2024-03-02,SKU-E02,Wireless Earbuds,Electronics,Motihar (Rajshahi),Online,28,70000,2500,1500,975,B2B
+2024-03-02,SKU-G02,Mustard Oil (1L),Groceries,Dhanmondi (Dhaka),Retail,12,3360,280,200,822,B2C
+2024-03-02,SKU-E01,Smart Lamp,Electronics,Narayanganj Sadar,Online,19,22800,1200,800,590,B2C
+2024-03-02,SKU-A01,Cotton Panjabi,Apparel,Khalishpur (Khulna),Wholesale,466,699000,1500,900,1025,B2B
+2024-03-03,SKU-A01,Cotton Panjabi,Apparel,Tongi (Gazipur),Wholesale,68,96900,1500,900,659,B2B
+2024-03-03,SKU-A04,Basic T-Shirt,Apparel,Savar (Dhaka),Online,30,11400,400,200,226,B2C
+2024-03-03,SKU-E04,Power Bank 10000mAh,Electronics,Cumilla Sadar,Online,24,43200,1800,1100,334,B2C
+2024-03-04,SKU-A01,Cotton Panjabi,Apparel,Cumilla Sadar,Retail,20,30000,1500,900,298,B2C
+2024-03-04,SKU-A02,Premium Jamdani Saree,Apparel,Dhanmondi (Dhaka),Retail,7,84000,12000,8000,228,B2C
+2024-03-04,SKU-F01,Ergonomic Desk Chair,Furniture,Gulshan (Dhaka),Wholesale,311,1710500,5500,3500,834,B2B
+2024-03-04,SKU-C02,Herbal Shampoo,Cosmetics,Mirpur (Dhaka),Wholesale,447,201150,450,250,697,B2B
+2024-03-04,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Rangpur),Wholesale,305,137250,450,320,702,B2B
+2024-03-04,SKU-G01,Organic Rice (5kg),Groceries,Dakshin Surma (Sylhet),Retail,84,37800,450,320,154,B2C
+2024-03-04,SKU-G03,Lentils (1kg),Groceries,Fatullah (Narayanganj),Retail,6,840,140,100,88,B2C
+2024-03-04,SKU-F02,Office Desk,Furniture,Khalishpur (Khulna),Online,7,59500,8500,5000,192,B2C
+2024-03-05,SKU-C02,Herbal Shampoo,Cosmetics,Gazipur Sadar,Wholesale,308,131670,450,250,908,B2B
+2024-03-05,SKU-E03,Mechanical Keyboard,Electronics,Savar (Dhaka),Online,16,53200,3500,2200,214,B2C
+2024-03-05,SKU-G03,Lentils (1kg),Groceries,Patiya (Chattogram),Retail,79,10507,140,100,898,B2C
+2024-03-06,SKU-A03,Denim Jeans,Apparel,Khulna Sadar,Online,20,36000,1800,1000,280,B2C
+2024-03-06,SKU-G03,Lentils (1kg),Groceries,Khulna Sadar,Retail,64,8960,140,100,815,B2C
+2024-03-06,SKU-C01,Skincare Gift Set,Cosmetics,Dakshin Surma (Sylhet),Retail,30,66000,2200,1200,607,B2C
+2024-03-06,SKU-C01,Skincare Gift Set,Cosmetics,Gazipur Sadar,Online,5,11000,2200,1200,697,B2B
+2024-03-07,SKU-E04,Power Bank 10000mAh,Electronics,Gazipur Sadar,Retail,30,54000,1800,1100,642,B2C
+2024-03-07,SKU-G02,Mustard Oil (1L),Groceries,Double Mooring (Chattogram),Wholesale,130,32760,280,200,204,B2B
+2024-03-07,SKU-C02,Herbal Shampoo,Cosmetics,Dhanmondi (Dhaka),Retail,5,2138,450,250,843,B2C
+2024-03-08,SKU-F02,Office Desk,Furniture,Double Mooring (Chattogram),Retail,9,76500,8500,5000,903,B2C
+2024-03-08,SKU-A03,Denim Jeans,Apparel,Mirpur (Dhaka),Online,6,10800,1800,1000,918,B2C
+2024-03-08,SKU-G01,Organic Rice (5kg),Groceries,Boalia (Rajshahi),Wholesale,127,54292,450,320,282,B2B
+2024-03-08,SKU-A04,Basic T-Shirt,Apparel,Barishal Sadar,Online,3,1200,400,200,710,B2C
+2024-03-08,SKU-E02,Wireless Earbuds,Electronics,Halishahar (Chattogram),Wholesale,277,692500,2500,1500,416,B2B
+2024-03-09,SKU-G01,Organic Rice (5kg),Groceries,Gazipur Sadar,Retail,25,11250,450,320,837,B2C
+2024-03-09,SKU-E03,Mechanical Keyboard,Electronics,Khulna Sadar,Retail,15,52500,3500,2200,435,B2C
+2024-03-09,SKU-G02,Mustard Oil (1L),Groceries,Halishahar (Chattogram),Retail,42,11172,280,200,994,B2C
+2024-03-11,SKU-G03,Lentils (1kg),Groceries,Narayanganj Sadar,Retail,49,6517,140,100,764,B2C
+2024-03-11,SKU-F02,Office Desk,Furniture,Khulna Sadar,Wholesale,128,1088000,8500,5000,197,B2B
+2024-03-11,SKU-A03,Denim Jeans,Apparel,Barishal Sadar,Retail,1,1800,1800,1000,439,B2B
+2024-03-11,SKU-A03,Denim Jeans,Apparel,Cumilla Sadar,Wholesale,478,860400,1800,1000,1384,B2B
+2024-03-12,SKU-G01,Organic Rice (5kg),Groceries,Dakshin Surma (Sylhet),Retail,94,42300,450,320,693,B2C
+2024-03-12,SKU-G03,Lentils (1kg),Groceries,Khalishpur (Khulna),Wholesale,90,12600,140,100,547,B2B
+2024-03-12,SKU-A01,Cotton Panjabi,Apparel,Kotwali (Sylhet),Wholesale,416,624000,1500,900,717,B2B
+2024-03-12,SKU-G02,Mustard Oil (1L),Groceries,Boalia (Rajshahi),Retail,48,13440,280,200,397,B2C
+2024-03-13,SKU-E02,Wireless Earbuds,Electronics,Double Mooring (Chattogram),Wholesale,312,780000,2500,1500,342,B2B
+2024-03-13,SKU-A04,Basic T-Shirt,Apparel,Feni Sadar,Retail,29,11600,400,200,186,B2C
+2024-03-13,SKU-S01,Notebook Bundle (5 pcs),Stationery,Hathazari (Chattogram),Retail,16,9120,600,350,229,B2C
+2024-03-13,SKU-A01,Cotton Panjabi,Apparel,Sadar (Mymensingh),Wholesale,468,631800,1500,900,890,B2B
+2024-03-14,SKU-G01,Organic Rice (5kg),Groceries,Fatullah (Narayanganj),Retail,96,43200,450,320,915,B2C
+2024-03-14,SKU-G01,Organic Rice (5kg),Groceries,Mirpur (Dhaka),Retail,53,23850,450,320,993,B2C
+2024-03-14,SKU-A01,Cotton Panjabi,Apparel,Sadar (Rangpur),Retail,12,17100,1500,900,650,B2C
+2024-03-14,SKU-G02,Mustard Oil (1L),Groceries,Barishal Sadar,Wholesale,146,40880,280,200,832,B2B
+2024-03-14,SKU-C02,Herbal Shampoo,Cosmetics,Savar (Dhaka),Online,11,4950,450,250,598,B2B
+2024-03-15,SKU-A03,Denim Jeans,Apparel,Cumilla Sadar,Retail,14,25200,1800,1000,228,B2C
+2024-03-15,SKU-G03,Lentils (1kg),Groceries,Mirpur (Dhaka),Retail,74,10360,140,100,747,B2C
+2024-03-15,SKU-F03,Bookshelf,Furniture,Sadar (Cox's Bazar),Retail,3,12600,4200,2500,718,B2C
+2024-03-16,SKU-F01,Ergonomic Desk Chair,Furniture,Tongi (Gazipur),Retail,8,41800,5500,3500,950,B2C
+2024-03-16,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Cox's Bazar),Retail,73,20440,280,200,278,B2B
+2024-03-16,SKU-G03,Lentils (1kg),Groceries,Dakshin Surma (Sylhet),Retail,5,700,140,100,603,B2B
+2024-03-16,SKU-A01,Cotton Panjabi,Apparel,Sadar (Rangpur),Wholesale,353,529500,1500,900,469,B2B
+2024-03-16,SKU-E01,Smart Lamp,Electronics,Gazipur Sadar,Online,15,18000,1200,800,196,B2C
+2024-03-17,SKU-F01,Ergonomic Desk Chair,Furniture,Hathazari (Chattogram),Retail,6,33000,5500,3500,158,B2C
+2024-03-17,SKU-F01,Ergonomic Desk Chair,Furniture,Gazipur Sadar,Online,2,11000,5500,3500,617,B2C
+2024-03-17,SKU-A03,Denim Jeans,Apparel,Narayanganj Sadar,Online,10,17100,1800,1000,128,B2B
+2024-03-18,SKU-A03,Denim Jeans,Apparel,Teknaf (Cox's Bazar),Online,21,37800,1800,1000,91,B2B
+2024-03-19,SKU-E03,Mechanical Keyboard,Electronics,Cumilla Sadar,Retail,18,63000,3500,2200,500,B2C
+2024-03-19,SKU-S01,Notebook Bundle (5 pcs),Stationery,Savar (Dhaka),Wholesale,323,184110,600,350,667,B2B
+2024-03-19,SKU-C02,Herbal Shampoo,Cosmetics,Teknaf (Cox's Bazar),Retail,3,1350,450,250,782,B2C
+2024-03-19,SKU-C01,Skincare Gift Set,Cosmetics,Sadar (Rangpur),Retail,10,22000,2200,1200,224,B2C
+2024-03-19,SKU-G03,Lentils (1kg),Groceries,Feni Sadar,Wholesale,467,62111,140,100,1161,B2B
+2024-03-20,SKU-A03,Denim Jeans,Apparel,Halishahar (Chattogram),Retail,3,5400,1800,1000,906,B2C
+2024-03-20,SKU-E01,Smart Lamp,Electronics,Cumilla Sadar,Retail,27,32400,1200,800,88,B2C
+2024-03-20,SKU-E04,Power Bank 10000mAh,Electronics,Patiya (Chattogram),Online,22,39600,1800,1100,790,B2C
+2024-03-21,SKU-E02,Wireless Earbuds,Electronics,Sadar (Cox's Bazar),Online,7,17500,2500,1500,873,B2B
+2024-03-21,SKU-G01,Organic Rice (5kg),Groceries,Bogura Sadar,Retail,63,28350,450,320,387,B2C
+2024-03-21,SKU-G01,Organic Rice (5kg),Groceries,Savar (Dhaka),Online,92,41400,450,320,936,B2C
+2024-03-21,SKU-A02,Premium Jamdani Saree,Apparel,Dakshin Surma (Sylhet),Online,17,204000,12000,8000,250,B2C
+2024-03-21,SKU-A03,Denim Jeans,Apparel,Sadar (Rangpur),Retail,1,1800,1800,1000,824,B2C
+2024-03-22,SKU-A01,Cotton Panjabi,Apparel,Khulna Sadar,Online,14,21000,1500,900,456,B2C
+2024-03-23,SKU-E02,Wireless Earbuds,Electronics,Sadar (Mymensingh),Retail,10,25000,2500,1500,375,B2B
+2024-03-23,SKU-A04,Basic T-Shirt,Apparel,Sadar (Cox's Bazar),Retail,13,5200,400,200,695,B2C
+2024-03-23,SKU-C02,Herbal Shampoo,Cosmetics,Fatullah (Narayanganj),Wholesale,459,206550,450,250,975,B2B
+2024-03-23,SKU-G02,Mustard Oil (1L),Groceries,Dakshin Surma (Sylhet),Retail,20,5320,280,200,318,B2C
+2024-03-24,SKU-G03,Lentils (1kg),Groceries,Motihar (Rajshahi),Wholesale,390,54600,140,100,674,B2B
+2024-03-24,SKU-G02,Mustard Oil (1L),Groceries,Narayanganj Sadar,Wholesale,52,14560,280,200,998,B2B
+2024-03-24,SKU-E04,Power Bank 10000mAh,Electronics,Narayanganj Sadar,Retail,10,18000,1800,1100,733,B2C
+2024-03-24,SKU-G02,Mustard Oil (1L),Groceries,Khalishpur (Khulna),Retail,47,13160,280,200,816,B2C
+2024-03-24,SKU-E04,Power Bank 10000mAh,Electronics,Bogura Sadar,Online,19,34200,1800,1100,532,B2C
+2024-03-24,SKU-A01,Cotton Panjabi,Apparel,Fatullah (Narayanganj),Wholesale,158,237000,1500,900,366,B2B
+2024-03-25,SKU-G02,Mustard Oil (1L),Groceries,Kotwali (Sylhet),Retail,16,4480,280,200,236,B2C
+2024-03-25,SKU-G03,Lentils (1kg),Groceries,Motihar (Rajshahi),Wholesale,171,23940,140,100,359,B2B
+2024-03-25,SKU-E03,Mechanical Keyboard,Electronics,Patiya (Chattogram),Online,7,24500,3500,2200,446,B2C
+2024-03-25,SKU-F02,Office Desk,Furniture,Sadar (Mymensingh),Retail,6,51000,8500,5000,372,B2C
+2024-03-25,SKU-G03,Lentils (1kg),Groceries,Mirpur (Dhaka),Online,52,7280,140,100,684,B2C
+2024-03-25,SKU-E04,Power Bank 10000mAh,Electronics,Tongi (Gazipur),Online,19,34200,1800,1100,180,B2C
+2024-03-27,SKU-E01,Smart Lamp,Electronics,Narayanganj Sadar,Wholesale,109,130800,1200,800,292,B2B
+2024-03-27,SKU-C02,Herbal Shampoo,Cosmetics,Patiya (Chattogram),Retail,3,1350,450,250,683,B2C
+2024-03-28,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Cox's Bazar),Wholesale,356,160200,450,320,780,B2B
+2024-03-28,SKU-A03,Denim Jeans,Apparel,Mirpur (Dhaka),Wholesale,470,846000,1800,1000,891,B2B
+2024-03-28,SKU-F03,Bookshelf,Furniture,Motihar (Rajshahi),Wholesale,65,273000,4200,2500,490,B2B
+2024-03-28,SKU-A01,Cotton Panjabi,Apparel,Fatullah (Narayanganj),Wholesale,131,186675,1500,900,343,B2B
+2024-03-28,SKU-G01,Organic Rice (5kg),Groceries,Hathazari (Chattogram),Retail,67,30150,450,320,569,B2C
+2024-03-28,SKU-E01,Smart Lamp,Electronics,Barishal Sadar,Online,10,12000,1200,800,937,B2C
+2024-03-30,SKU-C02,Herbal Shampoo,Cosmetics,Halishahar (Chattogram),Retail,21,9450,450,250,145,B2C
+2024-03-30,SKU-G03,Lentils (1kg),Groceries,Double Mooring (Chattogram),Retail,20,2520,140,100,899,B2C
+2024-03-31,SKU-G01,Organic Rice (5kg),Groceries,Tongi (Gazipur),Retail,93,41850,450,320,957,B2C
+2024-03-31,SKU-G01,Organic Rice (5kg),Groceries,Tongi (Gazipur),Retail,66,29700,450,320,878,B2C
+2024-04-01,SKU-A04,Basic T-Shirt,Apparel,Tongi (Gazipur),Online,2,800,400,200,87,B2C
+2024-04-01,SKU-A04,Basic T-Shirt,Apparel,Gazipur Sadar,Wholesale,408,163200,400,200,814,B2B
+2024-04-01,SKU-A03,Denim Jeans,Apparel,Feni Sadar,Wholesale,457,822600,1800,1000,663,B2B
+2024-04-01,SKU-E01,Smart Lamp,Electronics,Gulshan (Dhaka),Online,20,24000,1200,800,806,B2B
+2024-04-01,SKU-G03,Lentils (1kg),Groceries,Barishal Sadar,Wholesale,100,14000,140,100,386,B2B
+2024-04-01,SKU-G03,Lentils (1kg),Groceries,Sadar (Rangpur),Wholesale,383,53620,140,100,1126,B2B
+2024-04-01,SKU-E04,Power Bank 10000mAh,Electronics,Cumilla Sadar,Online,29,52200,1800,1100,848,B2C
+2024-04-02,SKU-F01,Ergonomic Desk Chair,Furniture,Cumilla Sadar,Wholesale,252,1386000,5500,3500,936,B2B
+2024-04-03,SKU-E03,Mechanical Keyboard,Electronics,Fatullah (Narayanganj),Online,13,45500,3500,2200,677,B2B
+2024-04-03,SKU-A03,Denim Jeans,Apparel,Narayanganj Sadar,Wholesale,452,813600,1800,1000,896,B2B
+2024-04-04,SKU-G03,Lentils (1kg),Groceries,Fatullah (Narayanganj),Online,86,12040,140,100,179,B2C
+2024-04-04,SKU-G03,Lentils (1kg),Groceries,Khulna Sadar,Wholesale,273,38220,140,100,693,B2B
+2024-04-05,SKU-E03,Mechanical Keyboard,Electronics,Feni Sadar,Retail,14,46550,3500,2200,540,B2C
+2024-04-05,SKU-G01,Organic Rice (5kg),Groceries,Teknaf (Cox's Bazar),Retail,12,5400,450,320,183,B2C
+2024-04-06,SKU-A03,Denim Jeans,Apparel,Dakshin Surma (Sylhet),Retail,1,1800,1800,1000,342,B2C
+2024-04-07,SKU-G02,Mustard Oil (1L),Groceries,Narayanganj Sadar,Retail,62,17360,280,200,183,B2C
+2024-04-07,SKU-A04,Basic T-Shirt,Apparel,Kotwali (Sylhet),Online,17,6800,400,200,915,B2C
+2024-04-07,SKU-E03,Mechanical Keyboard,Electronics,Gulshan (Dhaka),Wholesale,265,834750,3500,2200,760,B2B
+2024-04-07,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Rangpur),Wholesale,432,114912,280,200,1231,B2B
+2024-04-08,SKU-G02,Mustard Oil (1L),Groceries,Savar (Dhaka),Wholesale,194,54320,280,200,272,B2B
+2024-04-08,SKU-E01,Smart Lamp,Electronics,Savar (Dhaka),Wholesale,426,511200,1200,800,973,B2B
+2024-04-08,SKU-E02,Wireless Earbuds,Electronics,Barishal Sadar,Retail,25,59375,2500,1500,759,B2C
+2024-04-09,SKU-C01,Skincare Gift Set,Cosmetics,Teknaf (Cox's Bazar),Wholesale,241,530200,2200,1200,408,B2B
+2024-04-09,SKU-A02,Premium Jamdani Saree,Apparel,Fatullah (Narayanganj),Online,3,34200,12000,8000,762,B2C
+2024-04-09,SKU-A03,Denim Jeans,Apparel,Sadar (Rangpur),Online,8,14400,1800,1000,596,B2C
+2024-04-09,SKU-G01,Organic Rice (5kg),Groceries,Dhanmondi (Dhaka),Retail,72,32400,450,320,372,B2B
+2024-04-10,SKU-F01,Ergonomic Desk Chair,Furniture,Khalishpur (Khulna),Retail,7,38500,5500,3500,103,B2C
+2024-04-10,SKU-A04,Basic T-Shirt,Apparel,Hathazari (Chattogram),Online,28,11200,400,200,79,B2C
+2024-04-10,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Cox's Bazar),Wholesale,371,103880,280,200,1011,B2B
+2024-04-10,SKU-E04,Power Bank 10000mAh,Electronics,Double Mooring (Chattogram),Wholesale,351,631800,1800,1100,667,B2B
+2024-04-11,SKU-E01,Smart Lamp,Electronics,Hathazari (Chattogram),Online,18,21600,1200,800,860,B2C
+2024-04-11,SKU-G01,Organic Rice (5kg),Groceries,Khalishpur (Khulna),Wholesale,426,191700,450,320,1147,B2B
+2024-04-11,SKU-A01,Cotton Panjabi,Apparel,Kotwali (Sylhet),Retail,1,1500,1500,900,342,B2C
+2024-04-11,SKU-G01,Organic Rice (5kg),Groceries,Cumilla Sadar,Retail,69,29498,450,320,380,B2C
+2024-04-12,SKU-C01,Skincare Gift Set,Cosmetics,Fatullah (Narayanganj),Online,10,22000,2200,1200,996,B2C
+2024-04-12,SKU-E01,Smart Lamp,Electronics,Hathazari (Chattogram),Online,3,3600,1200,800,615,B2C
+2024-04-12,SKU-S01,Notebook Bundle (5 pcs),Stationery,Dhanmondi (Dhaka),Wholesale,425,255000,600,350,900,B2B
+2024-04-12,SKU-C01,Skincare Gift Set,Cosmetics,Teknaf (Cox's Bazar),Online,12,26400,2200,1200,298,B2C
+2024-04-12,SKU-A01,Cotton Panjabi,Apparel,Dhanmondi (Dhaka),Retail,3,4500,1500,900,706,B2C
+2024-04-12,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Cox's Bazar),Wholesale,270,121500,450,320,400,B2B
+2024-04-13,SKU-C02,Herbal Shampoo,Cosmetics,Motihar (Rajshahi),Wholesale,118,53100,450,250,855,B2B
+2024-04-13,SKU-A03,Denim Jeans,Apparel,Sadar (Rangpur),Online,13,23400,1800,1000,871,B2C
+2024-04-14,SKU-F01,Ergonomic Desk Chair,Furniture,Khalishpur (Khulna),Online,4,20900,5500,3500,265,B2C
+2024-04-14,SKU-E02,Wireless Earbuds,Electronics,Savar (Dhaka),Online,25,62500,2500,1500,559,B2C
+2024-04-14,SKU-G03,Lentils (1kg),Groceries,Sadar (Rangpur),Wholesale,317,44380,140,100,733,B2B
+2024-04-14,SKU-E01,Smart Lamp,Electronics,Gazipur Sadar,Online,6,7200,1200,800,660,B2C
+2024-04-14,SKU-G02,Mustard Oil (1L),Groceries,Patiya (Chattogram),Wholesale,489,136920,280,200,1291,B2B
+2024-04-15,SKU-G02,Mustard Oil (1L),Groceries,Narayanganj Sadar,Retail,93,26040,280,200,184,B2C
+2024-04-15,SKU-A03,Denim Jeans,Apparel,Boalia (Rajshahi),Online,22,39600,1800,1000,809,B2C
+2024-04-16,SKU-G03,Lentils (1kg),Groceries,Motihar (Rajshahi),Wholesale,448,62720,140,100,1079,B2B
+2024-04-16,SKU-F02,Office Desk,Furniture,Double Mooring (Chattogram),Online,5,42500,8500,5000,530,B2C
+2024-04-17,SKU-E02,Wireless Earbuds,Electronics,Double Mooring (Chattogram),Online,13,32500,2500,1500,741,B2C
+2024-04-17,SKU-E01,Smart Lamp,Electronics,Fatullah (Narayanganj),Retail,4,4800,1200,800,716,B2C
+2024-04-18,SKU-S02,Gel Pen Set,Stationery,Dhanmondi (Dhaka),Wholesale,170,42500,250,120,363,B2B
+2024-04-18,SKU-A03,Denim Jeans,Apparel,Patiya (Chattogram),Wholesale,470,846000,1800,1000,1345,B2B
+2024-04-18,SKU-C02,Herbal Shampoo,Cosmetics,Patiya (Chattogram),Online,1,450,450,250,603,B2C
+2024-04-19,SKU-E01,Smart Lamp,Electronics,Cumilla Sadar,Online,23,26220,1200,800,887,B2B
+2024-04-20,SKU-G02,Mustard Oil (1L),Groceries,Narayanganj Sadar,Wholesale,181,48146,280,200,528,B2B
+2024-04-20,SKU-F01,Ergonomic Desk Chair,Furniture,Fatullah (Narayanganj),Online,1,5500,5500,3500,763,B2C
+2024-04-20,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Cox's Bazar),Retail,34,15300,450,320,622,B2C
+2024-04-20,SKU-G01,Organic Rice (5kg),Groceries,Sadar (Cox's Bazar),Retail,37,16650,450,320,560,B2C
+2024-04-21,SKU-A03,Denim Jeans,Apparel,Teknaf (Cox's Bazar),Wholesale,409,699390,1800,1000,1119,B2B
+2024-04-21,SKU-C01,Skincare Gift Set,Cosmetics,Bogura Sadar,Wholesale,488,1073600,2200,1200,521,B2B
+2024-04-21,SKU-G03,Lentils (1kg),Groceries,Feni Sadar,Retail,7,980,140,100,44,B2C
+2024-04-22,SKU-A02,Premium Jamdani Saree,Apparel,Fatullah (Narayanganj),Online,21,252000,12000,8000,773,B2C
+2024-04-22,SKU-G02,Mustard Oil (1L),Groceries,Kotwali (Sylhet),Retail,36,9576,280,200,766,B2C
+2024-04-22,SKU-E02,Wireless Earbuds,Electronics,Feni Sadar,Online,15,33750,2500,1500,724,B2C
+2024-04-22,SKU-G01,Organic Rice (5kg),Groceries,Khulna Sadar,Retail,61,27450,450,320,27,B2C
+2024-04-23,SKU-A02,Premium Jamdani Saree,Apparel,Boalia (Rajshahi),Wholesale,53,636000,12000,8000,675,B2B
+2024-04-23,SKU-E03,Mechanical Keyboard,Electronics,Dhanmondi (Dhaka),Online,20,66500,3500,2200,186,B2C
+2024-04-23,SKU-G02,Mustard Oil (1L),Groceries,Sadar (Mymensingh),Retail,36,10080,280,200,325,B2C
+2024-04-23,SKU-C01,Skincare Gift Set,Cosmetics,Patiya (Chattogram),Retail,12,26400,2200,1200,437,B2C
+2024-04-23,SKU-G02,Mustard Oil (1L),Groceries,Hathazari (Chattogram),Retail,20,5320,280,200,807,B2C
+2024-04-23,SKU-F03,Bookshelf,Furniture,Sadar (Mymensingh),Online,10,42000,4200,2500,748,B2C
+2024-04-23,SKU-G03,Lentils (1kg),Groceries,Sadar (Cox's Bazar),Retail,16,2240,140,100,961,B2B
+2024-04-23,SKU-A03,Denim Jeans,Apparel,Narayanganj Sadar,Retail,24,41040,1800,1000,65,B2C
+2024-04-24,SKU-E02,Wireless Earbuds,Electronics,Fatullah (Narayanganj),Retail,10,23750,2500,1500,797,B2C
+2024-04-24,SKU-E01,Smart Lamp,Electronics,Dhanmondi (Dhaka),Retail,15,17100,1200,800,688,B2C
+2024-04-24,SKU-F03,Bookshelf,Furniture,Narayanganj Sadar,Retail,8,30240,4200,2500,520,B2C
+2024-04-24,SKU-G02,Mustard Oil (1L),Groceries,Khulna Sadar,Retail,48,12768,280,200,395,B2C
+2024-04-24,SKU-G02,Mustard Oil (1L),Groceries,Cumilla Sadar,Retail,27,7560,280,200,418,B2C
+2024-04-24,SKU-A04,Basic T-Shirt,Apparel,Savar (Dhaka),Online,10,4000,400,200,710,B2C
+2024-04-24,SKU-A03,Denim Jeans,Apparel,Motihar (Rajshahi),Online,1,1800,1800,1000,575,B2C
+2024-04-25,SKU-S01,Notebook Bundle (5 pcs),Stationery,Savar (Dhaka),Retail,5,2700,600,350,748,B2C
+2024-04-25,SKU-E01,Smart Lamp,Electronics,Fatullah (Narayanganj),Retail,11,13200,1200,800,872,B2C
+2024-04-25,SKU-A03,Denim Jeans,Apparel,Halishahar (Chattogram),Wholesale,291,497610,1800,1000,842,B2B
+2024-04-25,SKU-E03,Mechanical Keyboard,Electronics,Barishal Sadar,Online,8,28000,3500,2200,953,B2C
+2024-04-26,SKU-F01,Ergonomic Desk Chair,Furniture,Patiya (Chattogram),Online,9,49500,5500,3500,709,B2C
+2024-04-26,SKU-E04,Power Bank 10000mAh,Electronics,Boalia (Rajshahi),Online,29,52200,1800,1100,176,B2C
+2024-04-26,SKU-A03,Denim Jeans,Apparel,Motihar (Rajshahi),Wholesale,338,608400,1800,1000,757,B2B
+2024-04-26,SKU-G03,Lentils (1kg),Groceries,Teknaf (Cox's Bazar),Wholesale,316,44240,140,100,832,B2B
+2024-04-27,SKU-G03,Lentils (1kg),Groceries,Barishal Sadar,Retail,83,11620,140,100,75,B2C
+2024-04-27,SKU-F02,Office Desk,Furniture,Teknaf (Cox's Bazar),Online,6,51000,8500,5000,195,B2B
+2024-04-28,SKU-E01,Smart Lamp,Electronics,Fatullah (Narayanganj),Online,20,24000,1200,800,427,B2C
+2024-04-28,SKU-G03,Lentils (1kg),Groceries,Khalishpur (Khulna),Wholesale,300,42000,140,100,606,B2B
+2024-04-28,SKU-F02,Office Desk,Furniture,Teknaf (Cox's Bazar),Retail,2,16150,8500,5000,345,B2C
+2024-04-28,SKU-G03,Lentils (1kg),Groceries,Cumilla Sadar,Wholesale,415,58100,140,100,830,B2B
+2024-04-28,SKU-F02,Office Desk,Furniture,Sadar (Cox's Bazar),Retail,5,42500,8500,5000,47,B2C
+2024-04-28,SKU-G03,Lentils (1kg),Groceries,Khalishpur (Khulna),Retail,62,8680,140,100,348,B2C
+2024-04-29,SKU-G01,Organic Rice (5kg),Groceries,Boalia (Rajshahi),Retail,10,4500,450,320,478,B2C
+2024-04-29,SKU-A01,Cotton Panjabi,Apparel,Khalishpur (Khulna),Online,24,32400,1500,900,515,B2C
+2024-04-29,SKU-E01,Smart Lamp,Electronics,Kotwali (Sylhet),Online,29,34800,1200,800,573,B2C
+2024-04-29,SKU-E01,Smart Lamp,Electronics,Tongi (Gazipur),Online,14,15960,1200,800,176,B2C
+2024-04-29,SKU-A04,Basic T-Shirt,Apparel,Kotwali (Sylhet),Wholesale,194,77600,400,200,453,B2B
+2024-04-29,SKU-E02,Wireless Earbuds,Electronics,Gazipur Sadar,Online,23,57500,2500,1500,936,B2C
+2024-04-29,SKU-F02,Office Desk,Furniture,Dhanmondi (Dhaka),Wholesale,272,2312000,8500,5000,407,B2B
+2024-04-30,SKU-E01,Smart Lamp,Electronics,Hathazari (Chattogram),Online,27,32400,1200,800,784,B2C
+2024-05-01,SKU-G02,Mustard Oil (1L),Groceries,Cumilla Sadar,Retail,41,11480,280,200,187,B2C
+2024-05-01,SKU-E01,Smart Lamp,Electronics,Cumilla Sadar,Retail,13,14820,1200,800,16,B2C
+2024-05-01,SKU-C01,Skincare Gift Set,Cosmetics,Sadar (Mymensingh),Wholesale,447,983400,2200,1200,859,B2B
+2024-05-01,SKU-F03,Bookshelf,Furniture,Sadar (Rangpur),Retail,3,12600,4200,2500,629,B2C
+2024-05-02,SKU-S01,Notebook Bundle (5 pcs),Stationery,Savar (Dhaka),Retail,16,9600,600,350,671,B2C
+2024-05-02,SKU-G02,Mustard Oil (1L),Groceries,Khalishpur (Khulna),Retail,37,10360,280,200,295,B2C
+2024-05-02,SKU-E01,Smart Lamp,Electronics,Feni Sadar,Online,12,14400,1200,800,856,B2C
+2024-05-02,SKU-E01,Smart Lamp,Electronics,Patiya (Chattogram),Wholesale,175,210000,1200,800,250,B2B
+2024-05-02,SKU-S01,Notebook Bundle (5 pcs),Stationery,Sadar (Mymensingh),Retail,29,17400,600,350,823,B2C
+2024-05-03,SKU-E01,Smart Lamp,Electronics,Fatullah (Narayanganj),Online,22,26400,1200,800,744,B2C
+2024-05-03,SKU-E03,Mechanical Keyboard,Electronics,Cumilla Sadar,Online,7,24500,3500,2200,35,B2B
+2024-05-03,SKU-S01,Notebook Bundle (5 pcs),Stationery,Motihar (Rajshahi),Wholesale,470,282000,600,350,682,B2B
+2024-05-04,SKU-G02,Mustard Oil (1L),Groceries,Halishahar (Chattogram),Retail,55,15400,280,200,323,B2C
+2024-05-04,SKU-E01,Smart Lamp,Electronics,Gazipur Sadar,Online,24,28800,1200,800,39,B2B
+2024-05-04,SKU-E01,Smart Lamp,Electronics,Sadar (Cox's Bazar),Retail,1,1200,1200,800,961,B2C
+2024-05-05,SKU-C01,Skincare Gift Set,Cosmetics,Sadar (Cox's Bazar),Wholesale,137,301400,2200,1200,138,B2B
+2024-05-05,SKU-A01,Cotton Panjabi,Apparel,Dakshin Surma (Sylhet),Wholesale,144,216000,1500,900,911,B2B
+2024-05-05,SKU-F01,Ergonomic Desk Chair,Furniture,Narayanganj Sadar,Retail,4,20900,5500,3500,456,B2C
+2024-05-05,SKU-A01,Cotton Panjabi,Apparel,Narayanganj Sadar,Online,27,40500,1500,900,172,B2C
+2024-05-05,SKU-G01,Organic Rice (5kg),Groceries,Dakshin Surma (Sylhet),Retail,22,9900,450,320,422,B2C
+2024-05-05,SKU-E01,Smart Lamp,Electronics,Dhanmondi (Dhaka),Online,8,9600,1200,800,699,B2C
+2024-05-06,SKU-A04,Basic T-Shirt,Apparel,Mirpur (Dhaka),Online,18,7200,400,200,356,B2C
+2024-05-06,SKU-A01,Cotton Panjabi,Apparel,Kotwali (Sylhet),Retail,9,13500,1500,900,979,B2C
+2024-05-06,SKU-A01,Cotton Panjabi,Apparel,Bogura Sadar,Retail,23,34500,1500,900,369,B2C
+2024-05-06,SKU-E03,Mechanical Keyboard,Electronics,Hathazari (Chattogram),Retail,10,33250,3500,2200,877,B2C
+2024-05-06,SKU-S01,Notebook Bundle (5 pcs),Stationery,Gulshan (Dhaka),Wholesale,123,73800,600,350,647,B2B
+2024-05-07,SKU-C01,Skincare Gift Set,Cosmetics,Gazipur Sadar,Wholesale,351,694980,2200,1200,945,B2B
+2024-05-07,SKU-F03,Bookshelf,Furniture,Narayanganj Sadar,Retail,6,25200,4200,2500,145,B2C
+2024-05-07,SKU-G02,Mustard Oil (1L),Groceries,Teknaf (Cox's Bazar),Wholesale,109,30520,280,200,183,B2B
+2024-05-08,SKU-C01,Skincare Gift Set,Cosmetics,Dhanmondi (Dhaka),Online,21,46200,2200,1200,726,B2C
+2024-05-09,SKU-E03,Mechanical Keyboard,Electronics,Tongi (Gazipur),Online,18,63000,3500,2200,279,B2B
+2024-05-10,SKU-E04,Power Bank 10000mAh,Electronics,Sadar (Mymensingh),Wholesale,201,361800,1800,1100,825,B2B
+2024-05-10,SKU-C02,Herbal Shampoo,Cosmetics,Gazipur Sadar,Retail,7,3150,450,250,539,B2C
+2024-05-10,SKU-A01,Cotton Panjabi,Apparel,Boalia (Rajshahi),Wholesale,421,631500,1500,900,983,B2B
+2024-05-10,SKU-A01,Cotton Panjabi,Apparel,Feni Sadar,Wholesale,317,475500,1500,900,659,B2B
+2024-05-10,SKU-S01,Notebook Bundle (5 pcs),Stationery,Tongi (Gazipur),Online,22,13200,600,350,541,B2C
+2024-05-11,SKU-E02,Wireless Earbuds,Electronics,Cumilla Sadar,Online,9,20250,2500,1500,126,B2C
+2024-05-11,SKU-E01,Smart Lamp,Electronics,Mirpur (Dhaka),Online,8,9600,1200,800,682,B2C
+2024-05-12,SKU-A04,Basic T-Shirt,Apparel,Gulshan (Dhaka),Online,27,10800,400,200,327,B2C
+2024-05-12,SKU-A01,Cotton Panjabi,Apparel,Gazipur Sadar,Online,18,27000,1500,900,477,B2C
+2024-05-13,SKU-G02,Mustard Oil (1L),Groceries,Khulna Sadar,Online,56,15680,280,200,993,B2C
+2024-05-13,SKU-E03,Mechanical Keyboard,Electronics,Fatullah (Narayanganj),Online,8,28000,3500,2200,53,B2B
+2024-05-13,SKU-C01,Skincare Gift Set,Cosmetics,Fatullah (Narayanganj),Online,4,8800,2200,1200,746,B2C
+2024-05-14,SKU-G01,Organic Rice (5kg),Groceries,Tongi (Gazipur),Retail,73,32850,450,320,902,B2C
+2024-05-14,SKU-G01,Organic Rice (5kg),Groceries,Barishal Sadar,Retail,82,36900,450,320,767,B2C
+2024-05-14,SKU-A02,Premium Jamdani Saree,Apparel,Narayanganj Sadar,Wholesale,246,2952000,12000,8000,510,B2B
+2024-05-14,SKU-E03,Mechanical Keyboard,Electronics,Fatullah (Narayanganj),Online,15,52500,3500,2200,798,B2C
+2024-05-14,SKU-E03,Mechanical Keyboard,Electronics,Feni Sadar,Online,17,59500,3500,2200,202,B2C
+2024-05-14,SKU-A03,Denim Jeans,Apparel,Mirpur (Dhaka),Online,14,25200,1800,1000,568,B2C
+2024-05-14,SKU-S01,Notebook Bundle (5 pcs),Stationery,Motihar (Rajshahi),Wholesale,230,138000,600,350,742,B2B
+2024-05-15,SKU-E04,Power Bank 10000mAh,Electronics,Sadar (Mymensingh),Retail,28,50400,1800,1100,235,B2C
+2024-05-16,SKU-A02,Premium Jamdani Saree,Apparel,Feni Sadar,Online,21,252000,12000,8000,987,B2C
+2024-05-16,SKU-G01,Organic Rice (5kg),Groceries,Fatullah (Narayanganj),Online,24,9720,450,320,125,B2C
+2024-05-17,SKU-E04,Power Bank 10000mAh,Electronics,Sadar (Rangpur),Online,16,28800,1800,1100,610,B2C
+2024-05-17,SKU-G03,Lentils (1kg),Groceries,Halishahar (Chattogram),Retail,77,10780,140,100,951,B2C
+2024-05-18,SKU-F01,Ergonomic Desk Chair,Furniture,Gulshan (Dhaka),Wholesale,90,495000,5500,3500,228,B2B
+2024-05-18,SKU-E02,Wireless Earbuds,Electronics,Gulshan (Dhaka),Online,27,67500,2500,1500,985,B2C
+2024-05-18,SKU-G03,Lentils (1kg),Groceries,Cumilla Sadar,Retail,63,8820,140,100,162,B2C
+2024-05-18,SKU-E01,Smart Lamp,Electronics,Teknaf (Cox's Bazar),Retail,4,4800,1200,800,407,B2C
+2024-05-19,SKU-G03,Lentils (1kg),Groceries,Motihar (Rajshahi),Retail,75,10500,140,100,19,B2C
+2024-05-19,SKU-E03,Mechanical Keyboard,Electronics,Khulna Sadar,Online,13,43225,3500,2200,700,B2C
+2024-05-19,SKU-E01,Smart Lamp,Electronics,Hathazari (Chattogram),Retail,15,17100,1200,800,973,B2C
+2024-05-19,SKU-G01,Organic Rice (5kg),Groceries,Kotwali (Sylhet),Wholesale,180,81000,450,320,579,B2B
+2024-05-19,SKU-A01,Cotton Panjabi,Apparel,Bogura Sadar,Online,17,24225,1500,900,610,B2C
+2024-05-20,SKU-A01,Cotton Panjabi,Apparel,Khalishpur (Khulna),Wholesale,182,273000,1500,900,562,B2B
+2024-05-21,SKU-G03,Lentils (1kg),Groceries,Halishahar (Chattogram),Wholesale,122,17080,140,100,658,B2B
+2024-05-21,SKU-G03,Lentils (1kg),Groceries,Sadar (Rangpur),Retail,21,2940,140,100,976,B2B
+2024-05-21,SKU-A01,Cotton Panjabi,Apparel,Khulna Sadar,Wholesale,471,706500,1500,900,764,B2B
+2024-05-21,SKU-G01,Organic Rice (5kg),Groceries,Kotwali (Sylhet),Retail,47,21150,450,320,187,B2C
+2024-05-22,SKU-F02,Office Desk,Furniture,Feni Sadar,Wholesale,240,1938000,8500,5000,540,B2B
+2024-05-22,SKU-G03,Lentils (1kg),Groceries,Narayanganj Sadar,Wholesale,309,41097,140,100,879,B2B
+2024-05-22,SKU-A04,Basic T-Shirt,Apparel,Teknaf (Cox's Bazar),Wholesale,488,195200,400,200,1328,B2B
+2024-05-22,SKU-C01,Skincare Gift Set,Cosmetics,Halishahar (Chattogram),Retail,27,59400,2200,1200,579,B2C
+2024-05-24,SKU-G03,Lentils (1kg),Groceries,Mirpur (Dhaka),Retail,26,3640,140,100,85,B2C
+2024-05-24,SKU-E03,Mechanical Keyboard,Electronics,Feni Sadar,Retail,15,52500,3500,2200,305,B2B
+2024-05-24,SKU-E01,Smart Lamp,Electronics,Gulshan (Dhaka),Online,24,27360,1200,800,231,B2C
+2024-05-24,SKU-G03,Lentils (1kg),Groceries,Halishahar (Chattogram),Retail,88,11704,140,100,909,B2C
+2024-05-24,SKU-A01,Cotton Panjabi,Apparel,Savar (Dhaka),Retail,21,31500,1500,900,33,B2C
+2024-05-24,SKU-G02,Mustard Oil (1L),Groceries,Mirpur (Dhaka),Wholesale,179,50120,280,200,523,B2B
+2024-05-25,SKU-A01,Cotton Panjabi,Apparel,Boalia (Rajshahi),Online,19,27075,1500,900,715,B2C
+2024-05-26,SKU-G02,Mustard Oil (1L),Groceries,Cumilla Sadar,Online,64,17920,280,200,891,B2C
+2024-05-26,SKU-G01,Organic Rice (5kg),Groceries,Hathazari (Chattogram),Wholesale,184,82800,450,320,812,B2B
+2024-05-26,SKU-G03,Lentils (1kg),Groceries,Sadar (Rangpur),Retail,50,7000,140,100,161,B2B
+2024-05-26,SKU-E01,Smart Lamp,Electronics,Patiya (Chattogram),Online,9,10800,1200,800,363,B2C
+2024-05-27,SKU-C02,Herbal Shampoo,Cosmetics,Savar (Dhaka),Retail,11,4455,450,250,737,B2C
+2024-05-27,SKU-E04,Power Bank 10000mAh,Electronics,Sadar (Rangpur),Online,29,52200,1800,1100,976,B2B
+2024-05-27,SKU-A04,Basic T-Shirt,Apparel,Fatullah (Narayanganj),Retail,29,11600,400,200,454,B2C
+2024-05-27,SKU-G03,Lentils (1kg),Groceries,Dakshin Surma (Sylhet),Wholesale,308,43120,140,100,562,B2B
+2024-05-27,SKU-F01,Ergonomic Desk Chair,Furniture,Khalishpur (Khulna),Online,2,11000,5500,3500,524,B2C
+2024-05-28,SKU-G02,Mustard Oil (1L),Groceries,Patiya (Chattogram),Retail,80,21280,280,200,602,B2C
+2024-05-28,SKU-A03,Denim Jeans,Apparel,Feni Sadar,Online,14,23940,1800,1000,98,B2C
+2024-05-28,SKU-A02,Premium Jamdani Saree,Apparel,Hathazari (Chattogram),Wholesale,96,1152000,12000,8000,241,B2B
+2024-05-28,SKU-E04,Power Bank 10000mAh,Electronics,Dakshin Surma (Sylhet),Online,27,48600,1800,1100,558,B2C
+2024-05-29,SKU-A04,Basic T-Shirt,Apparel,Khalishpur (Khulna),Online,8,2880,400,200,764,B2B
+2024-05-29,SKU-G02,Mustard Oil (1L),Groceries,Khalishpur (Khulna),Retail,12,3360,280,200,802,B2C
+2024-05-30,SKU-E03,Mechanical Keyboard,Electronics,Boalia (Rajshahi),Online,10,35000,3500,2200,824,B2C
+2024-05-30,SKU-G01,Organic Rice (5kg),Groceries,Feni Sadar,Retail,36,16200,450,320,634,B2C
+2024-05-30,SKU-A01,Cotton Panjabi,Apparel,Patiya (Chattogram),Retail,30,45000,1500,900,115,B2C
+2024-05-31,SKU-G02,Mustard Oil (1L),Groceries,Patiya (Chattogram),Wholesale,342,95760,280,200,402,B2B
+2024-05-31,SKU-F01,Ergonomic Desk Chair,Furniture,Boalia (Rajshahi),Retail,6,33000,5500,3500,757,B2C
+2024-05-31,SKU-C01,Skincare Gift Set,Cosmetics,Teknaf (Cox's Bazar),Online,13,28600,2200,1200,335,B2C
