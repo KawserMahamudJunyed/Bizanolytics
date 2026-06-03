@@ -1,18 +1,34 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { Sidebar } from "@/components/sidebar"
 import { Header } from "@/components/header"
 import { DataGuard } from "@/components/data-guard"
 import { DataChatbot } from "@/components/data-chatbot"
 import { cn } from "@/lib/utils"
+import { createClient } from "@/utils/supabase/client"
 
 import { AlertCircle } from "lucide-react"
 
-export function AppLayout({ children, user }: { children: React.ReactNode, user: any }) {
+export function AppLayout({ children, user: serverUser }: { children: React.ReactNode, user: any }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const pathname = usePathname()
+  const [user, setUser] = useState(serverUser)
+
+  useEffect(() => {
+    const supabase = createClient()
+    
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   if (pathname === '/login' || pathname === '/signup') {
     return <div className="min-h-screen bg-background">{children}</div>
