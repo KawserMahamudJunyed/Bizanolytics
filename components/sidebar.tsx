@@ -25,7 +25,7 @@ import {
   LogOut,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { logout } from "@/app/login/actions"
+import { createClient } from "@/utils/supabase/client"
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", active: true },
@@ -51,6 +51,12 @@ export function Sidebar({
   const pathname = usePathname()
 
   const sidebarWidth = isCollapsed ? "w-16" : "w-64"
+
+  const handleLogout = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    window.location.href = '/login'
+  }
 
   return (
     <>
@@ -239,11 +245,11 @@ export function Sidebar({
                 </div>
               )}
               {!isCollapsed && (
-                <form action={logout} className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-4">
-                  <button type="submit" className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-muted-foreground hover:bg-destructive hover:text-destructive-foreground transition-colors" title="Log out">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-4">
+                  <button onClick={handleLogout} className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-muted-foreground hover:bg-destructive hover:text-destructive-foreground transition-colors" title="Log out">
                     <LogOut className="h-4 w-4" />
                   </button>
-                </form>
+                </div>
               )}
             </div>
           ) : (

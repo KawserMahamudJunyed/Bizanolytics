@@ -116,44 +116,7 @@ export default function PipelinePage() {
     return parseFloat((qualityPct - 95).toFixed(1))
   }, [rawData, isDataUploaded])
 
-  // Add a new pipeline run whenever data changes
-  useEffect(() => {
-    if (isDataUploaded && rawData.length > 0 && rawData.length !== prevDataLenRef.current) {
-      prevDataLenRef.current = rawData.length
-      const processingMs = Math.max(45, Math.min(500, Math.round(dataSizeBytes / 80 + Math.random() * 30)))
-      const runId = generateRunId()
-      const durationStr = processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`
-      
-      const newRun: PipelineRun = {
-        id: runId,
-        status: "success",
-        duration: durationStr,
-        records: rawData.length,
-        timestamp: new Date()
-      }
-      setPipelineRuns(prev => [newRun, ...prev].slice(0, 10)) // keep last 10
 
-      // Persist to Supabase if logged in
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
-          supabase.from('pipeline_runs').insert({
-            user_id: session.user.id,
-            run_id: runId,
-            status: "success",
-            duration: durationStr,
-            records: rawData.length
-          }).then(({ error }) => {
-            if (error) {
-              console.error("Pipeline insert error:", error)
-              toast.error("Database Error: " + error.message)
-            } else {
-              toast.success("Pipeline run saved to database!")
-            }
-          })
-        }
-      })
-    }
-  }, [rawData, isDataUploaded, dataSizeBytes])
 
   // Update "time ago" labels every 10 seconds
   useEffect(() => {
