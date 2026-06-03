@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { login } from './actions'
+import { createClient } from '@/utils/supabase/client'
 import { Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const searchParams = useSearchParams()
   const isSignupSuccess = searchParams.get('signup') === 'success'
+  const supabase = createClient()
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -21,13 +22,19 @@ export default function LoginPage() {
     setError(null)
     
     const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+    const pass = formData.get('password') as string
     
     try {
-      const result = await login(formData)
-      if (result?.error) {
-        setError(result.error)
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password: pass,
+      })
+      
+      if (error) {
+        setError(error.message)
         setLoading(false)
-      } else if (result?.success) {
+      } else {
         window.location.href = '/'
       }
     } catch (err) {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { signup } from '@/app/login/actions'
+import { createClient } from '@/utils/supabase/client'
 import { Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 
@@ -11,6 +11,7 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [password, setPassword] = useState('')
+  const supabase = createClient()
 
   // Calculate password strength
   const getPasswordStrength = (pass: string) => {
@@ -29,13 +30,31 @@ export default function SignupPage() {
     setError(null)
     
     const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+    const pass = formData.get('password') as string
+    const fullName = formData.get('fullName') as string
+    const companyName = formData.get('companyName') as string
+    const industry = formData.get('industry') as string
+    const salesChannel = formData.get('salesChannel') as string
     
     try {
-      const result = await signup(formData)
-      if (result?.error) {
-        setError(result.error)
+      const { error } = await supabase.auth.signUp({
+        email,
+        password: pass,
+        options: {
+          data: {
+            full_name: fullName,
+            company_name: companyName,
+            industry: industry,
+            sales_channel: salesChannel,
+          }
+        }
+      })
+      
+      if (error) {
+        setError(error.message)
         setLoading(false)
-      } else if (result?.success) {
+      } else {
         window.location.href = '/login?signup=success'
       }
     } catch (err) {
