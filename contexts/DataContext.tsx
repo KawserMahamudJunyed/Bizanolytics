@@ -19,12 +19,22 @@ export type SMEDataRow = {
   Customer_Segment: string
 }
 
+export type DatasetMeta = {
+  id: string
+  file_name: string
+  file_path: string
+  created_at: string
+}
+
 interface DataContextType {
   isDataUploaded: boolean
   rawData: SMEDataRow[]
   setUploadedData: (data: SMEDataRow[], datasetId?: string) => void
   resetData: () => void
   datasetId?: string
+  datasetHistory: DatasetMeta[]
+  loadDatasetById: (id: string) => Promise<void>
+  renameDataset: (id: string, newName: string) => Promise<void>
   aiInsights?: string
   saveAiInsights: (insights: string) => void
 }
@@ -35,60 +45,91 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [rawData, setRawData] = useState<SMEDataRow[]>([])
   const [isDataUploaded, setIsDataUploaded] = useState(false)
   const [datasetId, setDatasetId] = useState<string>()
+  const [datasetHistory, setDatasetHistory] = useState<DatasetMeta[]>([])
   const [aiInsights, setAiInsights] = useState<string>()
 
+  const loadDatasetData = async (dataset: any, supabase: any) => {
+    setDatasetId(dataset.id)
+    if (dataset.ai_insights) {
+      setAiInsights(dataset.ai_insights)
+    } else {
+      setAiInsights(undefined)
+    }
+
+    const { data: fileData, error: downloadError } = await supabase.storage
+      .from('user_datasets')
+      .download(dataset.file_path)
+
+    if (downloadError || !fileData) return
+
+    const text = await fileData.text()
+    Papa.parse(text, {
+      header: true,
+      dynamicTyping: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        if (results.data && results.data.length > 0) {
+          setRawData(results.data as SMEDataRow[])
+          setIsDataUploaded(true)
+        }
+      }
+    })
+  }
+
   useEffect(() => {
-    async function loadSavedData() {
+    async function fetchHistory() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      // Fetch latest dataset metadata
       const { data: datasets, error } = await supabase
         .from('datasets')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-        .limit(1)
 
       if (error || !datasets || datasets.length === 0) return
-
-      const latestDataset = datasets[0]
-      setDatasetId(latestDataset.id)
-      if (latestDataset.ai_insights) {
-        setAiInsights(latestDataset.ai_insights)
+      
+      setDatasetHistory(datasets)
+      
+      // Load the latest dataset by default
+      if (datasets.length > 0) {
+        await loadDatasetData(datasets[0], supabase)
       }
-
-      // Download file from storage
-      const { data: fileData, error: downloadError } = await supabase.storage
-        .from('user_datasets')
-        .download(latestDataset.file_path)
-
-      if (downloadError || !fileData) return
-
-      // Parse CSV text
-      const text = await fileData.text()
-      Papa.parse(text, {
-        header: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          if (results.data && results.data.length > 0) {
-            setRawData(results.data as SMEDataRow[])
-            setIsDataUploaded(true)
-          }
-        }
-      })
     }
-
-    loadSavedData()
+    fetchHistory()
   }, [])
+
+  const loadDatasetById = async (id: string) => {
+    const supabase = createClient()
+    const dataset = datasetHistory.find(d => d.id === id)
+    if (!dataset) return
+    await loadDatasetData(dataset, supabase)
+  }
+
+  const renameDataset = async (id: string, newName: string) => {
+    const supabase = createClient()
+    const { error } = await supabase.from('datasets').update({ file_name: newName }).eq('id', id)
+    if (!error) {
+      setDatasetHistory(prev => prev.map(d => d.id === id ? { ...d, file_name: newName } : d))
+    }
+  }
 
   const setUploadedData = (data: SMEDataRow[], id?: string) => {
     setRawData(data)
     setIsDataUploaded(true)
     setDatasetId(id)
     setAiInsights(undefined)
+    
+    // Refresh history if a new dataset was uploaded
+    if (id) {
+      const supabase = createClient()
+      supabase.from('datasets').select('*').eq('id', id).single().then(({ data: newDataset }) => {
+        if (newDataset) {
+          setDatasetHistory(prev => [newDataset, ...prev])
+        }
+      })
+    }
   }
 
   const resetData = () => {
@@ -107,7 +148,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <DataContext.Provider value={{ isDataUploaded, rawData, setUploadedData, resetData, datasetId, aiInsights, saveAiInsights }}>
+    <DataContext.Provider value={{ 
+      isDataUploaded, rawData, setUploadedData, resetData, 
+      datasetId, datasetHistory, loadDatasetById, renameDataset,
+      aiInsights, saveAiInsights 
+    }}>
       {children}
     </DataContext.Provider>
   )
