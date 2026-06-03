@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { Sidebar } from "@/components/sidebar"
 import { Header } from "@/components/header"
 import { DataGuard } from "@/components/data-guard"
@@ -11,6 +12,11 @@ import { AlertCircle } from "lucide-react"
 
 export function AppLayout({ children, user }: { children: React.ReactNode, user: any }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const pathname = usePathname()
+
+  if (pathname === '/login') {
+    return <div className="min-h-screen bg-background">{children}</div>
+  }
 
   return (
     <div className="relative flex min-h-screen bg-background">

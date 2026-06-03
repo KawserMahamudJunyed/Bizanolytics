@@ -5,7 +5,10 @@ import { motion } from 'framer-motion'
 import { login, signup } from './actions'
 import { Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
 
+import { useRouter } from 'next/navigation'
+
 export default function LoginPage() {
+  const router = useRouter()
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -34,10 +37,12 @@ export default function LoginPage() {
       const result = isLogin ? await login(formData) : await signup(formData)
       if (result?.error) {
         setError(result.error)
+      } else if (result?.success) {
+        router.push('/')
+        router.refresh()
       }
     } catch (err) {
       setError("An unexpected error occurred.")
-    } finally {
       setLoading(false)
     }
   }

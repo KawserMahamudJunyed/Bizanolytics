@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  return { success: true }
 }
 
 export async function signup(formData: FormData) {
@@ -32,7 +32,7 @@ export async function signup(formData: FormData) {
   const industry = formData.get('industry') as string
   const salesChannel = formData.get('salesChannel') as string
 
-  const { error } = await supabase.auth.signUp({
+  const { data: authData, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -49,8 +49,18 @@ export async function signup(formData: FormData) {
     return { error: error.message }
   }
 
+  if (authData?.user) {
+    await supabase.from('profiles').insert({
+      id: authData.user.id,
+      full_name: fullName,
+      company_name: companyName,
+      industry: industry,
+      sales_channel: salesChannel
+    })
+  }
+
   revalidatePath('/', 'layout')
-  redirect('/')
+  return { success: true }
 }
 
 export async function logout() {

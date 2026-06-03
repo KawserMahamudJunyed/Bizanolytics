@@ -6,6 +6,7 @@ import { DataFlowVisualization } from "@/components/spider-web"
 import { cn } from "@/lib/utils"
 
 import { useData } from "@/contexts/DataContext"
+import { createClient } from "@/utils/supabase/client"
 
 type PipelineRun = {
   id: string
@@ -33,10 +34,38 @@ function formatTimeAgo(date: Date) {
 export default function PipelinePage() {
   const { rawData, isDataUploaded } = useData()
   const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([])
+  const [userId, setUserId] = useState<string | null>(null)
   const prevDataLenRef = useRef(0)
   const [, forceUpdate] = useState(0)
+  const supabase = createClient()
   
   const recordCount = isDataUploaded ? rawData.length : 0
+
+  // Fetch initial data
+  useEffect(() => {
+    async function loadRuns() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUserId(user.id)
+        const { data } = await supabase
+          .from('pipeline_runs')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(10)
+        
+        if (data) {
+          setPipelineRuns(data.map((r: any) => ({
+            id: r.run_id,
+            status: r.status as any,
+            duration: r.duration,
+            records: r.records,
+            timestamp: new Date(r.created_at)
+          })))
+        }
+      }
+    }
+    loadRuns()
+  }, [])
   
   // Compute dynamic metrics
   const dataSizeBytes = useMemo(() => {
@@ -93,16 +122,30 @@ export default function PipelinePage() {
     if (isDataUploaded && rawData.length > 0 && rawData.length !== prevDataLenRef.current) {
       prevDataLenRef.current = rawData.length
       const processingMs = Math.max(45, Math.min(500, Math.round(dataSizeBytes / 80 + Math.random() * 30)))
+      const runId = generateRunId()
+      const durationStr = processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`
+      
       const newRun: PipelineRun = {
-        id: generateRunId(),
+        id: runId,
         status: "success",
-        duration: processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`,
+        duration: durationStr,
         records: rawData.length,
         timestamp: new Date()
       }
       setPipelineRuns(prev => [newRun, ...prev].slice(0, 10)) // keep last 10
+
+      // Persist to Supabase if logged in
+      if (userId) {
+        supabase.from('pipeline_runs').insert({
+          user_id: userId,
+          run_id: runId,
+          status: "success",
+          duration: durationStr,
+          records: rawData.length
+        }).then()
+      }
     }
-  }, [rawData, isDataUploaded, dataSizeBytes])
+  }, [rawData, isDataUploaded, dataSizeBytes, userId])
 
   // Update "time ago" labels every 10 seconds
   useEffect(() => {
