@@ -55,7 +55,9 @@ export default function SignupPage() {
         setError(error.message)
         setLoading(false)
       } else {
-        window.location.href = '/login?signup=success'
+        setTimeout(() => {
+          window.location.href = '/login?signup=success'
+        }, 500)
       }
     } catch (err) {
       setError("An unexpected error occurred.")

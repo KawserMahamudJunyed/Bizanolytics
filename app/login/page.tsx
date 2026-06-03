@@ -35,7 +35,9 @@ export default function LoginPage() {
         setError(error.message)
         setLoading(false)
       } else {
-        window.location.href = '/'
+        setTimeout(() => {
+          window.location.href = '/'
+        }, 500)
       }
     } catch (err) {
       setError("An unexpected error occurred.")
