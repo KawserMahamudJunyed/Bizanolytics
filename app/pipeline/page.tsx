@@ -34,7 +34,6 @@ function formatTimeAgo(date: Date) {
 export default function PipelinePage() {
   const { rawData, isDataUploaded } = useData()
   const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([])
-  const [userId, setUserId] = useState<string | null>(null)
   const prevDataLenRef = useRef(0)
   const [, forceUpdate] = useState(0)
   const supabase = createClient()
@@ -44,9 +43,8 @@ export default function PipelinePage() {
   // Fetch initial data
   useEffect(() => {
     async function loadRuns() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setUserId(user.id)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
         const { data } = await supabase
           .from('pipeline_runs')
           .select('*')
@@ -135,17 +133,21 @@ export default function PipelinePage() {
       setPipelineRuns(prev => [newRun, ...prev].slice(0, 10)) // keep last 10
 
       // Persist to Supabase if logged in
-      if (userId) {
-        supabase.from('pipeline_runs').insert({
-          user_id: userId,
-          run_id: runId,
-          status: "success",
-          duration: durationStr,
-          records: rawData.length
-        }).then()
-      }
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          supabase.from('pipeline_runs').insert({
+            user_id: session.user.id,
+            run_id: runId,
+            status: "success",
+            duration: durationStr,
+            records: rawData.length
+          }).then(({ error }) => {
+            if (error) console.error("Pipeline insert error:", error)
+          })
+        }
+      })
     }
-  }, [rawData, isDataUploaded, dataSizeBytes, userId])
+  }, [rawData, isDataUploaded, dataSizeBytes])
 
   // Update "time ago" labels every 10 seconds
   useEffect(() => {
