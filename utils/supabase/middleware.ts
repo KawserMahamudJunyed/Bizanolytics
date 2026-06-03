@@ -27,8 +27,8 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // This will refresh the session if it's expired
-  await supabase.auth.getUser()
+  // This will refresh the session if it's expired (much faster than getUser)
+  await supabase.auth.getSession()
 
   return supabaseResponse
 }

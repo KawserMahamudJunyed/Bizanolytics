@@ -79,7 +79,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function fetchHistory() {
       const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { session } } = await supabase.auth.getSession()
+      const user = session?.user
       if (!user) return
 
       const { data: datasets, error } = await supabase
