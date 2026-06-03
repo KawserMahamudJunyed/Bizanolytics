@@ -7,7 +7,9 @@ import { DataGuard } from "@/components/data-guard"
 import { DataChatbot } from "@/components/data-chatbot"
 import { cn } from "@/lib/utils"
 
-export function AppLayout({ children }: { children: React.ReactNode }) {
+import { AlertCircle } from "lucide-react"
+
+export function AppLayout({ children, user }: { children: React.ReactNode, user: any }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
@@ -15,6 +17,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <Sidebar 
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
+        user={user}
       />
 
       <main className={cn(
@@ -22,6 +25,15 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         isCollapsed ? "lg:pl-16" : "lg:pl-64"
       )}>
         <Header />
+
+        {!user && (
+          <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-3 flex items-center gap-3 text-sm text-amber-500">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <p>
+              <strong>You are not logged in.</strong> Your data is stored in memory and will vanish upon reload. <a href="/login" className="underline font-medium hover:text-amber-400">Log in</a> to save your analysis permanently.
+            </p>
+          </div>
+        )}
 
         <div className="p-6 lg:p-8 min-w-0 w-full flex-1">
           <DataGuard>

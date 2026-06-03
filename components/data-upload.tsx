@@ -8,6 +8,7 @@ import Papa from "papaparse"
 import * as XLSX from "xlsx"
 import { useData } from "@/contexts/DataContext"
 import { useRouter } from "next/navigation"
+import { createClient } from "@/utils/supabase/client"
 
 export function DataUpload() {
   const [dragActive, setDragActive] = useState(false)
@@ -28,7 +29,7 @@ export function DataUpload() {
     }
   }
 
-  const handleParsedData = async (parsedData: any[]) => {
+  const handleParsedData = async (parsedData: any[], currentFile: File) => {
     if (parsedData.length === 0) {
       setErrorMessage("The uploaded file is empty or has no valid data.")
       setUploadState("error")
@@ -80,9 +81,38 @@ export function DataUpload() {
       }
     }
 
+    let newDatasetId: string | undefined = undefined;
+    
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (user) {
+        const filePath = `${user.id}/${Date.now()}_${currentFile.name}`
+        
+        const { error: uploadError } = await supabase.storage
+          .from('user_datasets')
+          .upload(filePath, currentFile)
+
+        if (!uploadError) {
+          const { data: insertedData, error: insertError } = await supabase.from('datasets').insert({
+            user_id: user.id,
+            file_name: currentFile.name,
+            file_path: filePath
+          }).select()
+          
+          if (!insertError && insertedData && insertedData.length > 0) {
+            newDatasetId = insertedData[0].id
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to sync to Supabase", err)
+    }
+
     setTimeout(() => {
       setUploadState("success")
-      setUploadedData(parsedData as any)
+      setUploadedData(parsedData as any, newDatasetId)
       router.push("/") // Redirect to dashboard to see results
     }, 200)
   }
@@ -107,7 +137,7 @@ export function DataUpload() {
             const firstSheetName = workbook.SheetNames[0]
             const worksheet = workbook.Sheets[firstSheetName]
             const jsonData = XLSX.utils.sheet_to_json(worksheet)
-            await handleParsedData(jsonData)
+            await handleParsedData(jsonData, fileToProcess)
           } catch (error) {
             setErrorMessage("Error parsing the Excel file.")
             setUploadState("error")
@@ -125,7 +155,7 @@ export function DataUpload() {
                 setUploadState("error")
                 return
               }
-              await handleParsedData(parsedData)
+              await handleParsedData(parsedData, fileToProcess)
             },
             error: (err) => {
               setErrorMessage("Error parsing the CSV or Excel file.")
@@ -229,7 +259,7 @@ export function DataUpload() {
                 />
               </label>
               <div className="mt-4 flex gap-4 text-xs text-muted-foreground">
-                <a href="/subdistrict-sample-sales.csv" download className="text-primary hover:underline">Download Sample Dataset</a>
+                <a href="/sample-sme-sales.csv" download className="text-primary hover:underline">Download Sample Dataset</a>
               </div>
             </motion.div>
           )}

@@ -39,7 +39,7 @@ const statusConfig = {
 import { useData } from "@/contexts/DataContext"
 
 export function AIInsights() {
-  const { rawData } = useData()
+  const { rawData, aiInsights: cachedInsights, saveAiInsights } = useData()
   const [aiInsight, setAiInsight] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -50,6 +50,13 @@ export function AIInsights() {
         setLoading(false)
         return
       }
+      
+      if (cachedInsights) {
+        setAiInsight(cachedInsights)
+        setLoading(false)
+        return
+      }
+
       try {
         const res = await fetch("/api/forecast-insight", {
           method: "POST",
@@ -58,6 +65,7 @@ export function AIInsights() {
         })
         const data = await res.json()
         setAiInsight(data.insight)
+        saveAiInsights(data.insight)
       } catch (e) {
         setAiInsight("Error fetching AI insight.")
       } finally {
@@ -65,7 +73,7 @@ export function AIInsights() {
       }
     }
     fetchInsight()
-  }, [rawData])
+  }, [rawData, cachedInsights, saveAiInsights])
 
   return (
     <motion.div
@@ -100,9 +108,12 @@ export function AIInsights() {
                 <div className="h-4 w-1/2 animate-pulse rounded bg-muted"></div>
               </div>
             ) : (
-              <p className="text-sm leading-relaxed text-foreground whitespace-pre-wrap">
-                {aiInsight}
-              </p>
+              <p 
+                className="text-sm leading-relaxed text-foreground whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{ 
+                  __html: (aiInsight || "").replace(/\*\*(.*?)\*\*/g, "<strong class='font-semibold text-white'>$1</strong>") 
+                }}
+              />
             )}
           </div>
         </motion.div>

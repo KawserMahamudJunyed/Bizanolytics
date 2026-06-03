@@ -22,16 +22,21 @@ export const metadata: Metadata = {
   generator: 'v0.app',
 }
 
-export default function RootLayout({
+import { createClient } from '@/utils/supabase/server'
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
     <html lang="en" className="dark bg-background" style={{ colorScheme: 'dark' }}>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         <DataProvider>
-          <AppLayout>
+          <AppLayout user={user}>
             {children}
           </AppLayout>
         </DataProvider>

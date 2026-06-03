@@ -79,7 +79,7 @@ export default function Dashboard() {
       </section>
 
       {/* Main Charts: Demand Forecast & AI Insights */}
-      <div className="grid gap-6 lg:grid-cols-2 items-stretch">
+      <div className="grid gap-6 lg:grid-cols-1 items-stretch">
         <div className="h-full">
           {isDataUploaded ? (
             <RegionalDistribution />
@@ -88,9 +88,6 @@ export default function Dashboard() {
               Upload data to see Regional Distribution
             </div>
           )}
-        </div>
-        <div className="h-full">
-          <AIInsights />
         </div>
       </div>
 
@@ -113,6 +110,11 @@ export default function Dashboard() {
         <div className="w-full">
           <BangladeshForecastTable />
         </div>
+      </div>
+
+      {/* AI Insights Full Width at Bottom */}
+      <div className="w-full mt-8">
+        <AIInsights />
       </div>
     </motion.div>
   )

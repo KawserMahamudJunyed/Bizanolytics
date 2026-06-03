@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { MessageCircle, X, Send, User, Bot, Loader2 } from "lucide-react"
+import { MessageCircle, X, Send, User, Bot, Loader2, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
+import { createClient } from "@/utils/supabase/client"
 
 interface Message {
   role: "user" | "assistant"
@@ -18,9 +19,30 @@ export function DataChatbot() {
   ])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [userId, setUserId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   
   const { rawData, isDataUploaded } = useData()
+
+  useEffect(() => {
+    async function loadHistory() {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUserId(user.id)
+        const { data } = await supabase
+          .from('chat_messages')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: true })
+        
+        if (data && data.length > 0) {
+          setMessages(data.map(m => ({ role: m.role as "user" | "assistant", content: m.content })))
+        }
+      }
+    }
+    loadHistory()
+  }, [])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -39,6 +61,11 @@ export function DataChatbot() {
     setMessages(prev => [...prev, { role: "user", content: userMsg }])
     setIsLoading(true)
 
+    const supabase = createClient()
+    if (userId) {
+      await supabase.from('chat_messages').insert({ user_id: userId, role: 'user', content: userMsg })
+    }
+
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -51,11 +78,24 @@ export function DataChatbot() {
       })
 
       const data = await response.json()
-      setMessages(prev => [...prev, { role: "assistant", content: data.reply }])
+      const reply = data.reply
+      setMessages(prev => [...prev, { role: "assistant", content: reply }])
+      
+      if (userId) {
+        await supabase.from('chat_messages').insert({ user_id: userId, role: 'assistant', content: reply })
+      }
     } catch (error) {
       setMessages(prev => [...prev, { role: "assistant", content: "Sorry, I had trouble processing that request." }])
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const clearHistory = async () => {
+    setMessages([{ role: "assistant", content: "Hi! I'm Bizanolytics Intelligence. Ask me anything about the data you just uploaded!" }])
+    if (userId) {
+      const supabase = createClient()
+      await supabase.from('chat_messages').delete().eq('user_id', userId)
     }
   }
 
@@ -97,12 +137,23 @@ export function DataChatbot() {
                   <p className="text-xs text-white/70">Online</p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-white/10 hover:text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-1">
+                {userId && (
+                  <button
+                    onClick={clearHistory}
+                    title="Clear Chat History"
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             {/* Chat Area */}

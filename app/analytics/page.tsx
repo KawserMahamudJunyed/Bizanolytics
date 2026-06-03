@@ -17,19 +17,18 @@ export default function AnalyticsPage() {
         <div className="lg:col-span-2">
           <TrendAnalysis />
         </div>
-        <div className="flex flex-col h-full gap-6">
-          <div className="shrink-0">
-            <AIInsights />
-          </div>
-          <div className="flex-1 min-h-0 *:h-full">
-            <ForecastAccuracy />
-          </div>
+        <div className="lg:col-span-1 h-full">
+          <ForecastAccuracy />
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <ParetoChart />
         <DemandForecastChart />
+      </div>
+
+      <div className="w-full">
+        <AIInsights />
       </div>
     </motion.div>
   )
