@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 export async function login(formData: FormData) {
@@ -63,8 +64,19 @@ export async function signup(formData: FormData) {
   return { success: true }
 }
 
+
 export async function logout() {
   const supabase = await createClient()
   await supabase.auth.signOut()
+  
+  // Forcefully delete all Supabase cookies to bypass Next.js caching bugs
+  const cookieStore = await cookies()
+  const allCookies = cookieStore.getAll()
+  allCookies.forEach(cookie => {
+    if (cookie.name.startsWith('sb-')) {
+      cookieStore.delete(cookie.name)
+    }
+  })
+  
   return { success: true }
 }
