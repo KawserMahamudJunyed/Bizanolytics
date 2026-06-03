@@ -8,8 +8,8 @@ import { MapPin, TrendingUp, TrendingDown, Globe, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 import bdGeoData from './bangladesh.json'
-
 import { useData } from "@/contexts/DataContext"
+import { getDivision } from "./data-visualizations"
 
 
 
@@ -26,9 +26,9 @@ export default function BangladeshMapInner() {
     const locMap = new Map();
     rawData.forEach(row => {
       if (row.Location) {
-        const loc = row.Location;
-        const current = locMap.get(loc) || { demand: 0, stock: 0, count: 0 };
-        locMap.set(loc, {
+        const divName = getDivision(row.Location);
+        const current = locMap.get(divName) || { demand: 0, stock: 0, count: 0 };
+        locMap.set(divName, {
           demand: current.demand + (row.Units_Sold || 0),
           stock: current.stock + (row.Current_Stock || 0),
           count: current.count + 1

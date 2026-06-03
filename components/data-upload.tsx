@@ -8,6 +8,7 @@ import Papa from "papaparse"
 import * as XLSX from "xlsx"
 import { useData } from "@/contexts/DataContext"
 import { useRouter } from "next/navigation"
+import { apiRequest } from "@/lib/api"
 
 export function DataUpload() {
   const [dragActive, setDragActive] = useState(false)
@@ -80,11 +81,31 @@ export function DataUpload() {
       }
     }
 
-    setTimeout(() => {
-      setUploadState("success")
-      setUploadedData(parsedData as any)
-      router.push("/") // Redirect to dashboard to see results
-    }, 200)
+    try {
+      setUploadState("processing");
+      const response = await apiRequest('/data/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'sales', data: parsedData }),
+      });
+
+      if (response && response.rowsInserted > 0) {
+        const rawDataResponse = await apiRequest('/dashboard/raw-data');
+        if (rawDataResponse && rawDataResponse.data) {
+          setUploadedData(rawDataResponse.data);
+          setUploadState("success");
+          router.push("/");
+        } else {
+          throw new Error("Failed to reload raw data from backend database");
+        }
+      } else {
+        throw new Error(response?.error || "No rows were inserted by the backend");
+      }
+    } catch (e: any) {
+      console.error("Backend save failed:", e);
+      setErrorMessage(e.message || "Failed to save the dataset to the backend database.");
+      setUploadState("error");
+    }
   }
 
   const processFile = (fileToProcess: File) => {

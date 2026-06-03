@@ -1,6 +1,7 @@
 "use client"
 
-import React, { createContext, useContext, useState, ReactNode } from "react"
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react"
+import { apiRequest } from "@/lib/api"
 
 export type SMEDataRow = {
   Date: string
@@ -22,6 +23,7 @@ interface DataContextType {
   rawData: SMEDataRow[]
   setUploadedData: (data: SMEDataRow[]) => void
   resetData: () => void
+  loading: boolean
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -29,6 +31,24 @@ const DataContext = createContext<DataContextType | undefined>(undefined)
 export function DataProvider({ children }: { children: ReactNode }) {
   const [rawData, setRawData] = useState<SMEDataRow[]>([])
   const [isDataUploaded, setIsDataUploaded] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const response = await apiRequest('/dashboard/raw-data');
+        if (response && response.data && response.data.length > 0) {
+          setRawData(response.data);
+          setIsDataUploaded(true);
+        }
+      } catch (err) {
+        console.error('Failed to load raw data from backend:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
   const setUploadedData = (data: SMEDataRow[]) => {
     setRawData(data)
@@ -41,7 +61,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <DataContext.Provider value={{ isDataUploaded, rawData, setUploadedData, resetData }}>
+    <DataContext.Provider value={{ isDataUploaded, rawData, setUploadedData, resetData, loading }}>
       {children}
     </DataContext.Provider>
   )
@@ -54,3 +74,4 @@ export function useData() {
   }
   return context
 }
+

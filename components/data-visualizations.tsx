@@ -13,6 +13,31 @@ import { ArrowUpDown, ArrowUp, ArrowDown, Download, Filter } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
 
+const DIVISION_MAPPING: Record<string, string[]> = {
+  "Dhaka": ["dhaka", "savar", "gazipur", "narayanganj", "tangail", "faridpur", "manikganj", "munshiganj", "narsingdi", "shariatpur", "madaripur", "gopalganj", "rajbari"],
+  "Chattogram": ["chattogram", "chittagong", "cox's bazar", "coxs bazar", "feni", "hathazari", "baghai chhari", "baghaichhari", "kasba", "brahmanbaria", "comilla", "cumilla", "chandpur", "lakshmipur", "noakhali", "rangamati", "khagrachhari", "bandarban"],
+  "Sylhet": ["sylhet", "habiganj", "sunamganj", "moulvibazar", "maulvibazar"],
+  "Rajshahi": ["rajshahi", "bogura", "bogra", "natore", "pabna", "naogaon", "joypurhat", "chapainawabganj", "nawabganj", "sirajganj"],
+  "Khulna": ["khulna", "jashore", "jessore", "satkhira", "bagerhat", "chuadanga", "kushtia", "magura", "meherpur", "narail", "jhenaidah"],
+  "Barishal": ["barishal", "barisal", "patuakhali", "bhola", "barguna", "pirojpur", "jhalokati", "jhalokathi"],
+  "Rangpur": ["rangpur", "dinajpur", "kurigram", "gaibandha", "lalmonirhat", "nilphamari", "panchagarh", "thakurgaon"],
+  "Mymensingh": ["mymensingh", "netrokona", "sherpur", "jamalpur"]
+};
+
+export function getDivision(location: string): string {
+  if (!location) return "Unknown";
+  const loc = location.trim().toLowerCase();
+  
+  for (const [division, keywords] of Object.entries(DIVISION_MAPPING)) {
+    if (keywords.some(k => loc.includes(k))) {
+      return division;
+    }
+  }
+  
+  // Fallback: Capitalize first letter of location
+  return location.charAt(0).toUpperCase() + location.slice(1);
+}
+
 // Removed static rawDemandData, regionData, and sparklineData
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -65,8 +90,8 @@ export function RegionalDistribution() {
 
     const grouped: Record<string, number> = {}
     rawData.forEach((row: any) => {
-      const loc = row.Location || "Unknown"
-      grouped[loc] = (grouped[loc] || 0) + (row.Revenue_BDT || 0)
+      const divName = getDivision(row.Location)
+      grouped[divName] = (grouped[divName] || 0) + (row.Revenue_BDT || 0)
     })
 
     const colors = [
@@ -163,14 +188,14 @@ export function RegionalPerformance() {
     const locMap = new Map();
     // Group by location and date to generate sparkline data
     rawData.forEach(row => {
-      const loc = row.Location || "Unknown";
+      const divName = getDivision(row.Location);
       const date = row.Date || "Unknown";
       
-      if (!locMap.has(loc)) {
-        locMap.set(loc, { totalValue: 0, dateMap: new Map() });
+      if (!locMap.has(divName)) {
+        locMap.set(divName, { totalValue: 0, dateMap: new Map() });
       }
       
-      const locData = locMap.get(loc);
+      const locData = locMap.get(divName);
       locData.totalValue += (row.Revenue_BDT || 0);
       locData.dateMap.set(date, (locData.dateMap.get(date) || 0) + (row.Revenue_BDT || 0));
     });

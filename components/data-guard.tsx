@@ -6,7 +6,15 @@ import { motion } from "framer-motion"
 import { FileSearch } from "lucide-react"
 
 export function DataGuard({ children }: { children: React.ReactNode }) {
-  const { isDataUploaded } = useData()
+  const { isDataUploaded, loading } = useData()
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[80vh] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-r-transparent" />
+      </div>
+    )
+  }
 
   if (!isDataUploaded) {
     return (
