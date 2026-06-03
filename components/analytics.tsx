@@ -49,34 +49,42 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export function TrendAnalysis() {
   const { rawData } = useData();
+  const [processedData, setProcessedData] = useState<any[]>([]);
   
-  const processedData = useMemo(() => {
-    if (!rawData || rawData.length === 0) return [];
+  useEffect(() => {
+    if (!rawData || rawData.length === 0) {
+      setProcessedData([]);
+      return;
+    }
     
-    // Group by Date
-    const dateMap = new Map();
-    rawData.forEach(row => {
-      if (row.Date) {
-        const d = row.Date;
-        dateMap.set(d, (dateMap.get(d) || 0) + (row.Revenue_BDT || 0));
-      }
-    });
-    
-    // Sort and take last 8 entries
-    const sorted = Array.from(dateMap.entries())
-      .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
-      .slice(-8);
+    const timer = setTimeout(() => {
+      // Group by Date
+      const dateMap = new Map();
+      rawData.forEach(row => {
+        if (row.Date) {
+          const d = row.Date;
+          dateMap.set(d, (dateMap.get(d) || 0) + (row.Revenue_BDT || 0));
+        }
+      });
       
-    // Compute simple moving average for trend
-    let sum = 0;
-    return sorted.map(([date, value], i) => {
-      sum += value;
-      return {
-        date,
-        value,
-        trend: Math.round(sum / (i + 1))
-      };
-    });
+      // Sort and take last 8 entries
+      const sorted = Array.from(dateMap.entries())
+        .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
+        .slice(-8);
+        
+      // Compute simple moving average for trend
+      let sum = 0;
+      setProcessedData(sorted.map(([date, value], i) => {
+        sum += value;
+        return {
+          date,
+          value,
+          trend: Math.round(sum / (i + 1))
+        };
+      }));
+    }, 10);
+    
+    return () => clearTimeout(timer);
   }, [rawData]);
 
   const averageValue = processedData.length > 0 
@@ -172,32 +180,42 @@ export function TrendAnalysis() {
 
 export function ForecastAccuracy() {
   const { rawData } = useData();
+  const [metrics, setMetrics] = useState<any[]>([
+    { label: "MAPE", value: "...", description: "Mean Absolute Percentage Error" },
+    { label: "RMSE", value: "...", description: "Root Mean Square Error" },
+    { label: "Bias", value: "...", description: "Forecast Bias" },
+  ]);
   
-  const metrics = useMemo(() => {
+  useEffect(() => {
     if (!rawData || rawData.length === 0) {
-      return [
+      setMetrics([
         { label: "MAPE", value: "0.0%", description: "Mean Absolute Percentage Error" },
         { label: "RMSE", value: "0", description: "Root Mean Square Error" },
         { label: "Bias", value: "0.0%", description: "Forecast Bias" },
-      ];
+      ]);
+      return;
     }
     
-    // Compute dynamic metrics based on actual data
-    const units = rawData.map(r => r.Units_Sold || 0);
-    const mean = units.reduce((a, b) => a + b, 0) / units.length;
-    const variance = units.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / units.length;
-    const stdDev = Math.sqrt(variance);
-    const cv = mean === 0 ? 0 : stdDev / mean;
+    const timer = setTimeout(() => {
+      // Compute dynamic metrics based on actual data
+      const units = rawData.map(r => r.Units_Sold || 0);
+      const mean = units.reduce((a, b) => a + b, 0) / units.length;
+      const variance = units.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / units.length;
+      const stdDev = Math.sqrt(variance);
+      const cv = mean === 0 ? 0 : stdDev / mean;
+      
+      const mape = Math.min(15, cv * 10).toFixed(1);
+      const rmse = Math.round(stdDev * 0.8).toLocaleString();
+      const bias = (cv > 0.5 ? -1.2 : 0.8).toFixed(1);
+      
+      setMetrics([
+        { label: "MAPE", value: `${mape}%`, description: "Mean Absolute Percentage Error" },
+        { label: "RMSE", value: rmse, description: "Root Mean Square Error" },
+        { label: "Bias", value: `${bias}%`, description: "Forecast Bias" },
+      ]);
+    }, 10);
     
-    const mape = Math.min(15, cv * 10).toFixed(1);
-    const rmse = Math.round(stdDev * 0.8).toLocaleString();
-    const bias = (cv > 0.5 ? -1.2 : 0.8).toFixed(1);
-    
-    return [
-      { label: "MAPE", value: `${mape}%`, description: "Mean Absolute Percentage Error" },
-      { label: "RMSE", value: rmse, description: "Root Mean Square Error" },
-      { label: "Bias", value: `${bias}%`, description: "Forecast Bias" },
-    ];
+    return () => clearTimeout(timer);
   }, [rawData]);
 
   return (
@@ -273,31 +291,43 @@ const ParetoTooltip = ({ active, payload, label }: any) => {
 }
 
 export function ParetoChart() {
-  const { rawData } = useData()
+  const { rawData } = useData();
+  const [processedParetoData, setProcessedParetoData] = useState<any[]>([]);
   
-  // Calculate category profits dynamically
-  const categoryMap = new Map<string, number>()
-  rawData.forEach(row => {
-    if (row.Category) {
-      const current = categoryMap.get(row.Category) || 0
-      // Assuming 20% margin for profit calculation for the demo
-      categoryMap.set(row.Category, current + (row.Revenue_BDT * 0.2))
+  useEffect(() => {
+    if (!rawData || rawData.length === 0) {
+      setProcessedParetoData([]);
+      return;
     }
-  })
 
-  const sortedCategories = Array.from(categoryMap.entries())
-    .map(([category, profit]) => ({ category, profit }))
-    .sort((a, b) => b.profit - a.profit)
+    const timer = setTimeout(() => {
+      // Calculate category profits dynamically
+      const categoryMap = new Map<string, number>()
+      rawData.forEach(row => {
+        if (row.Category) {
+          const current = categoryMap.get(row.Category) || 0
+          // Assuming 20% margin for profit calculation for the demo
+          categoryMap.set(row.Category, current + (row.Revenue_BDT * 0.2))
+        }
+      })
 
-  const totalProfit = sortedCategories.reduce((acc, curr) => acc + curr.profit, 0);
-  let currentSum = 0;
-  const processedParetoData = sortedCategories.map(item => {
-    currentSum += item.profit;
-    return {
-      ...item,
-      cumulativePercent: totalProfit > 0 ? parseFloat(((currentSum / totalProfit) * 100).toFixed(1)) : 0
-    };
-  });
+      const sortedCategories = Array.from(categoryMap.entries())
+        .map(([category, profit]) => ({ category, profit }))
+        .sort((a, b) => b.profit - a.profit)
+
+      const totalProfit = sortedCategories.reduce((acc, curr) => acc + curr.profit, 0);
+      let currentSum = 0;
+      setProcessedParetoData(sortedCategories.map(item => {
+        currentSum += item.profit;
+        return {
+          ...item,
+          cumulativePercent: totalProfit > 0 ? parseFloat(((currentSum / totalProfit) * 100).toFixed(1)) : 0
+        };
+      }));
+    }, 10);
+    
+    return () => clearTimeout(timer);
+  }, [rawData]);
 
   return (
     <motion.div
@@ -342,7 +372,7 @@ export function ParetoChart() {
     </motion.div>
   )
 }
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 
 const ForecastTooltip = ({ active, payload, label, capacity }: any) => {
   if (active && payload && payload.length) {
@@ -388,80 +418,91 @@ const ForecastTooltip = ({ active, payload, label, capacity }: any) => {
 
 export function DemandForecastChart() {
   const { rawData, isDataUploaded } = useData();
+  const [chartState, setChartState] = useState({ processedForecastData: [] as any[], inventoryCapacity: 0, restockMonth: null as string | null });
 
-  const { processedForecastData, inventoryCapacity, restockMonth } = useMemo(() => {
+  useEffect(() => {
     if (!isDataUploaded || rawData.length === 0) {
-      return { processedForecastData: [], inventoryCapacity: 0, restockMonth: null };
+      setChartState({ processedForecastData: [], inventoryCapacity: 0, restockMonth: null });
+      return;
     }
 
-    // 1. Aggregate by month
-    const monthlyData = new Map<string, { demand: number, stock: number }>();
-    rawData.forEach(row => {
-      if (row.Date) {
-        const month = String(row.Date).substring(0, 7); // YYYY-MM
-        const current = monthlyData.get(month) || { demand: 0, stock: 0 };
-        monthlyData.set(month, {
-          demand: current.demand + (row.Units_Sold || 0),
-          stock: current.stock + (row.Current_Stock || 0)
+    const timer = setTimeout(() => {
+      // 1. Aggregate by month
+      const monthlyData = new Map<string, { demand: number, stock: number }>();
+      rawData.forEach(row => {
+        if (row.Date) {
+          const month = String(row.Date).substring(0, 7); // YYYY-MM
+          const current = monthlyData.get(month) || { demand: 0, stock: 0 };
+          monthlyData.set(month, {
+            demand: current.demand + (row.Units_Sold || 0),
+            stock: current.stock + (row.Current_Stock || 0)
+          });
+        }
+      });
+
+      const sortedMonths = Array.from(monthlyData.keys()).sort();
+      const recentMonths = sortedMonths.slice(-4);
+      
+      const baseData = recentMonths.map((m, i) => {
+        const labels = ["M-3", "M-2", "M-1", "Current"];
+        const labelIndex = 4 - recentMonths.length + i;
+        const data = monthlyData.get(m)!;
+        return {
+          month: labels[labelIndex],
+          actual: data.demand,
+          yhat: data.demand,
+          lower: Math.round(data.demand * 0.95),
+          upper: Math.round(data.demand * 1.05),
+          rawStock: data.stock
+        };
+      });
+
+      if (baseData.length === 0) {
+        setChartState({ processedForecastData: [], inventoryCapacity: 0, restockMonth: null });
+        return;
+      }
+
+      // 2. Generate future forecasts (M+1 to M+4)
+      const forecasts = [];
+      const history = baseData.map(d => d.actual);
+      
+      let growthFactor = 1.05; 
+      if (history.length >= 2) {
+        growthFactor = history[history.length - 1] / (history[0] || 1);
+        growthFactor = Math.pow(growthFactor, 1 / history.length); 
+        growthFactor = Math.max(0.8, Math.min(1.2, growthFactor));
+      }
+
+      let lastVal = history[history.length - 1];
+      for (let i = 1; i <= 4; i++) {
+        lastVal = lastVal * growthFactor;
+        forecasts.push({
+          month: `M+${i}`,
+          actual: null,
+          yhat: Math.round(lastVal),
+          lower: Math.round(lastVal * 0.85), 
+          upper: Math.round(lastVal * 1.15),
         });
       }
-    });
 
-    const sortedMonths = Array.from(monthlyData.keys()).sort();
-    const recentMonths = sortedMonths.slice(-4);
+      const combined = [...baseData, ...forecasts].map(item => ({
+        ...item,
+        uncertaintyRange: [item.lower, item.upper]
+      }));
+
+      const latestStock = baseData[baseData.length - 1]?.rawStock || 2000;
+      const capacity = Math.round(latestStock * 1.2); // Simulated capacity constraint
+
+      const restockItem = forecasts.find(f => f.upper > capacity);
+      const rMonth = restockItem ? restockItem.month : null;
+
+      setChartState({ processedForecastData: combined, inventoryCapacity: capacity, restockMonth: rMonth });
+    }, 10);
     
-    const baseData = recentMonths.map((m, i) => {
-      const labels = ["M-3", "M-2", "M-1", "Current"];
-      const labelIndex = 4 - recentMonths.length + i;
-      const data = monthlyData.get(m)!;
-      return {
-        month: labels[labelIndex],
-        actual: data.demand,
-        yhat: data.demand,
-        lower: Math.round(data.demand * 0.95),
-        upper: Math.round(data.demand * 1.05),
-        rawStock: data.stock
-      };
-    });
-
-    if (baseData.length === 0) return { processedForecastData: [], inventoryCapacity: 0, restockMonth: null };
-
-    // 2. Generate future forecasts (M+1 to M+4)
-    const forecasts = [];
-    const history = baseData.map(d => d.actual);
-    
-    let growthFactor = 1.05; 
-    if (history.length >= 2) {
-      growthFactor = history[history.length - 1] / (history[0] || 1);
-      growthFactor = Math.pow(growthFactor, 1 / history.length); 
-      growthFactor = Math.max(0.8, Math.min(1.2, growthFactor));
-    }
-
-    let lastVal = history[history.length - 1];
-    for (let i = 1; i <= 4; i++) {
-      lastVal = lastVal * growthFactor;
-      forecasts.push({
-        month: `M+${i}`,
-        actual: null,
-        yhat: Math.round(lastVal),
-        lower: Math.round(lastVal * 0.85), 
-        upper: Math.round(lastVal * 1.15),
-      });
-    }
-
-    const combined = [...baseData, ...forecasts].map(item => ({
-      ...item,
-      uncertaintyRange: [item.lower, item.upper]
-    }));
-
-    const latestStock = baseData[baseData.length - 1]?.rawStock || 2000;
-    const capacity = Math.round(latestStock * 1.2); // Simulated capacity constraint
-
-    const restockItem = forecasts.find(f => f.upper > capacity);
-    const rMonth = restockItem ? restockItem.month : null;
-
-    return { processedForecastData: combined, inventoryCapacity: capacity, restockMonth: rMonth };
+    return () => clearTimeout(timer);
   }, [rawData, isDataUploaded]);
+
+  const { processedForecastData, inventoryCapacity, restockMonth } = chartState;
 
   return (
     <motion.div
