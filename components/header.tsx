@@ -5,6 +5,12 @@ import { Plus, Calendar, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function Header() {
+  // Calculate time of day greeting
+  const hour = new Date().getHours()
+  let greeting = "Good evening"
+  if (hour >= 5 && hour < 12) greeting = "Good morning"
+  else if (hour >= 12 && hour < 17) greeting = "Good afternoon"
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -19,7 +25,7 @@ export function Header() {
           transition={{ delay: 0.2, duration: 0.4 }}
           className="text-2xl font-semibold tracking-tight text-foreground"
         >
-          Hello, John!
+          {greeting}!
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -27,7 +33,7 @@ export function Header() {
           transition={{ delay: 0.3, duration: 0.4 }}
           className="text-sm text-muted-foreground"
         >
-          {"It's good to see you again. Here's your forecast overview."}
+          Ready to analyze. Here's your forecast overview.
         </motion.p>
       </div>
 

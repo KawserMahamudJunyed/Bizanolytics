@@ -1,14 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { login, signup } from './actions'
-import { Loader2, ArrowRight } from 'lucide-react'
+import { Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
+  const [password, setPassword] = useState('')
+
+  // Calculate password strength
+  const getPasswordStrength = (pass: string) => {
+    let strength = 0
+    if (pass.length >= 8) strength++
+    if (/[A-Z]/.test(pass)) strength++
+    if (/[0-9]/.test(pass)) strength++
+    if (/[^A-Za-z0-9]/.test(pass)) strength++
+    return strength
+  }
+  const strength = getPasswordStrength(password)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -32,8 +45,8 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4 relative overflow-hidden">
       {/* Background glowing effects */}
-      <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-emerald-500/10 blur-[128px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-purple-500/10 blur-[128px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-primary/5 blur-[128px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-secondary/20 blur-[128px] pointer-events-none" />
       
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -64,7 +77,7 @@ export default function LoginPage() {
                   name="fullName"
                   type="text"
                   required
-                  className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                  className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                   placeholder="John Doe"
                 />
               </div>
@@ -73,7 +86,7 @@ export default function LoginPage() {
                 <input
                   name="companyName"
                   type="text"
-                  className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                  className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                   placeholder="Acme Corp"
                 />
               </div>
@@ -82,7 +95,7 @@ export default function LoginPage() {
                   <label className="text-sm font-medium text-foreground">Industry</label>
                   <select
                     name="industry"
-                    className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                    className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                   >
                     <option value="Retail">Retail</option>
                     <option value="Manufacturing">Manufacturing</option>
@@ -96,7 +109,7 @@ export default function LoginPage() {
                   <label className="text-sm font-medium text-foreground">Primary Channel</label>
                   <select
                     name="salesChannel"
-                    className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                    className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                   >
                     <option value="Online">Online</option>
                     <option value="Offline">Offline / Store</option>
@@ -114,32 +127,62 @@ export default function LoginPage() {
               name="email"
               type="email"
               required
-              className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+              className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
               placeholder="you@example.com"
             />
           </div>
           
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Password</label>
-            <input
-              name="password"
-              type="password"
-              required
-              className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
-              placeholder="••••••••"
-            />
+            <div className="relative">
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg border border-border bg-secondary/50 pl-4 pr-10 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+            {!isLogin && password && (
+              <div className="mt-2 space-y-1">
+                <div className="flex gap-1 h-1">
+                  {[1, 2, 3, 4].map((level) => (
+                    <div
+                      key={level}
+                      className={`flex-1 rounded-full ${
+                        strength >= level
+                          ? strength <= 2 ? 'bg-orange-500' : strength === 3 ? 'bg-yellow-500' : 'bg-primary'
+                          : 'bg-border'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground text-right">
+                  {strength === 0 ? "Very weak" : strength === 1 ? "Weak" : strength === 2 ? "Fair" : strength === 3 ? "Good" : "Strong"}
+                </p>
+              </div>
+            )}
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="group relative flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-3 text-sm font-medium text-white transition-all hover:bg-emerald-600 disabled:opacity-50"
+            className="group relative flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>
-                {isLogin ? "Sign In" : "Create Account"}
+                {isLogin ? "Log in" : "Create Account"}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </>
             )}
@@ -152,10 +195,11 @@ export default function LoginPage() {
             onClick={() => {
               setIsLogin(!isLogin)
               setError(null)
+              setPassword("")
             }}
-            className="text-emerald-500 hover:underline font-medium"
+            className="text-foreground hover:underline font-medium"
           >
-            {isLogin ? "Sign up" : "Sign in"}
+            {isLogin ? "Sign up" : "Log in"}
           </button>
         </div>
         
