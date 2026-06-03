@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo } from "react"
+import React, { useMemo, useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import {
   PieChart,
@@ -12,6 +12,7 @@ import {
 import { ArrowUpDown, ArrowUp, ArrowDown, Download, Filter } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
+import { apiRequest } from "@/lib/api"
 
 const DIVISION_MAPPING: Record<string, string[]> = {
   "Dhaka": ["dhaka", "savar", "gazipur", "narayanganj", "tangail", "faridpur", "manikganj", "munshiganj", "narsingdi", "shariatpur", "madaripur", "gopalganj", "rajbari"],
@@ -83,17 +84,32 @@ function Sparkline({ data, color = "var(--foreground)" }: { data: number[]; colo
 
 // Regional Distribution Pie Chart
 export function RegionalDistribution() {
-  const { rawData, isDataUploaded } = useData()
+  const { isDataUploaded } = useData()
+  const [regions, setRegions] = useState<{ region: string, revenue: number, percentage: number }[]>([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchRegionalData() {
+      if (!isDataUploaded) {
+        setRegions([]);
+        return;
+      }
+      setLoading(true);
+      try {
+        const response = await apiRequest('/dashboard/regional-revenue');
+        if (response && response.regions) {
+          setRegions(response.regions);
+        }
+      } catch (err) {
+        console.error('Failed to fetch regional revenue:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchRegionalData();
+  }, [isDataUploaded]);
 
   const dynamicRegionData = useMemo(() => {
-    if (!isDataUploaded || !rawData || !rawData.length) return [];
-
-    const grouped: Record<string, number> = {}
-    rawData.forEach((row: any) => {
-      const divName = getDivision(row.Location)
-      grouped[divName] = (grouped[divName] || 0) + (row.Revenue_BDT || 0)
-    })
-
     const colors = [
       "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899",
       "#14b8a6", "#f97316", "#6366f1", "#84cc16", "#0ea5e9", "#d946ef",
@@ -103,14 +119,12 @@ export function RegionalDistribution() {
       "#9333ea", "#c026d3", "#db2777", "#e11d48"
     ]
 
-    return Object.entries(grouped)
-      .sort((a, b) => b[1] - a[1]) // highest first
-      .map(([name, value], idx) => ({
-        name,
-        value,
-        fill: colors[idx % colors.length]
-      }))
-  }, [rawData, isDataUploaded])
+    return regions.map((r, idx) => ({
+      name: r.region,
+      value: r.revenue,
+      fill: colors[idx % colors.length]
+    }));
+  }, [regions])
 
   const total = dynamicRegionData.reduce((sum, r) => sum + r.value, 0) || 1 // fallback to 1 to avoid NaN
 

@@ -36,8 +36,18 @@ export function DataUpload() {
       return
     }
     
+    // Clean keys of all objects in parsedData by trimming whitespaces
+    const cleanedData = parsedData.map(row => {
+      if (!row || typeof row !== 'object') return row;
+      const cleanRow: any = {};
+      for (const key of Object.keys(row)) {
+        cleanRow[key.trim()] = row[key];
+      }
+      return cleanRow;
+    });
+
     // Check Critical Columns
-    const firstRow = parsedData[0]
+    const firstRow = cleanedData[0]
     const hasCritical = firstRow.hasOwnProperty('Date') && 
                         firstRow.hasOwnProperty('Product_Name') && 
                         firstRow.hasOwnProperty('Units_Sold') && 
@@ -53,7 +63,7 @@ export function DataUpload() {
     const hasCategory = firstRow.hasOwnProperty('Category')
     if (!hasCategory) {
       setUploadState("imputing")
-      const uniqueProducts = Array.from(new Set(parsedData.map(row => row.Product_Name))).filter(Boolean)
+      const uniqueProducts = Array.from(new Set(cleanedData.map(row => row.Product_Name))).filter(Boolean)
       
       try {
         const res = await fetch("/api/impute-data", {
@@ -69,7 +79,7 @@ export function DataUpload() {
           const mapDict: Record<string, string> = {}
           data.mapping.forEach((item: any) => { mapDict[item.productName] = item.category })
           
-          parsedData.forEach(row => {
+          cleanedData.forEach(row => {
             row.Category = mapDict[row.Product_Name] || "General"
           })
         }
@@ -86,7 +96,7 @@ export function DataUpload() {
       const response = await apiRequest('/data/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'sales', data: parsedData }),
+        body: JSON.stringify({ type: 'sales', data: cleanedData }),
       });
 
       if (response && response.rowsInserted > 0) {
