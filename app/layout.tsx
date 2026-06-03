@@ -5,6 +5,7 @@ import './globals.css'
 import 'leaflet/dist/leaflet.css'
 import { AppLayout } from '@/components/app-layout'
 import { DataProvider } from '@/contexts/DataContext'
+import { Toaster } from 'sonner'
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default async function RootLayout({
             {children}
           </AppLayout>
         </DataProvider>
+        <Toaster theme="dark" position="bottom-right" />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 
 import { useData } from "@/contexts/DataContext"
 import { createClient } from "@/utils/supabase/client"
+import { toast } from "sonner"
 
 type PipelineRun = {
   id: string
@@ -142,7 +143,12 @@ export default function PipelinePage() {
             duration: durationStr,
             records: rawData.length
           }).then(({ error }) => {
-            if (error) console.error("Pipeline insert error:", error)
+            if (error) {
+              console.error("Pipeline insert error:", error)
+              toast.error("Database Error: " + error.message)
+            } else {
+              toast.success("Pipeline run saved to database!")
+            }
           })
         }
       })
