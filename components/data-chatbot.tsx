@@ -6,6 +6,7 @@ import { MessageCircle, X, Send, User, Bot, Loader2, Trash2 } from "lucide-react
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
 import { createClient } from "@/utils/supabase/client"
+import ReactMarkdown from "react-markdown"
 
 interface Message {
   role: "user" | "assistant"
@@ -181,7 +182,19 @@ export function DataChatbot() {
                         : "bg-white/10 text-foreground border border-white/5 backdrop-blur-md rounded-tl-none"
                     )}
                   >
-                    {msg.content}
+                    <div className={cn("prose prose-sm", msg.role === "user" ? "prose-invert" : "dark:prose-invert", "max-w-none")}>
+                      <ReactMarkdown
+                        components={{
+                          p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                          strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
+                          ul: ({node, ...props}) => <ul className="list-disc pl-4 mb-2" {...props} />,
+                          ol: ({node, ...props}) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                          li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
                   </div>
                 </div>
               ))}
