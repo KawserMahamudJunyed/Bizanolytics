@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { logout } from "@/app/login/actions"
+import { createClient } from "@/utils/supabase/client"
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", active: true },
@@ -53,7 +54,14 @@ export function Sidebar({
   const sidebarWidth = isCollapsed ? "w-16" : "w-64"
 
   const handleLogout = async () => {
+    // 1. Clear client-side local storage session
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    
+    // 2. Clear server-side HTTP cookies
     await logout()
+    
+    // 3. Hard reload to homepage
     window.location.href = '/'
   }
 
