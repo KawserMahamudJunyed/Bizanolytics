@@ -14,7 +14,7 @@ export function AppLayout({ children, user }: { children: React.ReactNode, user:
   const [isCollapsed, setIsCollapsed] = useState(false)
   const pathname = usePathname()
 
-  if (pathname === '/login') {
+  if (pathname === '/login' || pathname === '/signup') {
     return <div className="min-h-screen bg-background">{children}</div>
   }
 

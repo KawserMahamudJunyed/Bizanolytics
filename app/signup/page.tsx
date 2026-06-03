@@ -1,19 +1,27 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { login } from './actions'
+import { signup } from '@/app/login/actions'
 import { Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [password, setPassword] = useState('')
-  const searchParams = useSearchParams()
-  const isSignupSuccess = searchParams.get('signup') === 'success'
+
+  // Calculate password strength
+  const getPasswordStrength = (pass: string) => {
+    let strength = 0
+    if (pass.length >= 8) strength++
+    if (/[A-Z]/.test(pass)) strength++
+    if (/[0-9]/.test(pass)) strength++
+    if (/[^A-Za-z0-9]/.test(pass)) strength++
+    return strength
+  }
+  const strength = getPasswordStrength(password)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -23,12 +31,12 @@ export default function LoginPage() {
     const formData = new FormData(e.currentTarget)
     
     try {
-      const result = await login(formData)
+      const result = await signup(formData)
       if (result?.error) {
         setError(result.error)
         setLoading(false)
       } else if (result?.success) {
-        window.location.href = '/'
+        window.location.href = '/login?signup=success'
       }
     } catch (err) {
       setError("An unexpected error occurred.")
@@ -48,18 +56,12 @@ export default function LoginPage() {
       >
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold text-foreground">
-            Welcome back
+            Create your account
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Enter your credentials to access your dashboard
+            Join Bizanolytics to save your data
           </p>
         </div>
-
-        {isSignupSuccess && (
-          <div className="mb-6 rounded-lg bg-emerald-500/10 p-4 text-sm text-emerald-500 border border-emerald-500/20">
-            Account created successfully! Please log in.
-          </div>
-        )}
 
         {error && (
           <div className="mb-6 rounded-lg bg-red-500/10 p-4 text-sm text-red-500 border border-red-500/20">
@@ -68,6 +70,54 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Full Name</label>
+            <input
+              name="fullName"
+              type="text"
+              required
+              className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+              placeholder="John Doe"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Company Name (Optional)</label>
+            <input
+              name="companyName"
+              type="text"
+              className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+              placeholder="Acme Corp"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Industry</label>
+              <select
+                name="industry"
+                className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+              >
+                <option value="Retail">Retail</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Technology">Technology</option>
+                <option value="Groceries">Groceries</option>
+                <option value="Services">Services</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Primary Channel</label>
+              <select
+                name="salesChannel"
+                className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+              >
+                <option value="Online">Online</option>
+                <option value="Offline">Offline / Store</option>
+                <option value="Omnichannel">Omnichannel (Both)</option>
+                <option value="B2B">B2B / Wholesale</option>
+              </select>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Email</label>
             <input
@@ -99,6 +149,25 @@ export default function LoginPage() {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            {password && (
+              <div className="mt-2 space-y-1">
+                <div className="flex gap-1 h-1">
+                  {[1, 2, 3, 4].map((level) => (
+                    <div
+                      key={level}
+                      className={`flex-1 rounded-full ${
+                        strength >= level
+                          ? strength <= 2 ? 'bg-orange-500' : strength === 3 ? 'bg-yellow-500' : 'bg-primary'
+                          : 'bg-border'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground text-right">
+                  {strength === 0 ? "Very weak" : strength === 1 ? "Weak" : strength === 2 ? "Fair" : strength === 3 ? "Good" : "Strong"}
+                </p>
+              </div>
+            )}
           </div>
 
           <button
@@ -110,7 +179,7 @@ export default function LoginPage() {
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>
-                Log in
+                Create Account
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </>
             )}
@@ -118,9 +187,9 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
-          <Link href="/signup" className="text-foreground hover:underline font-medium">
-            Sign up
+          Already have an account?{" "}
+          <Link href="/login" className="text-foreground hover:underline font-medium">
+            Log in
           </Link>
         </div>
         
