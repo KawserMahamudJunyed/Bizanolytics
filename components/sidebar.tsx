@@ -120,23 +120,22 @@ export function Sidebar({
         )}>
           {!isEffectivelyCollapsed ? (
             <>
+              {/* Invisible spacer to center the logo perfectly */}
+              <div className="hidden lg:block w-8 shrink-0" />
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
-                className="flex shrink-0 items-center pt-1 overflow-hidden"
+                className="flex shrink-0 items-center justify-center pt-1 overflow-hidden"
               >
-                <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-9 w-auto max-w-[160px] object-contain" />
+                <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-8 w-auto max-w-[140px] object-contain" />
               </motion.div>
               
               {/* Desktop Toggle */}
               <button
                 onClick={() => {
-                  const newValue = !isCollapsed;
-                  setIsCollapsed(newValue);
-                  if (newValue) {
-                    setIsHovered(false); // Immediately collapse visually
-                  }
+                  setIsCollapsed(true);
+                  setIsHovered(false);
                 }}
                 className="hidden lg:flex shrink-0 h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               >
@@ -145,7 +144,7 @@ export function Sidebar({
             </>
           ) : (
              <div className="flex shrink-0 items-center justify-center pt-1">
-                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-7 w-auto object-contain" />
+                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-8 w-auto object-contain" />
              </div>
           )}
           
