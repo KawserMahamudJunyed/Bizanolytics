@@ -67,13 +67,19 @@ export function Sidebar({
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Expand/Menu Button (Visible on Mobile, and on Desktop when Collapsed) */}
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        onClick={() => setIsOpen(true)}
-        className="fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-foreground lg:hidden"
+        onClick={() => {
+          setIsOpen(true) // For mobile
+          setIsCollapsed(false) // For desktop
+        }}
+        className={cn(
+          "fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-foreground transition-colors hover:bg-secondary shadow-sm",
+          !isCollapsed && "lg:hidden" // Hide on desktop ONLY if the sidebar is currently expanded
+        )}
       >
         <Menu className="h-5 w-5" />
       </motion.button>
@@ -104,12 +110,9 @@ export function Sidebar({
         style={{ width: isCollapsed ? 64 : 256 }}
       >
         {/* Logo + Collapse Toggle */}
-        <div className={cn(
-          "relative flex h-14 items-center px-3 mb-2",
-          isCollapsed ? "justify-center" : "justify-between"
-        )}>
+        <div className="relative flex h-14 w-full items-center justify-center mb-2 px-2 mt-2">
           {!isCollapsed ? (
-            <div className="flex items-center gap-3">
+            <>
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -118,30 +121,26 @@ export function Sidebar({
               >
                 <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-10 w-auto object-contain" />
               </motion.div>
-            </div>
+              
+              {/* Desktop Toggle (Only show PanelLeftClose when expanded) */}
+              <button
+                onClick={() => setIsCollapsed(true)}
+                className="hidden lg:flex absolute right-2 shrink-0 h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              >
+                <PanelLeftClose className="h-4 w-4" />
+              </button>
+            </>
           ) : (
-             <div className="flex shrink-0 items-center justify-center pt-2">
+             <div className="flex shrink-0 items-center justify-center pt-1">
                 <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-10 w-auto object-contain" />
              </div>
           )}
-          
-          {/* Desktop Toggle */}
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex shrink-0 h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-          >
-            {isCollapsed ? (
-              <Menu className="h-5 w-5" />
-            ) : (
-              <PanelLeftClose className="h-5 w-5" />
-            )}
-          </button>
           
           {/* Mobile Close Button */}
           {!isCollapsed && (
             <button
               onClick={() => setIsOpen(false)}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground lg:hidden"
+              className="absolute right-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground lg:hidden"
             >
               <X className="h-4 w-4" />
             </button>
