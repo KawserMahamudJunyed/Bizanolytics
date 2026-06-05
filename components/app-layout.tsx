@@ -13,6 +13,7 @@ import { AlertCircle } from "lucide-react"
 
 export function AppLayout({ children, user: serverUser }: { children: React.ReactNode, user: any }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
   const pathname = usePathname()
   const [user, setUser] = useState(serverUser)
 
@@ -39,12 +40,14 @@ export function AppLayout({ children, user: serverUser }: { children: React.Reac
       <Sidebar 
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
+        isHovered={isHovered}
+        setIsHovered={setIsHovered}
         user={user}
       />
 
       <main className={cn(
         "relative z-10 flex flex-col min-w-0 flex-1 transition-all duration-300",
-        isCollapsed ? "lg:pl-16" : "lg:pl-64"
+        (isCollapsed && !isHovered) ? "lg:pl-16" : "lg:pl-64"
       )}>
         <Header />
 

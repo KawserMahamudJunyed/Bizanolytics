@@ -42,14 +42,17 @@ const navItems = [
 export function Sidebar({ 
   isCollapsed,
   setIsCollapsed,
+  isHovered,
+  setIsHovered,
   user
 }: { 
   isCollapsed: boolean
   setIsCollapsed: (collapsed: boolean) => void
+  isHovered: boolean
+  setIsHovered: (hovered: boolean) => void
   user: any
 }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
   const pathname = usePathname()
 
   const isEffectivelyCollapsed = isCollapsed && !isHovered
@@ -128,7 +131,7 @@ export function Sidebar({
                 transition={{ delay: 0.2, duration: 0.4 }}
                 className="flex shrink-0 items-center justify-center pt-1 overflow-hidden"
               >
-                <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-8 w-auto max-w-[140px] object-contain" />
+                <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-10 w-auto max-w-[150px] object-contain" />
               </motion.div>
               
               {/* Desktop Toggle */}
@@ -144,7 +147,7 @@ export function Sidebar({
             </>
           ) : (
              <div className="flex shrink-0 items-center justify-center pt-1">
-                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-8 w-auto object-contain" />
+                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-9 w-auto object-contain" />
              </div>
           )}
           
