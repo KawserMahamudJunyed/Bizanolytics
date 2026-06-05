@@ -108,25 +108,21 @@ export function Sidebar({
           "relative flex h-14 items-center px-3 mb-2",
           isCollapsed ? "justify-center" : "justify-between"
         )}>
-          {!isCollapsed && (
+          {!isCollapsed ? (
             <div className="flex items-center gap-3">
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary"
+                className="flex shrink-0 items-center justify-center"
               >
-                <BarChart3 className="h-4 w-4 text-foreground" />
+                <img src="/logo-full.png" alt="Bizanolytics Logo" className="h-6 w-auto" />
               </motion.div>
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
-                exit={{ opacity: 0, width: 0 }}
-                className="text-base font-semibold tracking-tight text-foreground overflow-hidden whitespace-nowrap"
-              >
-                Bizanolytics
-              </motion.span>
             </div>
+          ) : (
+             <div className="flex shrink-0 items-center justify-center pt-2">
+                <img src="/logo-icon.png" alt="Bizanolytics Icon" className="h-8 w-auto" />
+             </div>
           )}
           
           {/* Desktop Toggle */}
