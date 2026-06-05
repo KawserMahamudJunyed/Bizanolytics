@@ -116,12 +116,12 @@ export function Sidebar({
                 transition={{ delay: 0.2, duration: 0.4 }}
                 className="flex shrink-0 items-center justify-center pt-1"
               >
-                <img src="/logo-full.png" alt="Bizanolytics Logo" className="h-10 w-auto object-contain" />
+                <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-10 w-auto object-contain" />
               </motion.div>
             </div>
           ) : (
              <div className="flex shrink-0 items-center justify-center pt-2">
-                <img src="/logo-icon.png" alt="Bizanolytics Icon" className="h-10 w-auto object-contain" />
+                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-10 w-auto object-contain" />
              </div>
           )}
           
