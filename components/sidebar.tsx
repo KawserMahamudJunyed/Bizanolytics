@@ -147,7 +147,7 @@ export function Sidebar({
             </>
           ) : (
              <div className="flex shrink-0 items-center justify-center pt-1">
-                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-9 w-auto object-contain" />
+                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-[18px] w-auto object-contain" />
              </div>
           )}
           
