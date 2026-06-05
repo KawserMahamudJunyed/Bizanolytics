@@ -189,7 +189,7 @@ export function Sidebar({
               <X className="h-4 w-4" />
             </button>
           )}
-        </div>
+        </motion.div>
 
         {/* Search - only show when not collapsed */}
         <AnimatePresence>
