@@ -114,29 +114,38 @@ export function Sidebar({
         style={{ width: isEffectivelyCollapsed ? 64 : 256 }}
       >
         {/* Logo + Collapse Toggle */}
-        <div className="relative flex h-14 w-full items-center justify-center mb-2 px-2 mt-2">
+        <div className={cn(
+          "relative flex h-14 w-full items-center mb-2 px-3 mt-2",
+          isEffectivelyCollapsed ? "justify-center" : "justify-between gap-2"
+        )}>
           {!isEffectivelyCollapsed ? (
             <>
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
-                className="flex shrink-0 items-center justify-center pt-1"
+                className="flex shrink-0 items-center pt-1 overflow-hidden"
               >
-                <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-10 w-auto object-contain" />
+                <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-9 w-auto max-w-[160px] object-contain" />
               </motion.div>
               
-              {/* Desktop Toggle (Only show PanelLeftClose when expanded) */}
+              {/* Desktop Toggle */}
               <button
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="hidden lg:flex absolute right-2 shrink-0 h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                onClick={() => {
+                  const newValue = !isCollapsed;
+                  setIsCollapsed(newValue);
+                  if (newValue) {
+                    setIsHovered(false); // Immediately collapse visually
+                  }
+                }}
+                className="hidden lg:flex shrink-0 h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               >
                 <PanelLeftClose className="h-4 w-4" />
               </button>
             </>
           ) : (
              <div className="flex shrink-0 items-center justify-center pt-1">
-                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-10 w-auto object-contain" />
+                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-7 w-auto object-contain" />
              </div>
           )}
           
