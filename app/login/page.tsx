@@ -36,7 +36,7 @@ export default function LoginPage() {
         setLoading(false)
       } else {
         setTimeout(() => {
-          window.location.href = '/'
+          window.location.href = '/dashboard'
         }, 500)
       }
     } catch (err) {
@@ -134,7 +134,7 @@ export default function LoginPage() {
         </div>
         
         <div className="mt-8 pt-6 border-t border-border/50 text-center">
-          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Continue without logging in (Guest Mode)
           </Link>
         </div>

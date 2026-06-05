@@ -215,7 +215,7 @@ export default function SignupPage() {
         </div>
         
         <div className="mt-8 pt-6 border-t border-border/50 text-center">
-          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Continue without logging in (Guest Mode)
           </Link>
         </div>

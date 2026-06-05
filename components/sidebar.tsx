@@ -209,14 +209,14 @@ export function Sidebar({
           )}
           <ul className="space-y-1">
             {[
-              { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+              { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
               { icon: Database, label: "Data Sources", href: "/data" },
               { icon: TrendingUp, label: "Forecasts", href: "/forecasts" },
               { icon: BarChart3, label: "Analytics", href: "/analytics" },
               { icon: Layers, label: "Integrations", href: "/integrations" },
               { icon: Activity, label: "Data Pipeline", href: "/pipeline" },
             ].map((item, index) => {
-              const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
+              const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
               return (
                 <motion.li
                   key={item.label}

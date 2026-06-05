@@ -31,7 +31,7 @@ export function AppLayout({ children, user: serverUser }: { children: React.Reac
     return () => subscription.unsubscribe()
   }, [])
 
-  if (pathname === '/login' || pathname === '/signup') {
+  if (pathname === '/login' || pathname === '/signup' || pathname === '/') {
     return <div className="min-h-screen bg-background">{children}</div>
   }
 
