@@ -178,8 +178,6 @@ export function Sidebar({
               <PanelLeftClose className="h-4 w-4" />
             </motion.button>
           )}
-        </motion.div>
-          
           {/* Mobile Close Button */}
           {!isEffectivelyCollapsed && (
             <button
