@@ -114,14 +114,14 @@ export function Sidebar({
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
-                className="flex shrink-0 items-center justify-center"
+                className="flex shrink-0 items-center justify-center pt-1"
               >
-                <img src="/logo-full.png" alt="Bizanolytics Logo" className="h-6 w-auto" />
+                <img src="/logo-full.png" alt="Bizanolytics Logo" className="h-10 w-auto object-contain" />
               </motion.div>
             </div>
           ) : (
              <div className="flex shrink-0 items-center justify-center pt-2">
-                <img src="/logo-icon.png" alt="Bizanolytics Icon" className="h-8 w-auto" />
+                <img src="/logo-icon.png" alt="Bizanolytics Icon" className="h-10 w-auto object-contain" />
              </div>
           )}
           
