@@ -117,39 +117,68 @@ export function Sidebar({
         style={{ width: isEffectivelyCollapsed ? 64 : 256 }}
       >
         {/* Logo + Collapse Toggle */}
-        <div className={cn(
-          "relative flex h-14 w-full items-center mb-2 px-3 mt-2",
-          isEffectivelyCollapsed ? "justify-center" : "justify-between gap-2"
-        )}>
-          {!isEffectivelyCollapsed ? (
-            <>
-              {/* Invisible spacer to center the logo perfectly */}
-              <div className="hidden lg:block w-8 shrink-0" />
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-                className="flex shrink-0 items-center justify-center pt-1 overflow-hidden"
-              >
-                <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-10 w-auto max-w-[150px] object-contain" />
-              </motion.div>
-              
-              {/* Desktop Toggle */}
-              <button
-                onClick={() => {
-                  setIsCollapsed(true);
-                  setIsHovered(false);
-                }}
-                className="hidden lg:flex shrink-0 h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-              >
-                <PanelLeftClose className="h-4 w-4" />
-              </button>
-            </>
-          ) : (
-             <div className="flex shrink-0 items-center justify-center pt-1">
-                <img src="/logo-icon.svg" alt="Bizanolytics Icon" className="h-[18px] w-auto object-contain" />
-             </div>
+        <motion.div 
+          layout
+          className={cn(
+            "relative flex h-14 w-full items-center mb-2 px-3 mt-2",
+            isEffectivelyCollapsed ? "justify-center" : "justify-between gap-2"
           )}
+        >
+          {!isEffectivelyCollapsed && (
+            <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="hidden lg:block w-8 shrink-0" />
+          )}
+
+          <motion.div
+            layout
+            className="flex shrink-0 items-center justify-center relative h-10"
+          >
+            {/* Full Logo */}
+            <motion.img 
+              src="/logo-full.svg" 
+              alt="Bizanolytics Logo" 
+              initial={false}
+              animate={{ 
+                opacity: isEffectivelyCollapsed ? 0 : 1,
+                filter: isEffectivelyCollapsed ? "blur(4px)" : "blur(0px)"
+              }}
+              transition={{ duration: 0.3 }}
+              className={cn(
+                "h-10 w-auto max-w-[150px] object-contain origin-left",
+                isEffectivelyCollapsed ? "absolute left-0" : "relative"
+              )}
+            />
+            {/* Icon Logo */}
+            <motion.img 
+              src="/logo-icon.svg" 
+              alt="Bizanolytics Icon" 
+              initial={false}
+              animate={{ 
+                opacity: isEffectivelyCollapsed ? 1 : 0,
+              }}
+              transition={{ duration: 0.3 }}
+              className={cn(
+                "h-[18px] w-auto object-contain top-1/2 -translate-y-1/2",
+                isEffectivelyCollapsed ? "relative" : "absolute left-[4px]" // Slight offset to align with the first letter of full logo
+              )}
+            />
+          </motion.div>
+          
+          {/* Desktop Toggle */}
+          {!isEffectivelyCollapsed && (
+            <motion.button
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              onClick={() => {
+                setIsCollapsed(true);
+                setIsHovered(false);
+              }}
+              className="hidden lg:flex shrink-0 h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </motion.button>
+          )}
+        </motion.div>
           
           {/* Mobile Close Button */}
           {!isEffectivelyCollapsed && (
