@@ -128,40 +128,31 @@ export function Sidebar({
             <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="hidden lg:block w-8 shrink-0" />
           )}
 
-          <motion.div
-            layout
-            className="flex shrink-0 items-center justify-center relative h-10"
-          >
-            {/* Full Logo */}
-            <motion.img 
-              src="/logo-full.svg" 
-              alt="Bizanolytics Logo" 
-              initial={false}
-              animate={{ 
-                opacity: isEffectivelyCollapsed ? 0 : 1,
-                filter: isEffectivelyCollapsed ? "blur(4px)" : "blur(0px)"
-              }}
-              transition={{ duration: 0.3 }}
-              className={cn(
-                "h-10 w-auto max-w-[150px] object-contain origin-left",
-                isEffectivelyCollapsed ? "absolute left-0" : "relative"
-              )}
-            />
-            {/* Icon Logo */}
-            <motion.img 
-              src="/logo-icon.svg" 
-              alt="Bizanolytics Icon" 
-              initial={false}
-              animate={{ 
-                opacity: isEffectivelyCollapsed ? 1 : 0,
-              }}
-              transition={{ duration: 0.3 }}
-              className={cn(
-                "h-[18px] w-auto object-contain top-1/2 -translate-y-1/2",
-                isEffectivelyCollapsed ? "relative" : "absolute left-[4px]" // Slight offset to align with the first letter of full logo
-              )}
-            />
-          </motion.div>
+          <AnimatePresence mode="wait">
+            {isEffectivelyCollapsed ? (
+              <motion.img 
+                key="icon"
+                src="/logo-icon.svg" 
+                alt="Bizanolytics Icon" 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.15 }}
+                className="h-7 w-auto object-contain"
+              />
+            ) : (
+              <motion.img 
+                key="full"
+                src="/logo-full.svg" 
+                alt="Bizanolytics Logo" 
+                initial={{ opacity: 0, filter: "blur(4px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(4px)" }}
+                transition={{ duration: 0.2 }}
+                className="h-9 w-auto max-w-[160px] object-contain"
+              />
+            )}
+          </AnimatePresence>
           
           {/* Desktop Toggle */}
           {!isEffectivelyCollapsed && (
