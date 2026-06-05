@@ -121,7 +121,7 @@ export function Sidebar({
           layout
           className={cn(
             "relative flex h-14 w-full items-center mb-2 px-3 mt-2",
-            isEffectivelyCollapsed ? "justify-center" : "justify-between gap-2"
+            isEffectivelyCollapsed ? "justify-center" : "justify-center lg:justify-between gap-2"
           )}
         >
           {!isEffectivelyCollapsed && (
@@ -138,7 +138,7 @@ export function Sidebar({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.15 }}
-                className="h-7 w-auto object-contain"
+                className="h-3.5 w-auto object-contain"
               />
             ) : (
               <motion.img 
