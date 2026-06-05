@@ -49,9 +49,11 @@ export function Sidebar({
   user: any
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
   const pathname = usePathname()
 
-  const sidebarWidth = isCollapsed ? "w-16" : "w-64"
+  const isEffectivelyCollapsed = isCollapsed && !isHovered
+  const sidebarWidth = isEffectivelyCollapsed ? "w-16" : "w-64"
 
   const handleLogout = async () => {
     // 1. Clear client-side local storage session
@@ -99,19 +101,21 @@ export function Sidebar({
 
       {/* Sidebar */}
       <motion.aside
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         initial={{ x: -20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1, width: isCollapsed ? 64 : 256 }}
+        animate={{ x: 0, opacity: 1, width: isEffectivelyCollapsed ? 64 : 256 }}
         transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
         className={cn(
           "fixed left-0 top-0 z-50 flex h-screen flex-col border-r border-border bg-sidebar transition-all duration-300 lg:translate-x-0",
           isOpen ? "translate-x-0 w-64" : "-translate-x-full",
           "lg:w-auto"
         )}
-        style={{ width: isCollapsed ? 64 : 256 }}
+        style={{ width: isEffectivelyCollapsed ? 64 : 256 }}
       >
         {/* Logo + Collapse Toggle */}
         <div className="relative flex h-14 w-full items-center justify-center mb-2 px-2 mt-2">
-          {!isCollapsed ? (
+          {!isEffectivelyCollapsed ? (
             <>
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -124,7 +128,7 @@ export function Sidebar({
               
               {/* Desktop Toggle (Only show PanelLeftClose when expanded) */}
               <button
-                onClick={() => setIsCollapsed(true)}
+                onClick={() => setIsCollapsed(!isCollapsed)}
                 className="hidden lg:flex absolute right-2 shrink-0 h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               >
                 <PanelLeftClose className="h-4 w-4" />
@@ -137,7 +141,7 @@ export function Sidebar({
           )}
           
           {/* Mobile Close Button */}
-          {!isCollapsed && (
+          {!isEffectivelyCollapsed && (
             <button
               onClick={() => setIsOpen(false)}
               className="absolute right-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground lg:hidden"
@@ -149,7 +153,7 @@ export function Sidebar({
 
         {/* Search - only show when not collapsed */}
         <AnimatePresence>
-          {!isCollapsed && (
+          {!isEffectivelyCollapsed && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
@@ -169,7 +173,7 @@ export function Sidebar({
 
         {/* Navigation - Main Items */}
         <nav className="relative flex-1 overflow-y-auto px-3 py-2">
-          {!isCollapsed && (
+          {!isEffectivelyCollapsed && (
             <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
               Main Menu
             </p>
@@ -194,17 +198,17 @@ export function Sidebar({
                   <Link
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    title={isCollapsed ? item.label : undefined}
+                    title={isEffectivelyCollapsed ? item.label : undefined}
                     className={cn(
                       "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
                       isActive
                         ? "bg-secondary text-foreground"
                         : "text-muted-foreground hover:bg-secondary hover:text-foreground",
-                      isCollapsed && "justify-center px-0"
+                      isEffectivelyCollapsed && "justify-center px-0"
                     )}
                   >
                     <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-foreground")} />
-                    {!isCollapsed && (
+                    {!isEffectivelyCollapsed && (
                       <>
                         <span>{item.label}</span>
                         {isActive && (
@@ -235,18 +239,18 @@ export function Sidebar({
           {user ? (
             <div className={cn(
               "flex items-center gap-2.5 rounded-xl p-2 transition-all hover:bg-secondary group cursor-pointer",
-              isCollapsed && "justify-center p-0"
+              isEffectivelyCollapsed && "justify-center p-0"
             )}>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-foreground ring-1 ring-border shrink-0">
                 {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase() || "U"}
               </div>
-              {!isCollapsed && (
+              {!isEffectivelyCollapsed && (
                 <div className="flex-1 overflow-hidden">
                   <p className="truncate text-sm font-medium text-foreground">{user.user_metadata?.full_name || "User"}</p>
                   <p className="truncate text-[10px] text-muted-foreground">{user.email}</p>
                 </div>
               )}
-              {!isCollapsed && (
+              {!isEffectivelyCollapsed && (
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-4">
                   <button onClick={handleLogout} className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-muted-foreground hover:bg-destructive hover:text-destructive-foreground transition-colors" title="Log out">
                     <LogOut className="h-4 w-4" />
@@ -259,14 +263,14 @@ export function Sidebar({
               href="/login"
               className={cn(
                 "flex items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary/90 transition-colors text-primary-foreground font-medium",
-                isCollapsed ? "h-9 w-9 p-0" : "w-full py-2.5 px-4 text-sm"
+                isEffectivelyCollapsed ? "h-9 w-9 p-0" : "w-full py-2.5 px-4 text-sm"
               )}
-              title={isCollapsed ? "Log In" : undefined}
+              title={isEffectivelyCollapsed ? "Log In" : undefined}
             >
-              <div className={cn(isCollapsed && "flex items-center justify-center")}>
+              <div className={cn(isEffectivelyCollapsed && "flex items-center justify-center")}>
                 <LogOut className="h-4 w-4 rotate-180" />
               </div>
-              {!isCollapsed && <span>Log in</span>}
+              {!isEffectivelyCollapsed && <span>Log in</span>}
             </Link>
           )}
         </motion.div>
