@@ -11,7 +11,9 @@ export default function LandingPage() {
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 backdrop-blur-md border-b border-border/50 bg-background/50">
         <div className="flex items-center">
-          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-[52px] w-auto" />
+        <Link href="/">
+          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-[52px] w-auto cursor-pointer" />
+        </Link>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
@@ -224,7 +226,9 @@ export default function LandingPage() {
       <footer className="border-t border-border bg-secondary/30 py-12 px-6 lg:px-8">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center">
-            <img src="/logo-full.svg" alt="Bizanolytics" className="h-[56px] w-auto opacity-70 grayscale" />
+          <Link href="/">
+            <img src="/logo-full.svg" alt="Bizanolytics" className="h-[56px] w-auto opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer" />
+          </Link>
           </div>
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Bizanolytics. All rights reserved.
