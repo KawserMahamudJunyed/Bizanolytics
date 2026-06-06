@@ -268,8 +268,7 @@ export function ForecastAccuracy() {
 
 
 
-const ParetoTooltip = ({ active, payload, label }: any) => {
-  const { userCurrency } = useData();
+const ParetoTooltip = ({ active, payload, label, userCurrency }: any) => {
   if (active && payload && payload.length) {
     return (
       <motion.div
@@ -295,7 +294,8 @@ const ParetoTooltip = ({ active, payload, label }: any) => {
 }
 
 export function ParetoChart() {
-  const { rawData } = useData();
+  const { rawData, userCurrency } = useData();
+  const sym = CURRENCY_SYMBOLS[userCurrency as CurrencyCode] || "৳";
   const [processedParetoData, setProcessedParetoData] = useState<any[]>([]);
   
   useEffect(() => {
@@ -361,7 +361,7 @@ export function ParetoChart() {
               <XAxis dataKey="category" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} angle={-45} textAnchor="end" height={60} />
               <YAxis yAxisId="left" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(value) => `${sym}${value/1000}k`} />
               <YAxis yAxisId="right" orientation="right" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}%`} />
-              <Tooltip content={<ParetoTooltip />} />
+              <Tooltip content={<ParetoTooltip userCurrency={userCurrency} />} />
               <ReferenceLine yAxisId="right" y={80} stroke="var(--chart-4)" strokeDasharray="4 4" label={{ value: '80% Threshold', position: 'insideTopLeft', fill: 'var(--chart-4)', fontSize: 11 }} />
               <Bar yAxisId="left" dataKey="profit" name="Profit" radius={[4, 4, 0, 0]}>
                 {processedParetoData.map((entry, index) => (

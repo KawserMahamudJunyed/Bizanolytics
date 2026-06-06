@@ -59,7 +59,7 @@ function Sparkline({ data, color = "var(--foreground)" }: { data: number[]; colo
 
 // Regional Distribution Pie Chart
 export function RegionalDistribution() {
-  const { rawData, isDataUploaded } = useData()
+  const { rawData, isDataUploaded, userCurrency } = useData()
 
   const dynamicRegionData = useMemo(() => {
     if (!isDataUploaded || !rawData || !rawData.length) return [];

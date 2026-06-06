@@ -36,40 +36,40 @@ const CATEGORIES = [
     title: "E-Commerce",
     description: "Connect Shopify, WooCommerce, or Custom API",
     icon: ShoppingBag,
-    color: "text-foreground",
-    bg: "bg-secondary",
-    border: "border-border",
-    hover: "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
+    color: "text-blue-500",
+    bg: "bg-blue-500/10",
+    border: "border-blue-500/20",
+    hover: "hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10"
   },
   {
     id: "pos",
     title: "Retail POS",
     description: "Sync with Square, Lightspeed, or Clover",
     icon: Store,
-    color: "text-foreground",
-    bg: "bg-secondary",
-    border: "border-border",
-    hover: "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
+    color: "text-purple-500",
+    bg: "bg-purple-500/10",
+    border: "border-purple-500/20",
+    hover: "hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10"
   },
   {
     id: "databases",
     title: "Databases & Spreadsheets",
     description: "Connect Sheets, Excel, or API Endpoints",
     icon: Database,
-    color: "text-foreground",
-    bg: "bg-secondary",
-    border: "border-border",
-    hover: "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
+    color: "text-emerald-500",
+    bg: "bg-emerald-500/10",
+    border: "border-emerald-500/20",
+    hover: "hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10"
   },
   {
     id: "bizpos",
     title: "BizPOS (Manual Entry)",
     description: "Native manual point-of-sale logging",
     icon: Calculator,
-    color: "text-foreground",
-    bg: "bg-secondary",
-    border: "border-border",
-    hover: "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
+    color: "text-amber-500",
+    bg: "bg-amber-500/10",
+    border: "border-amber-500/20",
+    hover: "hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10"
   }
 ]
 
