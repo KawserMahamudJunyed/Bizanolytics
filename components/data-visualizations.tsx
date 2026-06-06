@@ -157,7 +157,7 @@ export function RegionalDistribution() {
 
 // Regional Performance with Sparklines
 export function RegionalPerformance() {
-  const { rawData } = useData();
+  const { rawData, userCurrency } = useData();
   
   const regions = useMemo(() => {
     if (!rawData || rawData.length === 0) return [];

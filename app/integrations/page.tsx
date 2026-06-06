@@ -17,7 +17,7 @@ import {
   Zap,
   Calendar,
   CreditCard,
-  Link as LinkIcon
+  Link2
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -175,7 +175,7 @@ export default function IntegrationsPage() {
     <div className="max-w-5xl mx-auto py-8">
       <div className="mb-10 text-center space-y-4">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          <LinkIcon className="h-8 w-8" />
+          <Link2 className="h-8 w-8" />
         </div>
         <h1 className="text-3xl font-bold text-foreground">Integrations Hub</h1>
         <p className="text-muted-foreground max-w-xl mx-auto">

@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
+import Link from "next/link"
 
 const CURRENCIES = [
   { code: "BDT", symbol: "৳", label: "Bangladeshi Taka (BDT)" },
