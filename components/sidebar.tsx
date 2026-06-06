@@ -267,7 +267,7 @@ export function Sidebar({
           className="relative border-t border-border p-3"
         >
           {user ? (
-            <Link href="/settings" className={cn(
+            <Link href="/profile" className={cn(
               "flex items-center gap-2.5 rounded-xl p-2 transition-all hover:bg-secondary group cursor-pointer",
               isEffectivelyCollapsed && "justify-center p-0"
             )}>
