@@ -62,7 +62,7 @@ export default function SettingsPage() {
       setIsSaving(false)
       return
     }
-
+    const { error } = await supabase
       .from("profiles")
       .upsert({
         id: session.user.id,
