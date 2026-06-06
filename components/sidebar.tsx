@@ -128,31 +128,33 @@ export function Sidebar({
             <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="hidden lg:block w-8 shrink-0" />
           )}
 
-          <AnimatePresence mode="wait">
-            {isEffectivelyCollapsed ? (
-              <motion.img 
-                key="icon"
-                src="/logo-icon.svg" 
-                alt="Bizanolytics Icon" 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.15 }}
-                className="h-5 w-auto object-contain"
-              />
-            ) : (
-              <motion.img 
-                key="full"
-                src="/logo-full.svg" 
-                alt="Bizanolytics Logo" 
-                initial={{ opacity: 0, filter: "blur(4px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, filter: "blur(4px)" }}
-                transition={{ duration: 0.2 }}
-                className="h-9 w-auto max-w-[160px] object-contain"
-              />
-            )}
-          </AnimatePresence>
+          <Link href="/">
+            <AnimatePresence mode="wait">
+              {isEffectivelyCollapsed ? (
+                <motion.img 
+                  key="icon"
+                  src="/logo-icon.svg" 
+                  alt="Bizanolytics Icon" 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.15 }}
+                  className="h-5 w-auto object-contain cursor-pointer"
+                />
+              ) : (
+                <motion.img 
+                  key="full"
+                  src="/logo-full.svg" 
+                  alt="Bizanolytics Logo" 
+                  initial={{ opacity: 0, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, filter: "blur(4px)" }}
+                  transition={{ duration: 0.2 }}
+                  className="h-9 w-auto max-w-[160px] object-contain cursor-pointer"
+                />
+              )}
+            </AnimatePresence>
+          </Link>
           
           {/* Desktop Toggle */}
           {!isEffectivelyCollapsed && (
