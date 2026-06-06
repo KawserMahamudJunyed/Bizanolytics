@@ -23,8 +23,6 @@ export default function SettingsPage() {
   const { setUserCurrency } = useData()
   
   const [profile, setProfile] = useState({
-    full_name: "",
-    company_name: "",
     currency: "BDT"
   })
 
@@ -38,24 +36,16 @@ export default function SettingsPage() {
         return
       }
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("profiles")
-        .select("full_name, company_name, currency")
+        .select("currency")
         .eq("id", session.user.id)
         .single()
 
       if (data) {
         setProfile({
-          full_name: data.full_name || session.user.user_metadata?.full_name || "",
-          company_name: data.company_name || "",
           currency: data.currency || "BDT"
         })
-      } else {
-        // Fallback to auth metadata if no profile row yet
-        setProfile(p => ({
-          ...p,
-          full_name: session.user.user_metadata?.full_name || ""
-        }))
       }
       setIsLoading(false)
     }
@@ -73,15 +63,12 @@ export default function SettingsPage() {
       return
     }
 
-    const { error } = await supabase
       .from("profiles")
       .upsert({
         id: session.user.id,
-        full_name: profile.full_name,
-        company_name: profile.company_name,
         currency: profile.currency,
         updated_at: new Date().toISOString()
-      })
+      }, { onConflict: 'id' })
 
     setIsSaving(false)
     
@@ -95,7 +82,6 @@ export default function SettingsPage() {
   }
 
   const tabs = [
-    { id: "general", label: "General", icon: User },
     { id: "preferences", label: "Preferences", icon: Coins },
     { id: "billing", label: "Billing & Plans", icon: CreditCard },
     { id: "security", label: "Security", icon: Shield },
@@ -110,10 +96,15 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-12">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Settings</h1>
-        <p className="text-muted-foreground mt-2">Manage your account settings and preferences.</p>
+    <div className="max-w-5xl mx-auto space-y-8 pb-12 pt-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Settings</h1>
+          <p className="text-muted-foreground mt-2">Manage your account settings and preferences.</p>
+        </div>
+        <Link href="/profile" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-secondary transition-colors">
+          <User className="w-4 h-4" /> Go to Profile
+        </Link>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -140,46 +131,6 @@ export default function SettingsPage() {
 
         {/* Content Area */}
         <div className="flex-1 min-w-0 space-y-6">
-          {activeTab === "general" && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="card-base p-6 md:p-8 space-y-8"
-            >
-              <div>
-                <h3 className="text-lg font-medium text-foreground">Profile Information</h3>
-                <p className="text-sm text-muted-foreground">Update your personal and company details.</p>
-              </div>
-              
-              <div className="space-y-4 max-w-md">
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">Full Name</label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input
-                      type="text"
-                      value={profile.full_name}
-                      onChange={e => setProfile({...profile, full_name: e.target.value})}
-                      className="w-full rounded-xl border border-border bg-secondary/50 py-2.5 pl-10 pr-4 text-sm text-foreground focus:ring-2 focus:ring-primary/30 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">Company Name</label>
-                  <div className="relative">
-                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input
-                      type="text"
-                      value={profile.company_name}
-                      onChange={e => setProfile({...profile, company_name: e.target.value})}
-                      className="w-full rounded-xl border border-border bg-secondary/50 py-2.5 pl-10 pr-4 text-sm text-foreground focus:ring-2 focus:ring-primary/30 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
 
           {activeTab === "preferences" && (
             <motion.div
@@ -227,7 +178,7 @@ export default function SettingsPage() {
           )}
 
           {/* Action Footer */}
-          {(activeTab === "general" || activeTab === "preferences") && (
+          {activeTab === "preferences" && (
             <div className="flex justify-end pt-4">
               <button
                 onClick={handleSave}

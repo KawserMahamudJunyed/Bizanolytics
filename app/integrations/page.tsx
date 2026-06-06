@@ -16,13 +16,11 @@ import {
   Clock,
   Zap,
   Calendar,
-  CreditCard
+  CreditCard,
+  Link as LinkIcon
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { OwnerConnect } from "./components/OwnerConnect"
-import { BizPOS } from "./components/BizPOS"
-import { DatabaseConnect } from "./components/DatabaseConnect"
 import { useData } from "@/contexts/DataContext"
 import { mapIntegrationToSMEData } from "./utils/normalize"
 import type { IntegrationData } from "./utils/types"
@@ -74,7 +72,6 @@ const CATEGORIES = [
 ]
 
 export default function IntegrationsPage() {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [data, setData] = useState<IntegrationData | null>(null)
   const [syncFreq, setSyncFreq] = useState<"daily" | "hourly" | "instant">("daily")
   const [hasHydrated, setHasHydrated] = useState(false)
@@ -93,15 +90,8 @@ export default function IntegrationsPage() {
     setHasHydrated(true)
   }, [])
 
-  const handleDataReady = useCallback((newData: IntegrationData) => {
-    setData(newData)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
-    setUploadedData(mapIntegrationToSMEData(newData))
-  }, [setUploadedData])
-
   const handleClear = useCallback(() => {
     setData(null)
-    setActiveCategory(null)
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem(SYNC_FREQ_KEY)
     resetData()
@@ -183,63 +173,49 @@ export default function IntegrationsPage() {
   // Selection Hub
   return (
     <div className="max-w-5xl mx-auto py-8">
-      {!activeCategory ? (
-        <>
-          <div className="mb-10 text-center space-y-4">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <LinkIcon className="h-8 w-8" />
-            </div>
-            <h1 className="text-3xl font-bold text-foreground">Integrations Hub</h1>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Connect your favorite platforms, sync your databases, or log manual sales using BizPOS. Choose a category to get started.
-            </p>
-          </div>
+      <div className="mb-10 text-center space-y-4">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <LinkIcon className="h-8 w-8" />
+        </div>
+        <h1 className="text-3xl font-bold text-foreground">Integrations Hub</h1>
+        <p className="text-muted-foreground max-w-xl mx-auto">
+          Connect your favorite platforms, sync your databases, or log manual sales using BizPOS. Choose a category to get started.
+        </p>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {CATEGORIES.map((cat) => (
-              <motion.div
-                key={cat.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setActiveCategory(cat.id)}
-                className={cn("card-base p-6 cursor-pointer flex items-start gap-4 transition-all duration-300", cat.hover, cat.border)}
-              >
-                <div className={cn("flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl", cat.bg, cat.color)}>
-                  <cat.icon className="h-7 w-7" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {CATEGORIES.map((cat) => (
+          <motion.div
+            key={cat.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Link
+              href={`/integrations/${cat.id}`}
+              className={cn(
+                "block h-full card-base p-6 text-left transition-all duration-300 border",
+                cat.bg,
+                cat.border,
+                cat.hover
+              )}
+            >
+              <div className="flex items-start gap-4">
+                <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-background shadow-sm", cat.color)}>
+                  <cat.icon className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-1">{cat.title}</h3>
-                  <p className="text-sm text-muted-foreground">{cat.description}</p>
+                  <h3 className="text-lg font-bold text-foreground">{cat.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+                    {cat.description}
+                  </p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </>
-      ) : (
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-          <button 
-            onClick={() => setActiveCategory(null)}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" /> Back to Categories
-          </button>
-
-          {(activeCategory === "ecommerce" || activeCategory === "pos") && (
-             <OwnerConnect 
-               onDataReady={handleDataReady} 
-               mode={activeCategory as "ecommerce" | "pos"} 
-             />
-          )}
-
-          {activeCategory === "databases" && (
-             <DatabaseConnect onDataReady={handleDataReady} />
-          )}
-
-          {activeCategory === "bizpos" && (
-            <BizPOS onComplete={() => setActiveCategory(null)} />
-          )}
-        </motion.div>
-      )}
+              </div>
+            </Link>
+          </motion.div>
+        ))}
+      </div>
     </div>
   )
 }
