@@ -63,8 +63,8 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
       className="card-base p-6 border-border"
     >
       <div className="flex items-center gap-3 mb-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-          <Database className="h-5 w-5 text-primary" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10">
+          <Database className="h-5 w-5 text-emerald-500" />
         </div>
         <div>
           <h3 className="text-base font-semibold text-foreground">Connect Database</h3>
@@ -77,7 +77,7 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
           onClick={() => setActiveTab("sheets")}
           className={cn(
             "flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all duration-200",
-            activeTab === "sheets" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+            activeTab === "sheets" ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/20" : "text-muted-foreground hover:text-foreground"
           )}
         >
           <Table className="h-4 w-4" /> Sheets / Excel
@@ -86,7 +86,7 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
           onClick={() => setActiveTab("sql")}
           className={cn(
             "flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all duration-200",
-            activeTab === "sql" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+            activeTab === "sql" ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/20" : "text-muted-foreground hover:text-foreground"
           )}
         >
           <Server className="h-4 w-4" /> SQL Database
@@ -141,7 +141,7 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
           disabled={isConnecting || (activeTab === "sheets" ? !sheetsUrl : !sqlString)}
           className={cn(
             "w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all",
-            isConnecting ? "bg-secondary text-primary cursor-wait" : "bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90",
+            isConnecting ? "bg-secondary text-emerald-600 cursor-wait" : "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600",
             (!sheetsUrl && activeTab === "sheets") || (!sqlString && activeTab === "sql") ? "opacity-50 cursor-not-allowed" : ""
           )}
         >

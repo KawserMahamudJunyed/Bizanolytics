@@ -88,7 +88,7 @@ export function BizPOS({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="card-base max-w-2xl mx-auto border-border bg-card overflow-hidden">
       {/* Header / Terminal Display */}
-      <div className="bg-secondary/50 p-6 border-b border-border relative overflow-hidden">
+      <div className="bg-amber-500/10 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-amber-500/20">
         <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
           <Calculator className="w-32 h-32 text-primary" />
         </div>
@@ -96,8 +96,8 @@ export function BizPOS({ onComplete }: { onComplete: () => void }) {
         <div className="flex justify-between items-start relative z-10">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">BizPOS Terminal Active</span>
+              <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500">BizPOS Terminal Active</span>
             </div>
             <h3 className="text-lg font-semibold text-foreground">Smart Register</h3>
           </div>
@@ -112,7 +112,7 @@ export function BizPOS({ onComplete }: { onComplete: () => void }) {
 
         <div className="mt-6 flex flex-col items-end">
           <span className="text-xs font-medium text-muted-foreground mb-1">Current Sale Total</span>
-          <span className="text-4xl md:text-5xl font-mono font-bold text-primary tracking-tight">
+          <span className="text-4xl md:text-5xl font-mono font-bold text-amber-500 tracking-tight">
             {formatCurrency(Number(totalRevenue), userCurrency)}
           </span>
         </div>
@@ -221,10 +221,7 @@ export function BizPOS({ onComplete }: { onComplete: () => void }) {
             onClick={handleSave}
             disabled={isSaving}
             className={cn(
-              "w-full flex items-center justify-center gap-2 rounded-xl py-3.5 mt-2 text-sm font-semibold transition-all",
-              isSaving 
-                ? "bg-secondary text-primary cursor-wait" 
-                : "bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"
+              "w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white py-3.5 font-medium transition-colors shadow-lg shadow-amber-500/20"
             )}
           >
             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}

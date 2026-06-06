@@ -267,7 +267,7 @@ export function Sidebar({
           className="relative border-t border-border p-3"
         >
           {user ? (
-            <div className={cn(
+            <Link href="/settings" className={cn(
               "flex items-center gap-2.5 rounded-xl p-2 transition-all hover:bg-secondary group cursor-pointer",
               isEffectivelyCollapsed && "justify-center p-0"
             )}>
@@ -282,12 +282,12 @@ export function Sidebar({
               )}
               {!isEffectivelyCollapsed && (
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-4">
-                  <button onClick={handleLogout} className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-muted-foreground hover:bg-destructive hover:text-destructive-foreground transition-colors" title="Log out">
+                  <button onClick={(e) => { e.preventDefault(); handleLogout(); }} className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-muted-foreground hover:bg-destructive hover:text-destructive-foreground transition-colors" title="Log out">
                     <LogOut className="h-4 w-4" />
                   </button>
                 </div>
               )}
-            </div>
+            </Link>
           ) : (
             <Link 
               href="/login"
