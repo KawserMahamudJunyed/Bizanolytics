@@ -1,0 +1,700 @@
+"use client"
+
+import { useState, useCallback, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  ShoppingBag,
+  Globe,
+  Key,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  AlertTriangle,
+  Download,
+  Link2,
+  Server,
+  Lock,
+  Store,
+  HelpCircle,
+} from "lucide-react"
+import { cn } from "@/lib/utils"
+import { toast } from "sonner"
+import {
+  normalizeShopify,
+  normalizeWooCommerce,
+  normalizeCustom,
+} from "../utils/normalize"
+import type {
+  IntegrationData,
+  PipelineStep,
+  PlatformType,
+} from "../utils/types"
+
+interface OwnerConnectProps {
+  onDataReady: (data: IntegrationData) => void
+  mode?: "ecommerce" | "pos"
+}
+
+const ECOMMERCE_PLATFORMS = [
+  {
+    key: "shopify" as PlatformType,
+    label: "Shopify",
+    icon: ShoppingBag,
+    gradient: "from-primary/80 to-primary",
+    accentBg: "bg-primary/10",
+    accentText: "text-primary",
+    accentBorder: "border-primary/30",
+    ringColor: "ring-primary/30",
+    description: "Connect via Storefront API",
+  },
+  {
+    key: "woocommerce" as PlatformType,
+    label: "WooCommerce",
+    icon: Store,
+    gradient: "from-primary/80 to-primary",
+    accentBg: "bg-primary/10",
+    accentText: "text-primary",
+    accentBorder: "border-primary/30",
+    ringColor: "ring-primary/30",
+    description: "Connect via REST API",
+  },
+  {
+    key: "custom" as PlatformType,
+    label: "Your Website",
+    icon: Globe,
+    gradient: "from-primary/80 to-primary",
+    accentBg: "bg-primary/10",
+    accentText: "text-primary",
+    accentBorder: "border-primary/30",
+    ringColor: "ring-primary/30",
+    description: "Connect any e-commerce site via API",
+  },
+]
+
+const POS_PLATFORMS = [
+  {
+    key: "square" as PlatformType,
+    label: "Square",
+    icon: Store,
+    gradient: "from-primary/80 to-primary",
+    accentBg: "bg-primary/10",
+    accentText: "text-primary",
+    accentBorder: "border-primary/30",
+    ringColor: "ring-primary/30",
+    description: "Connect via Square Retail API",
+  },
+  {
+    key: "lightspeed" as PlatformType,
+    label: "Lightspeed",
+    icon: Server,
+    gradient: "from-primary/80 to-primary",
+    accentBg: "bg-primary/10",
+    accentText: "text-primary",
+    accentBorder: "border-primary/30",
+    ringColor: "ring-primary/30",
+    description: "Connect via Lightspeed Retail API",
+  },
+  {
+    key: "clover" as PlatformType,
+    label: "Clover",
+    icon: Link2,
+    gradient: "from-primary/80 to-primary",
+    accentBg: "bg-primary/10",
+    accentText: "text-primary",
+    accentBorder: "border-primary/30",
+    ringColor: "ring-primary/30",
+    description: "Connect via Clover REST API",
+  },
+]
+
+const PIPELINE_STEPS = [
+  { key: "fetching", label: "Connecting…", icon: Link2 },
+  { key: "extracting", label: "Fetching products…", icon: Download },
+  { key: "updating", label: "Building dashboard…", icon: Server },
+]
+
+export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectProps) {
+  const PLATFORMS = mode === "ecommerce" ? ECOMMERCE_PLATFORMS : POS_PLATFORMS
+  const [activePlatform, setActivePlatform] = useState<PlatformType>(PLATFORMS[0].key)
+  const [currentStep, setCurrentStep] = useState<PipelineStep>("idle")
+  const [error, setError] = useState<string | null>(null)
+
+  // Reset active platform when mode changes
+  useEffect(() => {
+    setActivePlatform(PLATFORMS[0].key)
+  }, [mode])
+
+  // Shopify fields
+  const [shopifyDomain, setShopifyDomain] = useState("")
+  const [shopifyToken, setShopifyToken] = useState("")
+  const [showShopifyToken, setShowShopifyToken] = useState(false)
+
+  // WooCommerce fields
+  const [wooSiteUrl, setWooSiteUrl] = useState("")
+  const [wooKey, setWooKey] = useState("")
+  const [wooSecret, setWooSecret] = useState("")
+  const [showWooKey, setShowWooKey] = useState(false)
+  const [showWooSecret, setShowWooSecret] = useState(false)
+
+  // Custom API fields
+  const [customEndpoint, setCustomEndpoint] = useState("")
+  const [customToken, setCustomToken] = useState("")
+  const [showCustomToken, setShowCustomToken] = useState(false)
+
+  // POS fields
+  const [posToken, setPosToken] = useState("")
+  const [showPosToken, setShowPosToken] = useState(false)
+  const [posLocation, setPosLocation] = useState("")
+
+  const platform = PLATFORMS.find((p) => p.key === activePlatform) || PLATFORMS[0]
+  const isRunning = ["fetching", "extracting", "updating"].includes(currentStep)
+
+  // Handlers
+  const connectShopify = useCallback(async () => {
+    if (!shopifyDomain.trim() || !shopifyToken.trim()) {
+      toast.error("Please fill in both the store domain and API token")
+      return
+    }
+
+    setError(null)
+    setCurrentStep("fetching")
+
+    try {
+      const res = await fetch("/api/integrations/shopify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          domain: shopifyDomain.trim(),
+          storefrontToken: shopifyToken.trim(),
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to connect to Shopify")
+
+      setCurrentStep("extracting")
+      const normalized = normalizeShopify(data.products, data.domain)
+
+      if (normalized.products.length === 0) throw new Error("No products found in this Shopify store.")
+
+      setCurrentStep("updating")
+      await new Promise((r) => setTimeout(r, 600))
+      setCurrentStep("done")
+      onDataReady(normalized)
+      toast.success(`Connected! Found ${normalized.products.length} products`)
+    } catch (err: any) {
+      setCurrentStep("error")
+      setError(err.message || "Failed to connect to Shopify")
+      toast.error(err.message || "Connection failed")
+    }
+  }, [shopifyDomain, shopifyToken, onDataReady])
+
+  const connectWooCommerce = useCallback(async () => {
+    if (!wooSiteUrl.trim() || !wooKey.trim() || !wooSecret.trim()) {
+      toast.error("Please fill in all WooCommerce fields")
+      return
+    }
+
+    setError(null)
+    setCurrentStep("fetching")
+
+    try {
+      const res = await fetch("/api/integrations/woocommerce", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          siteUrl: wooSiteUrl.trim(),
+          consumerKey: wooKey.trim(),
+          consumerSecret: wooSecret.trim(),
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to connect to WooCommerce")
+
+      setCurrentStep("extracting")
+      const normalized = normalizeWooCommerce(data.products, data.siteUrl)
+
+      if (normalized.products.length === 0) throw new Error("No products found in this WooCommerce store.")
+
+      setCurrentStep("updating")
+      await new Promise((r) => setTimeout(r, 600))
+      setCurrentStep("done")
+      onDataReady(normalized)
+      toast.success(`Connected! Found ${normalized.products.length} products`)
+    } catch (err: any) {
+      setCurrentStep("error")
+      setError(err.message || "Failed to connect to WooCommerce")
+      toast.error(err.message || "Connection failed")
+    }
+  }, [wooSiteUrl, wooKey, wooSecret, onDataReady])
+
+  const connectCustom = useCallback(async () => {
+    if (!customEndpoint.trim()) {
+      toast.error("Please enter your API endpoint URL")
+      return
+    }
+
+    let validUrl = customEndpoint.trim()
+    if (!validUrl.startsWith("http")) validUrl = `https://${validUrl}`
+    try { new URL(validUrl) } catch { toast.error("Please enter a valid URL"); return }
+
+    setError(null)
+    setCurrentStep("fetching")
+
+    try {
+      const res = await fetch("/api/integrations/custom", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpointUrl: validUrl,
+          bearerToken: customToken.trim() || undefined,
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to fetch from your API")
+
+      setCurrentStep("extracting")
+      const normalized = normalizeCustom(data.products, data.endpointUrl)
+
+      if (normalized.products.length === 0) throw new Error("No products found from your API endpoint.")
+
+      setCurrentStep("updating")
+      await new Promise((r) => setTimeout(r, 600))
+      setCurrentStep("done")
+      onDataReady(normalized)
+      toast.success(`Connected! Found ${normalized.products.length} products`)
+    } catch (err: any) {
+      setCurrentStep("error")
+      setError(err.message || "Failed to connect to your API")
+      toast.error(err.message || "Connection failed")
+    }
+  }, [customEndpoint, customToken, onDataReady])
+
+  const connectMockPOS = useCallback(async () => {
+    if (!posToken.trim()) {
+      toast.error(`Please enter your ${activePlatform} API Token`)
+      return
+    }
+    
+    setError(null)
+    setCurrentStep("fetching")
+    
+    try {
+      await new Promise((r) => setTimeout(r, 1000))
+      setCurrentStep("extracting")
+      
+      const mockNormalized: IntegrationData = {
+        source: "custom_api",
+        scrapedAt: new Date().toISOString(),
+        business: { name: `My ${platform.label} Store`, type: "retail", currency: "USD" },
+        products: [
+          { id: "1", name: "Premium Widget", price: 29.99, category: "Accessories", stock: 150, reviewCount: 12, rating: 4.5 },
+          { id: "2", name: "Super Gadget", price: 99.99, category: "Electronics", stock: 45, reviewCount: 8, rating: 4.8 }
+        ],
+        categories: [
+          { name: "Accessories", count: 1, avgPrice: 29.99, totalRevenue: 1000 },
+          { name: "Electronics", count: 1, avgPrice: 99.99, totalRevenue: 5000 }
+        ],
+        demandSignals: { high: ["Premium Widget"], rising: ["Super Gadget"], slow: [] },
+        meta: { totalProducts: 2, dataConfidence: "live" }
+      }
+      
+      setCurrentStep("updating")
+      await new Promise((r) => setTimeout(r, 600))
+      setCurrentStep("done")
+      onDataReady(mockNormalized)
+      toast.success(`Connected to ${platform.label}! Found 2 products`)
+    } catch (err: any) {
+      setCurrentStep("error")
+      setError(err.message || "Failed to connect")
+      toast.error("Connection failed")
+    }
+  }, [posToken, activePlatform, platform.label, onDataReady])
+
+  const handleConnect = () => {
+    if (mode === "pos") {
+      connectMockPOS()
+      return
+    }
+    
+    switch (activePlatform) {
+      case "shopify":
+        connectShopify()
+        break
+      case "woocommerce":
+        connectWooCommerce()
+        break
+      case "custom":
+        connectCustom()
+        break
+    }
+  }
+
+  const canConnect = () => {
+    if (isRunning) return false
+    
+    if (mode === "pos") {
+      return !!posToken.trim()
+    }
+    
+    switch (activePlatform) {
+      case "shopify":
+        return !!shopifyDomain.trim() && !!shopifyToken.trim()
+      case "woocommerce":
+        return !!wooSiteUrl.trim() && !!wooKey.trim() && !!wooSecret.trim()
+      case "custom":
+        return !!customEndpoint.trim()
+      default:
+        return false
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="card-base p-6 border-border">
+        <div className="flex items-center gap-3 mb-5">
+          <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", platform.accentBg)}>
+            <Key className={cn("h-5 w-5", platform.accentText)} />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-foreground">
+              Connect Your {mode === "ecommerce" ? "Store" : "POS"}
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              Link your platform for live product data
+            </p>
+          </div>
+        </div>
+
+        {/* Platform selector pills */}
+        <div className="flex gap-2 mb-6 p-1 rounded-xl bg-secondary/50">
+          {PLATFORMS.map((p) => {
+            const isActive = activePlatform === p.key
+            return (
+              <button
+                key={p.key}
+                onClick={() => {
+                  if (!isRunning) {
+                    setActivePlatform(p.key)
+                    setError(null)
+                    setCurrentStep("idle")
+                  }
+                }}
+                disabled={isRunning}
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all duration-200",
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                  isRunning && !isActive && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                <p.icon className="h-4 w-4" />
+                <span className="hidden sm:inline">{p.label}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={activePlatform}
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 5 }}
+            className={cn("text-xs font-medium mb-4", platform.accentText)}
+          >
+            {platform.description}
+          </motion.p>
+        </AnimatePresence>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activePlatform}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-4"
+          >
+            {mode === "pos" ? (
+              <>
+                <CredentialField
+                  id="pos-location"
+                  label="Location ID (Optional)"
+                  placeholder="e.g. LOC-12345"
+                  value={posLocation}
+                  onChange={setPosLocation}
+                  disabled={isRunning}
+                  icon={Globe}
+                />
+                <CredentialField
+                  id="pos-token"
+                  label="API Access Token"
+                  placeholder="Bearer token or API Key"
+                  value={posToken}
+                  onChange={setPosToken}
+                  disabled={isRunning}
+                  isSecret
+                  showSecret={showPosToken}
+                  onToggleSecret={() => setShowPosToken(!showPosToken)}
+                  icon={Key}
+                />
+              </>
+            ) : (
+              <>
+                {activePlatform === "shopify" && (
+                  <>
+                    <CredentialField
+                      id="shopify-domain"
+                      label="Store Domain"
+                      placeholder="your-store.myshopify.com"
+                      value={shopifyDomain}
+                      onChange={setShopifyDomain}
+                      disabled={isRunning}
+                      icon={Globe}
+                    />
+                    <CredentialField
+                      id="shopify-token"
+                      label="Storefront Access Token"
+                      placeholder="shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                      value={shopifyToken}
+                      onChange={setShopifyToken}
+                      disabled={isRunning}
+                      isSecret
+                      showSecret={showShopifyToken}
+                      onToggleSecret={() => setShowShopifyToken(!showShopifyToken)}
+                      icon={Key}
+                    />
+                  </>
+                )}
+
+                {activePlatform === "woocommerce" && (
+                  <>
+                    <CredentialField
+                      id="woo-site-url"
+                      label="Site URL"
+                      placeholder="https://your-store.com"
+                      value={wooSiteUrl}
+                      onChange={setWooSiteUrl}
+                      disabled={isRunning}
+                      icon={Globe}
+                    />
+                    <CredentialField
+                      id="woo-consumer-key"
+                      label="Consumer Key"
+                      placeholder="ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                      value={wooKey}
+                      onChange={setWooKey}
+                      disabled={isRunning}
+                      isSecret
+                      showSecret={showWooKey}
+                      onToggleSecret={() => setShowWooKey(!showWooKey)}
+                      icon={Key}
+                    />
+                    <CredentialField
+                      id="woo-consumer-secret"
+                      label="Consumer Secret"
+                      placeholder="cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                      value={wooSecret}
+                      onChange={setWooSecret}
+                      disabled={isRunning}
+                      isSecret
+                      showSecret={showWooSecret}
+                      onToggleSecret={() => setShowWooSecret(!showWooSecret)}
+                      icon={Lock}
+                    />
+                  </>
+                )}
+
+                {activePlatform === "custom" && (
+                  <>
+                    <CredentialField
+                      id="custom-endpoint"
+                      label="API Endpoint URL"
+                      placeholder="https://your-site.com/api/products"
+                      value={customEndpoint}
+                      onChange={setCustomEndpoint}
+                      disabled={isRunning}
+                      icon={Server}
+                    />
+                    <CredentialField
+                      id="custom-bearer-token"
+                      label="Bearer Token (optional)"
+                      placeholder="your-api-token"
+                      value={customToken}
+                      onChange={setCustomToken}
+                      disabled={isRunning}
+                      isSecret
+                      showSecret={showCustomToken}
+                      onToggleSecret={() => setShowCustomToken(!showCustomToken)}
+                      icon={Key}
+                    />
+                  </>
+                )}
+              </>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="mt-6">
+          <motion.button
+            id="owner-connect-button"
+            whileHover={{ scale: isRunning ? 1 : 1.01 }}
+            whileTap={{ scale: isRunning ? 1 : 0.99 }}
+            onClick={handleConnect}
+            disabled={!canConnect()}
+            className={cn(
+              "w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all",
+              isRunning
+                ? cn("bg-secondary text-primary cursor-wait")
+                : cn("bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"),
+              !canConnect() && !isRunning && "opacity-50 cursor-not-allowed"
+            )}
+          >
+            {isRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+            {isRunning ? "Connecting…" : "Connect & Import"}
+          </motion.button>
+        </div>
+
+        <AnimatePresence mode="wait">
+          {isRunning && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-5 overflow-hidden"
+            >
+              <div className="flex items-center gap-0">
+                {PIPELINE_STEPS.map((step, i) => {
+                  const stepKeys: PipelineStep[] = ["fetching", "extracting", "updating"]
+                  const currentIdx = stepKeys.indexOf(currentStep as any)
+                  const isActive = stepKeys[i] === currentStep
+                  const isComplete = i < currentIdx
+                  const isPending = i > currentIdx
+
+                  return (
+                    <div key={step.key} className="flex items-center flex-1">
+                      <div className="flex items-center gap-2.5 flex-1">
+                        <div
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300",
+                            isActive && cn("bg-primary/10 ring-2 ring-primary/30"),
+                            isComplete && "bg-primary/20",
+                            isPending && "bg-secondary"
+                          )}
+                        >
+                          {isComplete ? (
+                            <CheckCircle2 className="h-4 w-4 text-primary" />
+                          ) : isActive ? (
+                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                          ) : (
+                            <step.icon className="h-4 w-4 text-muted-foreground/50" />
+                          )}
+                        </div>
+                        <span
+                          className={cn(
+                            "text-xs font-medium transition-colors hidden sm:block",
+                            isActive && "text-primary",
+                            isComplete && "text-primary/80",
+                            isPending && "text-muted-foreground/50"
+                          )}
+                        >
+                          {step.label}
+                        </span>
+                      </div>
+                      {i < PIPELINE_STEPS.length - 1 && (
+                        <div className={cn("h-px flex-1 mx-3 transition-colors", isComplete ? "bg-primary/40" : "bg-border")} />
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="mt-3 h-1 w-full rounded-full bg-secondary overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-primary"
+                  initial={{ width: "0%" }}
+                  animate={{
+                    width: currentStep === "fetching" ? "33%" : currentStep === "extracting" ? "66%" : "95%",
+                  }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              className="mt-4 flex items-start gap-3 rounded-xl bg-destructive/10 border border-destructive/20 p-4"
+            >
+              <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-destructive">Connection Failed</p>
+                <p className="text-xs text-destructive/80 mt-0.5">{error}</p>
+              </div>
+              <button
+                onClick={() => { setError(null); setCurrentStep("idle") }}
+                className="ml-auto text-destructive/60 hover:text-destructive transition-colors"
+              >
+                <XCircle className="h-4 w-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="mt-3 flex items-center justify-center gap-2 text-[11px] text-muted-foreground/60">
+        <Lock className="h-3 w-3" />
+        <span>Your credentials are sent directly to the platform's API and are never stored on our servers.</span>
+      </div>
+    </motion.div>
+  )
+}
+
+function CredentialField({
+  id, label, placeholder, value, onChange, disabled, isSecret = false, showSecret = false, onToggleSecret, icon: Icon,
+}: any) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-xs font-medium text-muted-foreground mb-1.5">
+        {label}
+      </label>
+      <div className="relative">
+        <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+        <input
+          id={id}
+          type={isSecret && !showSecret ? "password" : "text"}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          disabled={disabled}
+          className="w-full rounded-xl border border-border bg-secondary/50 py-3 pl-10 pr-12 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all disabled:opacity-50 font-mono"
+        />
+        {isSecret && onToggleSecret && (
+          <button
+            type="button"
+            onClick={onToggleSecret}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+          >
+            {showSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}

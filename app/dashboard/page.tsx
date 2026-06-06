@@ -14,9 +14,10 @@ import {
 } from "lucide-react"
 import { useData } from "@/contexts/DataContext"
 import { cn } from "@/lib/utils"
+import { formatCurrency } from "@/utils/currency"
 
 export default function Dashboard() {
-  const { rawData, isDataUploaded } = useData()
+  const { rawData, isDataUploaded, userCurrency } = useData()
 
   // Calculate dynamic metrics
   const totalRevenue = rawData.reduce((acc, row) => acc + (row.Revenue_BDT || 0), 0)
@@ -39,7 +40,7 @@ export default function Dashboard() {
   const metrics = [
     {
       title: "Total Revenue",
-      value: `৳${totalRevenue.toLocaleString()}`,
+      value: formatCurrency(totalRevenue, userCurrency),
       change: 12.5,
       changeLabel: "vs last month",
       icon: <Coins className="h-5 w-5" />,
@@ -84,8 +85,8 @@ export default function Dashboard() {
           {isDataUploaded ? (
             <RegionalDistribution />
           ) : (
-            <div className="h-full min-h-[300px] card-base flex items-center justify-center text-muted-foreground border-dashed">
-              Upload data to see Regional Distribution
+            <div className="flex h-[300px] items-center justify-center rounded-xl border border-dashed border-border bg-secondary/20">
+              <span className="text-sm text-muted-foreground">Upload data or Connect an Integration to see Regional Distribution</span>
             </div>
           )}
         </div>

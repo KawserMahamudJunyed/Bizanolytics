@@ -12,6 +12,7 @@ import {
 import { ArrowUpDown, ArrowUp, ArrowDown, Download, Filter } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
+import { formatCurrency, CURRENCY_SYMBOLS, CurrencyCode } from "@/utils/currency"
 
 // Removed static rawDemandData, regionData, and sparklineData
 
@@ -21,7 +22,7 @@ const CustomTooltip = ({ active, payload }: any) => {
       <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-lg">
         <p className="text-sm font-medium text-foreground">{payload[0].name}</p>
         <p className="text-lg font-semibold text-foreground">
-          ৳{(payload[0].value / 1000).toFixed(1)}k
+          {formatCurrency(payload[0].value, payload[0].payload?.userCurrency || "BDT")}
         </p>
       </div>
     )
@@ -83,9 +84,10 @@ export function RegionalDistribution() {
       .map(([name, value], idx) => ({
         name,
         value,
-        fill: colors[idx % colors.length]
+        fill: colors[idx % colors.length],
+        userCurrency
       }))
-  }, [rawData, isDataUploaded])
+  }, [rawData, isDataUploaded, userCurrency])
 
   const total = dynamicRegionData.reduce((sum, r) => sum + r.value, 0) || 1 // fallback to 1 to avoid NaN
 
@@ -138,7 +140,7 @@ export function RegionalDistribution() {
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-sm font-semibold tabular-nums text-foreground">
-                  ৳{(region.value / 1000).toFixed(1)}k
+                  {formatCurrency(region.value, userCurrency)}
                 </span>
                 <span className="w-12 text-right text-xs text-muted-foreground">
                   {((region.value / total) * 100).toFixed(0)}%
@@ -223,7 +225,7 @@ export function RegionalPerformance() {
             </div>
             <div className="flex items-center gap-6">
               <span className="text-sm font-bold tabular-nums text-foreground">
-                ৳{(region.value / 1000).toFixed(1)}k
+                {formatCurrency(region.value, userCurrency)}
               </span>
               <div className={cn(
                 "flex items-center gap-1 text-sm font-medium tabular-nums",
@@ -246,7 +248,7 @@ export function RegionalPerformance() {
 
 // Raw Data Table
 export function RawDataTable() {
-  const { rawData, isDataUploaded } = useData();
+  const { rawData, isDataUploaded, userCurrency } = useData();
   const displayData = isDataUploaded && rawData.length > 0 ? rawData : [];
 
   return (
@@ -361,14 +363,14 @@ export function RawDataTable() {
                         <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{row.Sales_Channel || "N/A"}</td>
                         <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{row.Customer_Segment || "N/A"}</td>
                         <td className="px-4 py-3 font-mono tabular-nums text-foreground">{units.toLocaleString()}</td>
-                        <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">৳{Number(row.Unit_Price || 0).toLocaleString()}</td>
-                        <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">৳{cost.toLocaleString()}</td>
-                        <td className="px-4 py-3 font-mono tabular-nums text-foreground">৳{revenue.toLocaleString()}</td>
+                        <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">{formatCurrency(Number(row.Unit_Price || 0), userCurrency)}</td>
+                        <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">{formatCurrency(cost, userCurrency)}</td>
+                        <td className="px-4 py-3 font-mono tabular-nums text-foreground">{formatCurrency(revenue, userCurrency)}</td>
                         <td className="px-4 py-3 font-mono tabular-nums text-muted-foreground">
                           {stock > 0 ? stock.toLocaleString() : "N/A"}
                         </td>
                         {/* Generated Columns */}
-                        <td className="px-4 py-3 font-mono tabular-nums text-emerald-500 font-medium">৳{profit.toLocaleString()}</td>
+                        <td className="px-4 py-3 font-mono tabular-nums text-emerald-500 font-medium">{formatCurrency(profit, userCurrency)}</td>
                         <td className="px-4 py-3">
                           <span className={cn(
                             "font-mono tabular-nums font-medium",
@@ -377,7 +379,7 @@ export function RawDataTable() {
                             {marginVal !== undefined ? `${marginVal}%` : "N/A"}
                           </span>
                         </td>
-                        <td className="px-4 py-3 font-mono tabular-nums text-emerald-500/80 font-medium">৳{stockValue.toLocaleString()}</td>
+                        <td className="px-4 py-3 font-mono tabular-nums text-emerald-500/80 font-medium">{formatCurrency(stockValue, userCurrency)}</td>
                         <td className="px-4 py-3 font-mono tabular-nums text-emerald-500/80 font-medium">{stockRatio}x</td>
                       </>
                     )
@@ -386,8 +388,8 @@ export function RawDataTable() {
               ))}
               {displayData.length === 0 && (
                 <tr>
-                  <td colSpan={16} className="px-4 py-8 text-center text-sm text-muted-foreground">
-                    Upload data to view raw records.
+                  <td colSpan={16} className="h-24 text-center text-sm text-muted-foreground">
+                    Upload data or Connect an Integration to view raw records.
                   </td>
                 </tr>
               )}

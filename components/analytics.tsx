@@ -1,5 +1,8 @@
 "use client"
 
+import { useMemo, useEffect, useState } from "react"
+import { useData } from "@/contexts/DataContext"
+import { formatCurrency, CURRENCY_SYMBOLS, CurrencyCode } from "@/utils/currency"
 import { motion } from "framer-motion"
 import {
   LineChart,
@@ -263,9 +266,10 @@ export function ForecastAccuracy() {
   )
 }
 
-import { useData } from "@/contexts/DataContext"
+
 
 const ParetoTooltip = ({ active, payload, label }: any) => {
+  const { userCurrency } = useData();
   if (active && payload && payload.length) {
     return (
       <motion.div
@@ -277,7 +281,7 @@ const ParetoTooltip = ({ active, payload, label }: any) => {
         <div className="flex items-center gap-2 text-sm mb-1">
           <div className="h-2 w-2 rounded-full bg-purple-500" />
           <span className="text-muted-foreground">Profit:</span>
-          <span className="font-medium text-foreground">৳{payload[0]?.value?.toLocaleString()}</span>
+          <span className="font-medium text-foreground">{formatCurrency(payload[0]?.value, userCurrency)}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
@@ -355,7 +359,7 @@ export function ParetoChart() {
             >
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
               <XAxis dataKey="category" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} angle={-45} textAnchor="end" height={60} />
-              <YAxis yAxisId="left" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(value) => `৳${value/1000}k`} />
+              <YAxis yAxisId="left" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(value) => `${sym}${value/1000}k`} />
               <YAxis yAxisId="right" orientation="right" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}%`} />
               <Tooltip content={<ParetoTooltip />} />
               <ReferenceLine yAxisId="right" y={80} stroke="var(--chart-4)" strokeDasharray="4 4" label={{ value: '80% Threshold', position: 'insideTopLeft', fill: 'var(--chart-4)', fontSize: 11 }} />
@@ -372,7 +376,7 @@ export function ParetoChart() {
     </motion.div>
   )
 }
-import { useMemo, useEffect, useState } from "react";
+
 
 const ForecastTooltip = ({ active, payload, label, capacity }: any) => {
   if (active && payload && payload.length) {
@@ -417,7 +421,8 @@ const ForecastTooltip = ({ active, payload, label, capacity }: any) => {
 }
 
 export function DemandForecastChart() {
-  const { rawData, isDataUploaded } = useData();
+  const { rawData, isDataUploaded, userCurrency } = useData()
+  const sym = CURRENCY_SYMBOLS[userCurrency as CurrencyCode] || "৳";
   const [chartState, setChartState] = useState({ processedForecastData: [] as any[], inventoryCapacity: 0, restockMonth: null as string | null });
 
   useEffect(() => {

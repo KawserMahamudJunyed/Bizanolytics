@@ -124,6 +124,12 @@ export default function PipelinePage() {
     return () => clearInterval(interval)
   }, [])
 
+  const [syncFreq, setSyncFreq] = useState<string | null>(null)
+
+  useEffect(() => {
+    setSyncFreq(localStorage.getItem("bizanolytics_sync_freq"))
+  }, [])
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -137,13 +143,13 @@ export default function PipelinePage() {
       {/* Pipeline Stats */}
       <div className="grid gap-6 md:grid-cols-3">
         <PipelineStatCard
-          title="Data Throughput"
-          value={throughput}
-          description="Average processing volume"
-          trend={throughputTrend}
+          title={syncFreq ? "Sync Frequency" : "Data Throughput"}
+          value={syncFreq ? syncFreq.charAt(0).toUpperCase() + syncFreq.slice(1) : throughput}
+          description={syncFreq ? "Active integration refresh rate" : "Average processing volume"}
+          trend={syncFreq ? 0 : throughputTrend}
         />
         <PipelineStatCard
-          title="Pipeline Latency"
+          title={syncFreq ? "API Latency" : "Pipeline Latency"}
           value={isDataUploaded ? `${latencyMs}ms` : "0ms"}
           description="End-to-end processing time"
           trend={latencyTrend}
@@ -251,7 +257,7 @@ function PipelineRunsTable({ runs }: { runs: PipelineRun[] }) {
               {runs.length === 0 && (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
-                    Upload data to view pipeline runs.
+                    Upload data or Connect an Integration to view pipeline runs.
                   </td>
                 </tr>
               )}

@@ -262,8 +262,8 @@ export function BangladeshForecastTable() {
                 )
               }) : (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-sm text-muted-foreground border-dashed">
-                    Upload data to view inventory forecasts.
+                  <td colSpan={8} className="py-12 text-center text-sm text-muted-foreground">
+                    Upload data or Connect an Integration to view inventory forecasts.
                   </td>
                 </tr>
               )}

@@ -215,6 +215,7 @@ export function Sidebar({
               { icon: BarChart3, label: "Analytics", href: "/analytics" },
               { icon: Layers, label: "Integrations", href: "/integrations" },
               { icon: Activity, label: "Data Pipeline", href: "/pipeline" },
+              { icon: Settings, label: "Settings", href: "/settings" },
             ].map((item, index) => {
               const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
               return (

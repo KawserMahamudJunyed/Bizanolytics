@@ -37,6 +37,8 @@ interface DataContextType {
   renameDataset: (id: string, newName: string) => Promise<void>
   aiInsights?: string
   saveAiInsights: (insights: string) => void
+  userCurrency: string
+  setUserCurrency: (currency: string) => void
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -47,6 +49,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [datasetId, setDatasetId] = useState<string>()
   const [datasetHistory, setDatasetHistory] = useState<DatasetMeta[]>([])
   const [aiInsights, setAiInsights] = useState<string>()
+  const [userCurrency, setUserCurrency] = useState<string>("BDT")
 
   const loadDatasetData = async (dataset: any, supabase: any) => {
     setDatasetId(dataset.id)
@@ -82,6 +85,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession()
       const user = session?.user
       if (!user) return
+
+      // Fetch user profile for currency
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('currency')
+        .eq('id', user.id)
+        .single()
+      
+      if (profile?.currency) {
+        setUserCurrency(profile.currency)
+      }
 
       const { data: datasets, error } = await supabase
         .from('datasets')
@@ -152,7 +166,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
     <DataContext.Provider value={{ 
       isDataUploaded, rawData, setUploadedData, resetData, 
       datasetId, datasetHistory, loadDatasetById, renameDataset,
-      aiInsights, saveAiInsights 
+      aiInsights, saveAiInsights,
+      userCurrency, setUserCurrency
     }}>
       {children}
     </DataContext.Provider>

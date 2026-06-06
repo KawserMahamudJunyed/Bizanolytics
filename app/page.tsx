@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { ArrowRight, BarChart3, Database, Shield, Zap, Package, Sparkles } from "lucide-react"
+import { ArrowRight, BarChart3, Database, Shield, Zap, Package, Sparkles, ShoppingBag, Store, Calculator, Clock, Calendar } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function LandingPage() {
@@ -126,6 +126,79 @@ export default function LandingPage() {
               title="Data Guard Privacy"
               description="Your data never leaves your browser unless you want it to. Enterprise-grade security out of the box."
             />
+          </div>
+        </section>
+
+        {/* Integrations & Sync Subscription Section */}
+        <section className="border-t border-border/50 bg-secondary/10 py-24">
+          <div className="max-w-5xl mx-auto px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-4">
+                <Zap className="h-3.5 w-3.5" /> 1-Click Integrations
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Connect anything. Sync instantly.</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Whether you run an online empire or a single physical shop, Bizanolytics connects to your systems to power AI forecasting.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-4 gap-4 mb-16">
+              <div className="card-base p-6 text-center hover:border-primary/50 transition-colors">
+                <div className="h-12 w-12 mx-auto rounded-full bg-secondary flex items-center justify-center mb-4">
+                  <ShoppingBag className="h-5 w-5 text-foreground" />
+                </div>
+                <h3 className="font-bold mb-1">E-Commerce</h3>
+                <p className="text-xs text-muted-foreground">Shopify & WooCommerce</p>
+              </div>
+              <div className="card-base p-6 text-center hover:border-primary/50 transition-colors">
+                <div className="h-12 w-12 mx-auto rounded-full bg-secondary flex items-center justify-center mb-4">
+                  <Store className="h-5 w-5 text-foreground" />
+                </div>
+                <h3 className="font-bold mb-1">Retail POS</h3>
+                <p className="text-xs text-muted-foreground">Square & Lightspeed</p>
+              </div>
+              <div className="card-base p-6 text-center hover:border-primary/50 transition-colors">
+                <div className="h-12 w-12 mx-auto rounded-full bg-secondary flex items-center justify-center mb-4">
+                  <Database className="h-5 w-5 text-foreground" />
+                </div>
+                <h3 className="font-bold mb-1">Databases</h3>
+                <p className="text-xs text-muted-foreground">Sheets / Excel Links</p>
+              </div>
+              <div className="card-base p-6 text-center hover:border-primary/50 transition-colors">
+                <div className="h-12 w-12 mx-auto rounded-full bg-secondary flex items-center justify-center mb-4">
+                  <Calculator className="h-5 w-5 text-foreground" />
+                </div>
+                <h3 className="font-bold mb-1">BizPOS (Manual)</h3>
+                <p className="text-xs text-muted-foreground">Built-in manual register</p>
+              </div>
+            </div>
+
+            <div className="card-base p-8 md:p-12 border-primary/20 bg-gradient-to-b from-background to-primary/5 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-8 opacity-10 blur-xl">
+                <Zap className="h-48 w-48 text-primary" />
+              </div>
+              <div className="relative z-10 max-w-2xl">
+                <h3 className="text-2xl font-bold mb-4">Choose Your Sync Speed</h3>
+                <p className="text-muted-foreground mb-8">
+                  Control how fresh your AI forecasts are with our flexible subscription tiers.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 bg-background p-4 rounded-xl border border-border">
+                    <div className="bg-secondary p-2 rounded-lg"><Calendar className="h-5 w-5 text-muted-foreground" /></div>
+                    <div className="flex-1"><h4 className="font-semibold">Daily Sync</h4><p className="text-xs text-muted-foreground">Free Tier</p></div>
+                  </div>
+                  <div className="flex items-center gap-4 bg-background p-4 rounded-xl border border-border">
+                    <div className="bg-secondary p-2 rounded-lg"><Clock className="h-5 w-5 text-foreground" /></div>
+                    <div className="flex-1"><h4 className="font-semibold">Hourly Sync</h4><p className="text-xs text-muted-foreground">Growth Tier</p></div>
+                  </div>
+                  <div className="flex items-center gap-4 bg-background p-4 rounded-xl border border-primary/30 ring-1 ring-border shadow-lg shadow-primary/5">
+                    <div className="bg-primary/10 p-2 rounded-lg"><Zap className="h-5 w-5 text-primary" /></div>
+                    <div className="flex-1"><h4 className="font-semibold text-primary">Instant Live Sync</h4><p className="text-xs text-primary/80">Pro Tier</p></div>
+                    <span className="text-xs font-bold bg-primary text-primary-foreground px-2 py-1 rounded">POPULAR</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
