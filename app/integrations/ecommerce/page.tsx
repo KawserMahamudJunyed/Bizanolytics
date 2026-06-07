@@ -17,7 +17,7 @@ export default function EcommercePage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
     setUploadedData(mapIntegrationToSMEData(newData))
     addNotification("E-commerce Connected", "Successfully synced data from your e-commerce integration.")
-    router.push("/integrations")
+    router.push("/dashboard")
   }
 
   return (

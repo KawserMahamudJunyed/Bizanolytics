@@ -17,7 +17,7 @@ export default function DatabasesPage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
     setUploadedData(mapIntegrationToSMEData(newData))
     addNotification("Database Connected", "Successfully synced data from your external Database.")
-    router.push("/integrations")
+    router.push("/dashboard")
   }
 
   return (
