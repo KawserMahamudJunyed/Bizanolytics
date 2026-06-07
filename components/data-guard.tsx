@@ -11,7 +11,7 @@ export function DataGuard({ children }: { children: React.ReactNode }) {
   const { isDataUploaded } = useData()
   const pathname = usePathname()
 
-  if (pathname === '/integrations') {
+  if (pathname.startsWith('/integrations') || pathname.startsWith('/profile') || pathname.startsWith('/settings')) {
     return <>{children}</>
   }
 
