@@ -211,13 +211,21 @@ export function DataProvider({ children }: { children: ReactNode }) {
     
     try {
       const parsed = JSON.parse(stored);
-      const source = parsed.source || "woocommerce";
+      let source = parsed.source || "woocommerce";
+      if (source === "custom_api") source = "custom"; // Map to the DB platform name
+
       const lastScrapedAt = new Date(parsed.scrapedAt || 0).getTime();
       const now = Date.now();
       
       const doSync = async () => {
         try {
-          const res = await fetch(`/api/integrations/sync?platform=${source}`);
+          const supabase = createClient()
+          const { data: { session } } = await supabase.auth.getSession()
+          const res = await fetch(`/api/integrations/sync?platform=${source}`, {
+            headers: {
+              ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
+            }
+          });
           if (res.ok) {
             const freshData = await res.json();
             localStorage.setItem("bizanolytics_integration_data", JSON.stringify(freshData));
