@@ -231,29 +231,50 @@ export type SMEDataRow = {
 
 export function mapIntegrationToSMEData(integration: IntegrationData): SMEDataRow[] {
   const locations = ["Savar", "Gazipur", "Narayanganj Sadar", "Jashore", "Satkhira", "Cox's Bazar", "Bogura", "Feni", "Habiganj", "Baghai Chhari"];
+  const rows: SMEDataRow[] = [];
   
-  return integration.products.map((p, idx) => {
+  const now = Date.now();
+  const dayMs = 24 * 60 * 60 * 1000;
+  
+  integration.products.forEach((p, idx) => {
     const location = locations[idx % locations.length];
     
-    // WooCommerce only gives us the catalog product, so we estimate historical sales based on reviews if present
-    const unitsSold = p.reviewCount ? Math.max(5, p.reviewCount) : 15 + (idx % 4) * 8;
+    // E-commerce APIs only give us the catalog product, so we estimate historical sales based on reviews if present
+    const totalUnitsSold = p.reviewCount ? Math.max(5, p.reviewCount) : 15 + (idx % 4) * 8;
     const currentStock = p.stock !== null ? p.stock : 60 + (idx % 5) * 20;
-    const date = new Date().toISOString().split('T')[0];
     
-    return {
-      Date: date,
-      Product_ID: p.id || `SKU-${1000 + idx}`,
-      Product_Name: p.name,
-      Category: p.category || "General",
-      Location: location,
-      Sales_Channel: "Online",
-      Units_Sold: unitsSold,
-      Revenue_BDT: unitsSold * p.price,
-      Unit_Price: p.price,
-      Cost_Price: Math.round(p.price * 0.7),
-      Current_Stock: currentStock,
-      Customer_Segment: idx % 2 === 0 ? "Retail" : "B2B"
-    };
+    // Spread sales over several random days in the past 60 days
+    const numTransactions = Math.max(3, Math.min(15, Math.floor(totalUnitsSold / 2)));
+    
+    for (let i = 0; i < numTransactions; i++) {
+        // Random day in the last 60 days
+        const randomDaysAgo = Math.floor(Math.random() * 60);
+        const date = new Date(now - randomDaysAgo * dayMs).toISOString().split('T')[0];
+        
+        // Randomize the units for this specific transaction
+        let unitsForThisTx = Math.max(1, Math.floor(totalUnitsSold / numTransactions));
+        // Add slight randomness
+        unitsForThisTx += Math.floor(Math.random() * 3) - 1; 
+        if (unitsForThisTx < 1) unitsForThisTx = 1;
+        
+        rows.push({
+          Date: date,
+          Product_ID: p.id || `SKU-${1000 + idx}`,
+          Product_Name: p.name,
+          Category: p.category || "General",
+          Location: location,
+          Sales_Channel: i % 4 === 0 ? "In-Store" : "Online",
+          Units_Sold: unitsForThisTx,
+          Revenue_BDT: unitsForThisTx * p.price,
+          Unit_Price: p.price,
+          Cost_Price: Math.round(p.price * 0.7),
+          Current_Stock: currentStock,
+          Customer_Segment: i % 2 === 0 ? "Retail" : "B2B"
+        });
+    }
   });
+  
+  // Sort by date ascending to make time-series charts flow correctly
+  return rows.sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime());
 }
 
