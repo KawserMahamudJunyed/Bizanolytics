@@ -82,7 +82,7 @@ export function Sidebar({
           setIsCollapsed(false) // For desktop
         }}
         className={cn(
-          "fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-foreground transition-colors hover:bg-secondary shadow-sm",
+          "fixed right-4 top-6 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-foreground transition-colors hover:bg-secondary shadow-sm",
           !isCollapsed && "lg:hidden" // Hide on desktop ONLY if the sidebar is currently expanded
         )}
       >
