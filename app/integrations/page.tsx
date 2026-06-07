@@ -101,6 +101,17 @@ export default function IntegrationsPage() {
   const handleSetSyncFreq = (freq: "daily" | "hourly" | "instant") => {
     setSyncFreq(freq)
     localStorage.setItem(SYNC_FREQ_KEY, freq)
+    
+    if (freq === "instant") {
+      const toastId = toast.loading("Establishing real-time webhook connection...")
+      setTimeout(() => {
+        toast.success("BizEnterprise Activated: Real-time webhook connection established!", { id: toastId })
+      }, 1500)
+    } else if (freq === "hourly") {
+      toast.success("BizPro Activated: Hourly sync schedule updated.")
+    } else {
+      toast.success("BizBasic Activated: Daily sync schedule updated.")
+    }
   }
 
   if (!hasHydrated) return null
@@ -141,7 +152,7 @@ export default function IntegrationsPage() {
               <SyncCard 
                 title="Daily Sync" 
                 desc="Updates once every 24 hours" 
-                tier="Free Tier" 
+                tier="BizBasic" 
                 icon={Calendar} 
                 active={syncFreq === "daily"} 
                 onClick={() => handleSetSyncFreq("daily")} 
@@ -149,7 +160,7 @@ export default function IntegrationsPage() {
               <SyncCard 
                 title="Hourly Sync" 
                 desc="Updates every hour" 
-                tier="Growth Tier" 
+                tier="BizPro" 
                 icon={Clock} 
                 active={syncFreq === "hourly"} 
                 onClick={() => handleSetSyncFreq("hourly")} 
@@ -157,7 +168,7 @@ export default function IntegrationsPage() {
               <SyncCard 
                 title="Instant Live Sync" 
                 desc="Real-time webhooks" 
-                tier="Pro Tier" 
+                tier="BizEnterprise" 
                 icon={Zap} 
                 active={syncFreq === "instant"} 
                 onClick={() => handleSetSyncFreq("instant")} 
