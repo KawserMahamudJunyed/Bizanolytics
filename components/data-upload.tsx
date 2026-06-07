@@ -114,6 +114,13 @@ export function DataUpload() {
               duration: processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`,
               records: parsedData.length
             })
+
+            // Generate Notification
+            await supabase.from('notifications').insert({
+              user_id: user.id,
+              title: "Data Upload Successful",
+              message: `Successfully processed and imported ${parsedData.length} rows from ${currentFile.name}.`
+            })
           }
         }
       }
@@ -124,7 +131,7 @@ export function DataUpload() {
     setTimeout(() => {
       setUploadState("success")
       setUploadedData(parsedData as any, newDatasetId)
-      router.push("/") // Redirect to dashboard to see results
+      router.push("/dashboard") // Redirect to dashboard to see results
     }, 200)
   }
 
