@@ -26,7 +26,7 @@ export default function NotificationsPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            <Bell className="h-6 w-6 text-emerald-500" />
+            <Bell className="h-6 w-6 text-foreground" />
             Notifications
             {unreadNotificationsCount > 0 && (
               <span className="ml-2 inline-flex items-center justify-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-500">
