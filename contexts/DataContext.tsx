@@ -38,10 +38,12 @@ export type Notification = {
 interface DataContextType {
   isDataUploaded: boolean
   rawData: SMEDataRow[]
-  setUploadedData: (data: SMEDataRow[], datasetId?: string) => void
+  setUploadedData: (data: SMEDataRow[], datasetId?: string, integrationName?: string) => void
   resetData: () => void
   datasetId?: string
   datasetHistory: DatasetMeta[]
+  activeIntegrationName?: string
+  setActiveIntegrationName: (name?: string) => void
   loadDatasetById: (id: string) => Promise<void>
   renameDataset: (id: string, newName: string) => Promise<void>
   aiInsights?: string
@@ -62,6 +64,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [isDataUploaded, setIsDataUploaded] = useState(false)
   const [datasetId, setDatasetId] = useState<string>()
   const [datasetHistory, setDatasetHistory] = useState<DatasetMeta[]>([])
+  const [activeIntegrationName, setActiveIntegrationName] = useState<string>()
   const [aiInsights, setAiInsights] = useState<string>()
   const [userCurrency, setUserCurrency] = useState<string>("BDT")
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -140,6 +143,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
       if (datasets.length > 0) {
         await loadDatasetData(datasets[0], supabase)
       }
+
+      // Check if integration is active
+      const storedIntegration = localStorage.getItem("bizanolytics_integration_data")
+      if (storedIntegration) {
+        try {
+          const parsed = JSON.parse(storedIntegration)
+          if (parsed?.business?.name) {
+            setActiveIntegrationName(parsed.business.name)
+          }
+        } catch (e) {}
+      }
     }
     fetchHistory()
   }, [])
@@ -159,10 +173,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const setUploadedData = (data: SMEDataRow[], id?: string) => {
+  const setUploadedData = (data: SMEDataRow[], id?: string, integrationName?: string) => {
     setRawData(data)
     setIsDataUploaded(true)
     setDatasetId(id)
+    setActiveIntegrationName(integrationName)
     setAiInsights(undefined)
     
     // Refresh history if a new dataset was uploaded
@@ -181,6 +196,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setIsDataUploaded(false)
     setDatasetId(undefined)
     setAiInsights(undefined)
+    setActiveIntegrationName(undefined)
   }
 
   const saveAiInsights = async (insights: string) => {
@@ -234,7 +250,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       aiInsights, saveAiInsights,
       userCurrency, setUserCurrency,
       notifications, unreadNotificationsCount,
-      markNotificationAsRead, markAllNotificationsAsRead, addNotification
+      markNotificationAsRead, markAllNotificationsAsRead, addNotification,
+      activeIntegrationName, setActiveIntegrationName
     }}>
       {children}
     </DataContext.Provider>

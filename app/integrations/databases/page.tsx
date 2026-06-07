@@ -15,7 +15,7 @@ export default function DatabasesPage() {
 
   const handleDataReady = (newData: any) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
-    setUploadedData(mapIntegrationToSMEData(newData))
+    setUploadedData(mapIntegrationToSMEData(newData), undefined, newData.business.name)
     addNotification("Database Connected", "Successfully synced data from your external Database.")
     router.push("/dashboard")
   }

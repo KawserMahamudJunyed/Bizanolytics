@@ -27,7 +27,7 @@ function formatTimeAgo(dateStr: string) {
 }
 
 export function Header() {
-  const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
+  const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
   const [isRenaming, setIsRenaming] = useState(false)
   const [editName, setEditName] = useState("")
 
@@ -103,11 +103,22 @@ export function Header() {
                 <Button variant="outline" className="flex items-center gap-2 border-dashed">
                   <Database className="w-4 h-4 text-muted-foreground" />
                   <span className="truncate max-w-[150px]">
-                    {activeDataset ? activeDataset.file_name : "Select Dataset"}
+                    {activeIntegrationName ? `🟢 ${activeIntegrationName}` : activeDataset ? activeDataset.file_name : "Select Dataset"}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuLabel>Live Integrations</DropdownMenuLabel>
+                {activeIntegrationName ? (
+                  <DropdownMenuItem className="flex justify-between items-center cursor-default text-emerald-500">
+                    <span className="truncate flex-1 pr-2">🟢 {activeIntegrationName}</span>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem className="text-muted-foreground cursor-default">
+                    No active integration
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
                 <DropdownMenuLabel>Your Datasets</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {datasetHistory.map((dataset) => (

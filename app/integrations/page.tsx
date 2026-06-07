@@ -17,7 +17,8 @@ import {
   Zap,
   Calendar,
   CreditCard,
-  Link2
+  Link2,
+  Plus
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -113,9 +114,14 @@ export default function IntegrationsPage() {
             <h1 className="text-2xl font-bold text-foreground tracking-tight">Integration Active</h1>
             <p className="mt-1 text-sm text-muted-foreground">Your store is connected and syncing data to Bizanolytics.</p>
           </div>
-          <button onClick={handleClear} className="flex items-center gap-2 rounded-xl bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-500/20 transition-colors">
-            <Trash2 className="h-4 w-4" /> Disconnect
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setConnectedIntegration(null)} className="flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80 transition-colors">
+              <Plus className="h-4 w-4" /> Connect Another
+            </button>
+            <button onClick={handleClear} className="flex items-center gap-2 rounded-xl bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-500/20 transition-colors">
+              <Trash2 className="h-4 w-4" /> Disconnect
+            </button>
+          </div>
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card-base p-8 space-y-8">

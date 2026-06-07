@@ -15,7 +15,7 @@ export default function POSPage() {
 
   const handleDataReady = (newData: any) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
-    setUploadedData(mapIntegrationToSMEData(newData))
+    setUploadedData(mapIntegrationToSMEData(newData), undefined, newData.business.name)
     addNotification("POS Connected", "Successfully synced data from your Point of Sale system.")
     router.push("/dashboard")
   }
