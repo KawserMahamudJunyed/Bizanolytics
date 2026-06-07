@@ -30,7 +30,22 @@ export async function POST(req: Request) {
     }
 
     const data = await response.json();
-    return NextResponse.json({ products: data, endpointUrl });
+    
+    // Attempt to extract array from various common response structures
+    let productsArray: any[] = [];
+    if (Array.isArray(data)) {
+        productsArray = data;
+    } else if (data && Array.isArray(data.products)) {
+        productsArray = data.products;
+    } else if (data && Array.isArray(data.data)) {
+        productsArray = data.data;
+    } else if (data && Array.isArray(data.items)) {
+        productsArray = data.items;
+    } else {
+        productsArray = [data]; // Fallback
+    }
+
+    return NextResponse.json({ products: productsArray, endpointUrl });
 
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
