@@ -4,10 +4,11 @@ import { createClient } from '@/utils/supabase/server';
 export async function POST(req: Request) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user) {
+      console.error("Auth error in subscription POST:", authError);
+      return NextResponse.json({ error: 'Your login session has expired or is invalid. Please refresh the page to log in again.' }, { status: 401 });
     }
 
     const { platform, subscription_tier } = await req.json();
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
     const { error } = await supabase
       .from('user_integrations')
       .update({ subscription_tier })
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .eq('platform', platform);
 
     if (error) {

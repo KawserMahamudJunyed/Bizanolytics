@@ -7,10 +7,11 @@ import { normalizeWooCommerce, normalizeShopify, normalizeCustom } from '@/app/i
 export async function POST(req: Request) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user) {
+      console.error("Auth error in sync POST:", authError);
+      return NextResponse.json({ error: 'Your login session has expired or is invalid. Please refresh the page to log in again.' }, { status: 401 });
     }
 
     const { platform, url, keys, subscription_tier } = await req.json();
@@ -81,7 +82,7 @@ export async function POST(req: Request) {
     const { error: dbError } = await supabase
       .from('user_integrations')
       .upsert({ 
-        user_id: session.user.id,
+        user_id: user.id,
         platform,
         url,
         encrypted_keys: encryptedKeys,
@@ -94,7 +95,7 @@ export async function POST(req: Request) {
     if (dbError) {
        // Just insert it and order by created_at desc later
        const { error: insertError } = await supabase.from('user_integrations').insert({
-         user_id: session.user.id,
+         user_id: user.id,
          platform,
          url,
          encrypted_keys: encryptedKeys,
@@ -120,17 +121,18 @@ export async function GET(req: Request) {
     const platform = searchParams.get('platform') || 'woocommerce';
 
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user) {
+      console.error("Auth error in sync GET:", authError);
+      return NextResponse.json({ error: 'Your login session has expired or is invalid. Please refresh the page to log in again.' }, { status: 401 });
     }
 
     // Get the user's integration config
     const { data: configs, error } = await supabase
       .from('user_integrations')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .eq('platform', platform)
       .order('created_at', { ascending: false })
       .limit(1);
