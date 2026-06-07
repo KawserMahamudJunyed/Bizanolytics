@@ -26,7 +26,7 @@ function formatTimeAgo(dateStr: string) {
 }
 
 export function Header() {
-  const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData } = useData()
+  const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
   const [isRenaming, setIsRenaming] = useState(false)
   const [editName, setEditName] = useState("")
 
@@ -132,30 +132,54 @@ export function Header() {
               <Edit2 className="w-4 h-4 text-muted-foreground" />
             </Button>
           )}
-          )}
 
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-9 w-9 relative">
                 <Bell className="w-4 h-4 text-muted-foreground" />
-                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border border-background"></span>
+                {unreadNotificationsCount > 0 && (
+                  <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border border-background"></span>
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <div className="flex items-center justify-between px-2 py-1.5">
+                <DropdownMenuLabel className="p-0">Notifications</DropdownMenuLabel>
+                {unreadNotificationsCount > 0 && (
+                  <button 
+                    onClick={markAllNotificationsAsRead}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    Mark all as read
+                  </button>
+                )}
+              </div>
               <DropdownMenuSeparator />
-              <div className="flex flex-col gap-2 p-2">
-                <div className="rounded-lg p-2 hover:bg-secondary/50 transition-colors cursor-pointer border border-transparent hover:border-border">
-                  <p className="text-sm font-medium text-foreground">Forecast Generated</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Your sales forecast for next month is ready to view.</p>
-                  <p className="text-[10px] text-muted-foreground mt-1 text-primary">2 hours ago</p>
-                </div>
-                <div className="rounded-lg p-2 hover:bg-secondary/50 transition-colors cursor-pointer border border-transparent hover:border-border">
-                  <p className="text-sm font-medium text-foreground">Data Import Successful</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Successfully imported 5,000 rows from Shopify integration.</p>
-                  <p className="text-[10px] text-muted-foreground mt-1 text-primary">Yesterday</p>
-                </div>
+              <div className="flex flex-col gap-1 p-1 max-h-[300px] overflow-y-auto">
+                {notifications.length === 0 ? (
+                  <p className="text-sm text-muted-foreground p-4 text-center">No notifications yet.</p>
+                ) : (
+                  notifications.map((notif) => (
+                    <div 
+                      key={notif.id}
+                      onClick={() => !notif.is_read && markNotificationAsRead(notif.id)}
+                      className={cn(
+                        "rounded-lg p-3 transition-colors cursor-pointer border",
+                        notif.is_read 
+                          ? "bg-transparent border-transparent hover:bg-secondary/50" 
+                          : "bg-primary/5 border-primary/20 hover:bg-primary/10"
+                      )}
+                    >
+                      <div className="flex justify-between gap-2">
+                        <p className="text-sm font-semibold text-foreground">{notif.title}</p>
+                        {!notif.is_read && <span className="h-2 w-2 rounded-full bg-primary mt-1 shrink-0"></span>}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{notif.message}</p>
+                      <p className="text-[10px] font-medium text-muted-foreground/70 mt-2">{formatTimeAgo(notif.created_at)}</p>
+                    </div>
+                  ))
+                )}
               </div>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -26,6 +26,15 @@ export type DatasetMeta = {
   created_at: string
 }
 
+export type Notification = {
+  id: string
+  title: string
+  message: string
+  is_read: boolean
+  created_at: string
+}
+
+
 interface DataContextType {
   isDataUploaded: boolean
   rawData: SMEDataRow[]
@@ -39,6 +48,10 @@ interface DataContextType {
   saveAiInsights: (insights: string) => void
   userCurrency: string
   setUserCurrency: (currency: string) => void
+  notifications: Notification[]
+  unreadNotificationsCount: number
+  markNotificationAsRead: (id: string) => Promise<void>
+  markAllNotificationsAsRead: () => Promise<void>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -50,6 +63,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [datasetHistory, setDatasetHistory] = useState<DatasetMeta[]>([])
   const [aiInsights, setAiInsights] = useState<string>()
   const [userCurrency, setUserCurrency] = useState<string>("BDT")
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  
+  const unreadNotificationsCount = notifications.filter(n => !n.is_read).length
 
   const loadDatasetData = async (dataset: any, supabase: any) => {
     setDatasetId(dataset.id)
@@ -95,6 +111,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
       
       if (profile?.currency) {
         setUserCurrency(profile.currency)
+      }
+
+      // Fetch Notifications
+      const { data: notifs } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20)
+        
+      if (notifs) {
+        setNotifications(notifs)
       }
 
       const { data: datasets, error } = await supabase
@@ -162,12 +190,32 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const markNotificationAsRead = async (id: string) => {
+    const supabase = createClient()
+    const { error } = await supabase.from('notifications').update({ is_read: true }).eq('id', id)
+    if (!error) {
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+    }
+  }
+
+  const markAllNotificationsAsRead = async () => {
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return
+    const { error } = await supabase.from('notifications').update({ is_read: true }).eq('user_id', session.user.id)
+    if (!error) {
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+    }
+  }
+
   return (
     <DataContext.Provider value={{ 
       isDataUploaded, rawData, setUploadedData, resetData, 
       datasetId, datasetHistory, loadDatasetById, renameDataset,
       aiInsights, saveAiInsights,
-      userCurrency, setUserCurrency
+      userCurrency, setUserCurrency,
+      notifications, unreadNotificationsCount,
+      markNotificationAsRead, markAllNotificationsAsRead
     }}>
       {children}
     </DataContext.Provider>
