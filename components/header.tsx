@@ -102,8 +102,13 @@ export function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="flex items-center gap-2 border-dashed">
                   <Database className="w-4 h-4 text-muted-foreground" />
-                  <span className="truncate max-w-[150px]">
-                    {activeIntegrationName ? `🟢 ${activeIntegrationName}` : activeDataset ? activeDataset.file_name : "Select Dataset"}
+                  <span className="truncate max-w-[150px] flex items-center">
+                    {activeIntegrationName ? (
+                      <>
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mr-2" />
+                        {activeIntegrationName}
+                      </>
+                    ) : activeDataset ? activeDataset.file_name : "Select Dataset"}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
@@ -111,7 +116,10 @@ export function Header() {
                 <DropdownMenuLabel>Live Integrations</DropdownMenuLabel>
                 {activeIntegrationName ? (
                   <DropdownMenuItem className="flex justify-between items-center cursor-default text-emerald-500">
-                    <span className="truncate flex-1 pr-2">🟢 {activeIntegrationName}</span>
+                    <span className="truncate flex-1 pr-2 flex items-center">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mr-2" />
+                      {activeIntegrationName}
+                    </span>
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem className="text-muted-foreground cursor-default">

@@ -115,7 +115,7 @@ export default function IntegrationsPage() {
             <p className="mt-1 text-sm text-muted-foreground">Your store is connected and syncing data to Bizanolytics.</p>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={() => setConnectedIntegration(null)} className="flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80 transition-colors">
+            <button onClick={() => setData(null)} className="flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80 transition-colors">
               <Plus className="h-4 w-4" /> Connect Another
             </button>
             <button onClick={handleClear} className="flex items-center gap-2 rounded-xl bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-500/20 transition-colors">
