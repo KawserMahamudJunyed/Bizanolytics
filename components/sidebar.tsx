@@ -58,6 +58,15 @@ export function Sidebar({
   const isEffectivelyCollapsed = isCollapsed && !isHovered
   const sidebarWidth = isEffectivelyCollapsed ? "w-16" : "w-64"
 
+  useEffect(() => {
+    const handleOpenSidebar = () => {
+      setIsOpen(true)
+      setIsCollapsed(false)
+    }
+    window.addEventListener('open-sidebar', handleOpenSidebar)
+    return () => window.removeEventListener('open-sidebar', handleOpenSidebar)
+  }, [setIsCollapsed])
+
   const handleLogout = async () => {
     // 1. Clear client-side local storage session
     const supabase = createClient()
@@ -72,23 +81,6 @@ export function Sidebar({
 
   return (
     <>
-      {/* Expand/Menu Button (Visible on Mobile, and on Desktop when Collapsed) */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        onClick={() => {
-          setIsOpen(true) // For mobile
-          setIsCollapsed(false) // For desktop
-        }}
-        className={cn(
-          "fixed right-4 top-6 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-foreground transition-colors hover:bg-secondary shadow-sm",
-          !isCollapsed && "lg:hidden" // Hide on desktop ONLY if the sidebar is currently expanded
-        )}
-      >
-        <Menu className="h-5 w-5" />
-      </motion.button>
-
       {/* Mobile Overlay */}
       <AnimatePresence>
         {isOpen && (

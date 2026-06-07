@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Plus, Edit2, Check, X, Database, Bell } from "lucide-react"
+import { Plus, Edit2, Check, X, Database, Bell, Menu } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -27,7 +27,7 @@ function formatTimeAgo(dateStr: string) {
   return `${Math.floor(hours / 24)}d ago`
 }
 
-export function Header() {
+export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
   const router = useRouter()
   const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, setActiveIntegrationName, connectedIntegrationName, loadIntegrationData, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
   const [isRenaming, setIsRenaming] = useState(false)
@@ -78,7 +78,7 @@ export function Header() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="sticky top-0 z-30 w-full flex flex-wrap min-h-[80px] items-center justify-between gap-4 border-b border-border bg-background/80 py-4 backdrop-blur-md pl-4 pr-16 sm:pl-6 sm:pr-16 lg:pl-8 lg:pr-16"
+      className="sticky top-0 z-30 w-full flex flex-wrap min-h-[80px] items-center justify-between gap-4 border-b border-border bg-background/80 py-4 backdrop-blur-md px-4 sm:px-6 lg:px-8"
     >
       <div className="flex flex-col gap-1">
         <motion.h1
@@ -243,6 +243,16 @@ export function Header() {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Mobile / Desktop Expand Button */}
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => window.dispatchEvent(new Event('open-sidebar'))} 
+              className={cn("h-9 w-9 shrink-0 ml-1", !isCollapsed && "lg:hidden")}
+            >
+              <Menu className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       )}
