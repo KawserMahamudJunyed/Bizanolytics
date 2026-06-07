@@ -232,34 +232,28 @@ export type SMEDataRow = {
 export function mapIntegrationToSMEData(integration: IntegrationData): SMEDataRow[] {
   const locations = ["Savar", "Gazipur", "Narayanganj Sadar", "Jashore", "Satkhira", "Cox's Bazar", "Bogura", "Feni", "Habiganj", "Baghai Chhari"];
   
-  return integration.products.flatMap((p, idx) => {
-    // Generate 3 sales transaction rows per product to populate the charts nicely
-    const rows: SMEDataRow[] = [];
-    const baseUnits = p.reviewCount ? Math.max(5, Math.round(p.reviewCount / 3)) : 15 + (idx % 4) * 8;
+  return integration.products.map((p, idx) => {
+    const location = locations[idx % locations.length];
     
-    for (let i = 0; i < 3; i++) {
-      const location = locations[(idx + i) % locations.length];
-      const unitsSold = baseUnits + i * 4;
-      const currentStock = p.stock !== null ? Math.max(0, p.stock - i * 6) : 60 + (idx % 5) * 20;
-      // Spread dates over the last month
-      const date = new Date(Date.now() - (7 + i * 5 + (idx % 10)) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      
-      rows.push({
-        Date: date,
-        Product_ID: p.id || `SKU-${1000 + idx}`,
-        Product_Name: p.name,
-        Category: p.category || "General",
-        Location: location,
-        Sales_Channel: "Online",
-        Units_Sold: unitsSold,
-        Revenue_BDT: unitsSold * p.price,
-        Unit_Price: p.price,
-        Cost_Price: Math.round(p.price * 0.7),
-        Current_Stock: currentStock,
-        Customer_Segment: i % 2 === 0 ? "Retail" : "B2B"
-      });
-    }
-    return rows;
+    // WooCommerce only gives us the catalog product, so we estimate historical sales based on reviews if present
+    const unitsSold = p.reviewCount ? Math.max(5, p.reviewCount) : 15 + (idx % 4) * 8;
+    const currentStock = p.stock !== null ? p.stock : 60 + (idx % 5) * 20;
+    const date = new Date().toISOString().split('T')[0];
+    
+    return {
+      Date: date,
+      Product_ID: p.id || `SKU-${1000 + idx}`,
+      Product_Name: p.name,
+      Category: p.category || "General",
+      Location: location,
+      Sales_Channel: "Online",
+      Units_Sold: unitsSold,
+      Revenue_BDT: unitsSold * p.price,
+      Unit_Price: p.price,
+      Cost_Price: Math.round(p.price * 0.7),
+      Current_Stock: currentStock,
+      Customer_Segment: idx % 2 === 0 ? "Retail" : "B2B"
+    };
   });
 }
 

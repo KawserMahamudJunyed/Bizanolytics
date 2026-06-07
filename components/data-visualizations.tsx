@@ -336,16 +336,18 @@ export function RawDataTable() {
                 >
                   {(() => {
                     const revenue = Number(row.Revenue_BDT || row.revenue || 0);
-                    const cost = Number(row.Cost_Price || row.cost || 0);
+                    const cost = Number(row.Cost_Price || row.cost || 0); // This is unit cost
                     const units = Number(row.Units_Sold || row.units || 0);
                     const stock = Number(row.Current_Stock || 0);
+                    
+                    const totalCost = cost * units;
+                    const profit = revenue - totalCost;
                     
                     // Generated calculations
                     let marginVal = row.margin;
                     if (marginVal === undefined && revenue > 0) {
-                      marginVal = parseFloat((((revenue - cost) / revenue) * 100).toFixed(1));
+                      marginVal = parseFloat(((profit / revenue) * 100).toFixed(1));
                     }
-                    const profit = revenue - cost;
                     const stockValue = stock * cost;
                     const stockRatio = units > 0 ? (stock / units).toFixed(1) : "N/A";
 
