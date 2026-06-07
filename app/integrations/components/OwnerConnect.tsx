@@ -119,8 +119,11 @@ const PIPELINE_STEPS = [
 export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectProps) {
   const PLATFORMS = mode === "ecommerce" ? ECOMMERCE_PLATFORMS : POS_PLATFORMS
   const [activePlatform, setActivePlatform] = useState<PlatformType>(PLATFORMS[0].key)
-  const [currentStep, setCurrentStep] = useState<PipelineStep>("idle")
+  const [currentStep, setCurrentStep] = useState<PipelineStep | "subscription">("idle")
   const [error, setError] = useState<string | null>(null)
+  
+  const [fetchedData, setFetchedData] = useState<IntegrationData | null>(null)
+  const [selectedFreq, setSelectedFreq] = useState("daily")
 
   // Reset active platform when mode changes
   useEffect(() => {
@@ -182,8 +185,9 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
 
       setCurrentStep("updating")
       await new Promise((r) => setTimeout(r, 600))
-      setCurrentStep("done")
-      onDataReady(normalized)
+      
+      setFetchedData(normalized)
+      setCurrentStep("subscription")
       toast.success(`Connected! Found ${normalized.products.length} products`)
     } catch (err: any) {
       setCurrentStep("error")
@@ -221,8 +225,8 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
       setCurrentStep("updating")
       await new Promise((r) => setTimeout(r, 600))
       
-      setCurrentStep("done")
-      onDataReady(data)
+      setFetchedData(data)
+      setCurrentStep("subscription")
       toast.success(`Connected! Found ${data.products?.length || 0} products. Keys saved securely.`)
     } catch (err: any) {
       setCurrentStep("error")
@@ -264,8 +268,9 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
 
       setCurrentStep("updating")
       await new Promise((r) => setTimeout(r, 600))
-      setCurrentStep("done")
-      onDataReady(normalized)
+      
+      setFetchedData(normalized)
+      setCurrentStep("subscription")
       toast.success(`Connected! Found ${normalized.products.length} products`)
     } catch (err: any) {
       setCurrentStep("error")
@@ -305,8 +310,9 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
       
       setCurrentStep("updating")
       await new Promise((r) => setTimeout(r, 600))
-      setCurrentStep("done")
-      onDataReady(mockNormalized)
+      
+      setFetchedData(mockNormalized)
+      setCurrentStep("subscription")
       toast.success(`Connected to ${platform.label}! Found 2 products`)
     } catch (err: any) {
       setCurrentStep("error")
@@ -426,6 +432,7 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
             className="space-y-4"
           >
             {mode === "pos" ? (
+              currentStep === "subscription" ? null : (
               <>
                 <CredentialField
                   id="pos-location"
@@ -449,7 +456,8 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
                   icon={Key}
                 />
               </>
-            ) : (
+              )
+            ) : currentStep === "subscription" ? null : (
               <>
                 {activePlatform === "shopify" && (
                   <>
@@ -542,27 +550,83 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
                 )}
               </>
             )}
+
+            {currentStep === "subscription" && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="space-y-4"
+              >
+                <div className="text-center mb-6">
+                  <h3 className="text-lg font-bold text-foreground">Select Sync Plan</h3>
+                  <p className="text-xs text-muted-foreground mt-1">Choose how often Bizanolytics should update your data.</p>
+                </div>
+                <div className="grid gap-3">
+                  {[
+                    { id: "daily", name: "BizBasic (Free)", desc: "Daily Auto-Sync", color: "border-border hover:border-slate-500/50 hover:bg-slate-500/5" },
+                    { id: "hourly", name: "BizPro ($49/mo)", desc: "Hourly Auto-Sync", color: "border-border hover:border-blue-500/50 hover:bg-blue-500/5" },
+                    { id: "instant", name: "BizEnterprise ($199/mo)", desc: "Instant Live Sync Webhooks", color: "border-primary/30 hover:border-primary bg-primary/5 hover:bg-primary/10" }
+                  ].map((plan) => (
+                    <div
+                      key={plan.id}
+                      onClick={() => setSelectedFreq(plan.id)}
+                      className={cn(
+                        "cursor-pointer rounded-xl border p-4 transition-all duration-200",
+                        plan.color,
+                        selectedFreq === plan.id ? "ring-2 ring-primary border-primary bg-primary/5" : ""
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-sm text-foreground">{plan.name}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{plan.desc}</p>
+                        </div>
+                        <div className={cn("h-4 w-4 rounded-full border flex items-center justify-center", selectedFreq === plan.id ? "border-primary" : "border-muted-foreground/50")}>
+                          {selectedFreq === plan.id && <div className="h-2 w-2 rounded-full bg-primary" />}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         </AnimatePresence>
 
         <div className="mt-6">
-          <motion.button
-            id="owner-connect-button"
-            whileHover={{ scale: isRunning ? 1 : 1.01 }}
-            whileTap={{ scale: isRunning ? 1 : 0.99 }}
-            onClick={handleConnect}
-            disabled={!canConnect()}
-            className={cn(
-              "w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all",
-              isRunning
-                ? cn("bg-secondary text-primary cursor-wait")
-                : cn("bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"),
-              !canConnect() && !isRunning && "opacity-50 cursor-not-allowed"
-            )}
-          >
-            {isRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-            {isRunning ? "Connecting…" : "Connect & Import"}
-          </motion.button>
+          {currentStep === "subscription" ? (
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              onClick={() => {
+                localStorage.setItem("bizanolytics_sync_freq", selectedFreq);
+                if (fetchedData) {
+                  onDataReady(fetchedData);
+                }
+              }}
+              className="w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"
+            >
+              Finish Setup & Sync
+            </motion.button>
+          ) : (
+            <motion.button
+              id="owner-connect-button"
+              whileHover={{ scale: isRunning ? 1 : 1.01 }}
+              whileTap={{ scale: isRunning ? 1 : 0.99 }}
+              onClick={handleConnect}
+              disabled={!canConnect()}
+              className={cn(
+                "w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all",
+                isRunning
+                  ? cn("bg-secondary text-primary cursor-wait")
+                  : cn("bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"),
+                !canConnect() && !isRunning && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {isRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+              {isRunning ? "Connecting…" : "Connect & Import"}
+            </motion.button>
+          )}
         </div>
 
         <AnimatePresence mode="wait">
