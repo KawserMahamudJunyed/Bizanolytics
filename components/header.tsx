@@ -153,7 +153,7 @@ export function Header() {
                     No active integration
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={() => router.push('/integrations')} className="cursor-pointer text-emerald-500">
+                <DropdownMenuItem onClick={() => router.push('/integrations')} className="cursor-pointer text-muted-foreground focus:text-emerald-500 focus:bg-emerald-500/10 hover:text-emerald-500 hover:bg-emerald-500/10">
                   <Plus className="w-4 h-4 mr-2" /> Connect New Integration
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -179,7 +179,7 @@ export function Header() {
                   )
                 })}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={resetData} className="cursor-pointer text-primary">
+                <DropdownMenuItem onClick={resetData} className="cursor-pointer text-muted-foreground focus:text-emerald-500 focus:bg-emerald-500/10 hover:text-emerald-500 hover:bg-emerald-500/10">
                   <Plus className="w-4 h-4 mr-2" /> Upload New Dataset
                 </DropdownMenuItem>
               </DropdownMenuContent>
