@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { platform, url, keys } = await req.json();
+    const { platform, url, keys, subscription_tier } = await req.json();
 
     if (!platform || !url || !keys) {
       return NextResponse.json({ error: 'Missing required configuration' }, { status: 400 });
@@ -49,10 +49,11 @@ export async function POST(req: Request) {
         platform,
         url,
         encrypted_keys: encryptedKeys,
+        subscription_tier: subscription_tier || 'daily',
         updated_at: new Date().toISOString()
       }, { onConflict: 'user_id, platform' }); // assuming a user can only have 1 of each platform type for now
 
-    // Wait, the schema didn't have unique constraint or updated_at, we might just insert and use the latest.
+    // Wait, the schema didn't have unique constraint or updated_at initially.
     // Let's just insert for now to be safe with the exact schema provided in plan.
     if (dbError) {
        // Just insert it and order by created_at desc later
@@ -60,7 +61,8 @@ export async function POST(req: Request) {
          user_id: session.user.id,
          platform,
          url,
-         encrypted_keys: encryptedKeys
+         encrypted_keys: encryptedKeys,
+         subscription_tier: subscription_tier || 'daily'
        });
     }
 

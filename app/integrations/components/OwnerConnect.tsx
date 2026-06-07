@@ -22,6 +22,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { createClient } from "@/utils/supabase/client"
 import {
   normalizeShopify,
   normalizeWooCommerce,
@@ -598,8 +599,20 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              onClick={() => {
+              onClick={async () => {
                 localStorage.setItem("bizanolytics_sync_freq", selectedFreq);
+                
+                // Update subscription tier in Supabase
+                const supabase = createClient();
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                  await supabase
+                    .from('user_integrations')
+                    .update({ subscription_tier: selectedFreq })
+                    .eq('user_id', session.user.id)
+                    .eq('platform', activePlatform);
+                }
+                
                 if (fetchedData) {
                   onDataReady(fetchedData);
                 }
