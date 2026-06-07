@@ -4,7 +4,11 @@ import { createClient } from '@/utils/supabase/server';
 export async function POST(req: Request) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    const authHeader = req.headers.get('authorization');
+    const token = authHeader ? authHeader.replace('Bearer ', '') : undefined;
+    
+    const { data: { user }, error: authError } = token ? await supabase.auth.getUser(token) : await supabase.auth.getUser();
     
     if (!user) {
       console.error("Auth error in subscription POST:", authError);

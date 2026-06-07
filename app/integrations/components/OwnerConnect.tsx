@@ -22,6 +22,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { createClient } from "@/utils/supabase/client"
 import {
   normalizeShopify,
   normalizeWooCommerce,
@@ -167,9 +168,15 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
     setCurrentStep("fetching")
 
     try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+
       const res = await fetch("/api/integrations/sync", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
+        },
         body: JSON.stringify({
           platform: "shopify",
           url: shopifyDomain.trim(),
@@ -210,9 +217,15 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
     setCurrentStep("fetching")
 
     try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+
       const res = await fetch("/api/integrations/sync", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
+        },
         body: JSON.stringify({
           platform: "woocommerce",
           url: wooSiteUrl.trim(),
@@ -253,9 +266,15 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
     setCurrentStep("fetching")
 
     try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+
       const res = await fetch("/api/integrations/sync", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
+        },
         body: JSON.stringify({
           platform: "custom",
           url: validUrl,
@@ -612,9 +631,15 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
                 
                 // Update subscription tier via API
                 try {
+                  const supabase = createClient();
+                  const { data: { session } } = await supabase.auth.getSession();
+
                   const subRes = await fetch("/api/integrations/subscription", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                      "Content-Type": "application/json",
+                      ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
+                    },
                     body: JSON.stringify({
                       platform: activePlatform,
                       subscription_tier: selectedFreq

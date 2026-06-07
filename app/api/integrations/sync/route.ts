@@ -7,7 +7,12 @@ import { normalizeWooCommerce, normalizeShopify, normalizeCustom } from '@/app/i
 export async function POST(req: Request) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    // Explicitly read Authorization header just in case cookies are stripped
+    const authHeader = req.headers.get('authorization');
+    const token = authHeader ? authHeader.replace('Bearer ', '') : undefined;
+    
+    const { data: { user }, error: authError } = token ? await supabase.auth.getUser(token) : await supabase.auth.getUser();
     
     if (!user) {
       console.error("Auth error in sync POST:", authError);
@@ -121,7 +126,11 @@ export async function GET(req: Request) {
     const platform = searchParams.get('platform') || 'woocommerce';
 
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    const authHeader = req.headers.get('authorization');
+    const token = authHeader ? authHeader.replace('Bearer ', '') : undefined;
+    
+    const { data: { user }, error: authError } = token ? await supabase.auth.getUser(token) : await supabase.auth.getUser();
     
     if (!user) {
       console.error("Auth error in sync GET:", authError);
