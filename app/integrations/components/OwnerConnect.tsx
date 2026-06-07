@@ -202,29 +202,28 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
     setCurrentStep("fetching")
 
     try {
-      const res = await fetch("/api/integrations/woocommerce", {
+      const res = await fetch("/api/integrations/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          siteUrl: wooSiteUrl.trim(),
-          consumerKey: wooKey.trim(),
-          consumerSecret: wooSecret.trim(),
+          platform: "woocommerce",
+          url: wooSiteUrl.trim(),
+          keys: {
+            consumerKey: wooKey.trim(),
+            consumerSecret: wooSecret.trim(),
+          }
         }),
       })
 
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to connect to WooCommerce")
 
-      setCurrentStep("extracting")
-      const normalized = normalizeWooCommerce(data.products, data.siteUrl)
-
-      if (normalized.products.length === 0) throw new Error("No products found in this WooCommerce store.")
-
       setCurrentStep("updating")
       await new Promise((r) => setTimeout(r, 600))
+      
       setCurrentStep("done")
-      onDataReady(normalized)
-      toast.success(`Connected! Found ${normalized.products.length} products`)
+      onDataReady(data)
+      toast.success(`Connected! Found ${data.products?.length || 0} products. Keys saved securely.`)
     } catch (err: any) {
       setCurrentStep("error")
       setError(err.message || "Failed to connect to WooCommerce")

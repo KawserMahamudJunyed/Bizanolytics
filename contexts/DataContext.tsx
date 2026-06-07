@@ -201,6 +201,60 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // --- Auto Sync Logic ---
+  useEffect(() => {
+    if (!isDataUploaded || !activeIntegrationName) return;
+    
+    const syncFreq = localStorage.getItem("bizanolytics_sync_freq") || "daily";
+    const stored = localStorage.getItem("bizanolytics_integration_data");
+    if (!stored) return;
+    
+    try {
+      const parsed = JSON.parse(stored);
+      const source = parsed.source || "woocommerce";
+      const lastScrapedAt = new Date(parsed.scrapedAt || 0).getTime();
+      const now = Date.now();
+      
+      const doSync = async () => {
+        try {
+          const res = await fetch(`/api/integrations/sync?platform=${source}`);
+          if (res.ok) {
+            const freshData = await res.json();
+            localStorage.setItem("bizanolytics_integration_data", JSON.stringify(freshData));
+            // Invalidate old insights since data changed
+            localStorage.removeItem("bizanolytics_integration_insights");
+            loadIntegrationData(); // Reload UI
+            console.log("Background sync completed for", source);
+          }
+        } catch (err) {
+          console.error("Background sync failed", err);
+        }
+      };
+
+      if (syncFreq === "instant") {
+        // Fetch now and set interval for every 3 minutes
+        doSync();
+        const intervalId = setInterval(doSync, 3 * 60 * 1000);
+        return () => clearInterval(intervalId);
+      } else if (syncFreq === "hourly") {
+        if (now - lastScrapedAt > 60 * 60 * 1000) {
+          doSync();
+        }
+        const intervalId = setInterval(() => {
+          if (Date.now() - new Date(JSON.parse(localStorage.getItem("bizanolytics_integration_data") || "{}").scrapedAt || 0).getTime() > 60 * 60 * 1000) {
+            doSync();
+          }
+        }, 5 * 60 * 1000); // check every 5 minutes if an hour has passed
+        return () => clearInterval(intervalId);
+      } else if (syncFreq === "daily") {
+        if (now - lastScrapedAt > 24 * 60 * 60 * 1000) {
+          doSync();
+        }
+      }
+    } catch (e) {}
+  }, [isDataUploaded, activeIntegrationName]);
+
+
   const loadDatasetById = async (id: string) => {
     const supabase = createClient()
     const dataset = datasetHistory.find(d => d.id === id)
