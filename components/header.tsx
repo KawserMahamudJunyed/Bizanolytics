@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Plus, Edit2, Check, X, Database } from "lucide-react"
+import { Plus, Edit2, Check, X, Database, Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useData } from "@/contexts/DataContext"
 import {
@@ -132,6 +132,33 @@ export function Header() {
               <Edit2 className="w-4 h-4 text-muted-foreground" />
             </Button>
           )}
+          )}
+
+          {/* Notifications */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9 relative">
+                <Bell className="w-4 h-4 text-muted-foreground" />
+                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border border-background"></span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80">
+              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <div className="flex flex-col gap-2 p-2">
+                <div className="rounded-lg p-2 hover:bg-secondary/50 transition-colors cursor-pointer border border-transparent hover:border-border">
+                  <p className="text-sm font-medium text-foreground">Forecast Generated</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Your sales forecast for next month is ready to view.</p>
+                  <p className="text-[10px] text-muted-foreground mt-1 text-primary">2 hours ago</p>
+                </div>
+                <div className="rounded-lg p-2 hover:bg-secondary/50 transition-colors cursor-pointer border border-transparent hover:border-border">
+                  <p className="text-sm font-medium text-foreground">Data Import Successful</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Successfully imported 5,000 rows from Shopify integration.</p>
+                  <p className="text-[10px] text-muted-foreground mt-1 text-primary">Yesterday</p>
+                </div>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       )}
     </motion.header>
