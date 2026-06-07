@@ -29,7 +29,7 @@ function formatTimeAgo(dateStr: string) {
 
 export function Header() {
   const router = useRouter()
-  const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, setActiveIntegrationName, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
+  const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, setActiveIntegrationName, connectedIntegrationName, loadIntegrationData, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
   const [isRenaming, setIsRenaming] = useState(false)
   const [editName, setEditName] = useState("")
 
@@ -140,6 +140,13 @@ export function Header() {
                     <span className="truncate flex-1 pr-2 flex items-center">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mr-2" />
                       {activeIntegrationName}
+                    </span>
+                  </DropdownMenuItem>
+                ) : connectedIntegrationName ? (
+                  <DropdownMenuItem onClick={loadIntegrationData} className="flex justify-between items-center cursor-pointer text-foreground hover:bg-secondary">
+                    <span className="truncate flex-1 pr-2 flex items-center">
+                      <span className="w-2 h-2 rounded-full bg-muted-foreground shrink-0 mr-2" />
+                      {connectedIntegrationName} (Click to View)
                     </span>
                   </DropdownMenuItem>
                 ) : (

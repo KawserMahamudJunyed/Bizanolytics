@@ -44,6 +44,8 @@ interface DataContextType {
   datasetHistory: DatasetMeta[]
   activeIntegrationName?: string
   setActiveIntegrationName: (name?: string) => void
+  connectedIntegrationName?: string
+  loadIntegrationData: () => Promise<void>
   loadDatasetById: (id: string) => Promise<void>
   renameDataset: (id: string, newName: string) => Promise<void>
   aiInsights?: string
@@ -66,6 +68,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [datasetId, setDatasetId] = useState<string>()
   const [datasetHistory, setDatasetHistory] = useState<DatasetMeta[]>([])
   const [activeIntegrationName, setActiveIntegrationName] = useState<string>()
+  const [connectedIntegrationName, setConnectedIntegrationName] = useState<string>()
   const [aiInsights, setAiInsights] = useState<string>()
   const [userCurrency, setUserCurrency] = useState<string>("BDT")
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -79,6 +82,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     } else {
       setAiInsights(undefined)
     }
+    setActiveIntegrationName(undefined)
 
     const { data: fileData, error: downloadError } = await supabase.storage
       .from('user_datasets')
@@ -147,17 +151,35 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
       // Check if integration is active
       const storedIntegration = localStorage.getItem("bizanolytics_integration_data")
-      if (storedIntegration) {
+      if (!storedIntegration) {
+        await loadDatasetData(datasets[0], supabase)
+      } else {
         try {
           const parsed = JSON.parse(storedIntegration)
           if (parsed?.business?.name) {
             setActiveIntegrationName(parsed.business.name)
+            setConnectedIntegrationName(parsed.business.name)
           }
         } catch (e) {}
       }
     }
     fetchHistory()
   }, [])
+
+  const loadIntegrationData = async () => {
+    const stored = localStorage.getItem("bizanolytics_integration_data")
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored)
+        const { mapIntegrationToSMEData } = await import("@/app/integrations/utils/normalize")
+        setRawData(mapIntegrationToSMEData(parsed))
+        setDatasetId(undefined)
+        setActiveIntegrationName(parsed.business?.name)
+        setConnectedIntegrationName(parsed.business?.name)
+        setIsDataUploaded(true)
+      } catch (e) {}
+    }
+  }
 
   const loadDatasetById = async (id: string) => {
     const supabase = createClient()
@@ -179,6 +201,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setIsDataUploaded(true)
     setDatasetId(id)
     setActiveIntegrationName(integrationName)
+    if (integrationName) {
+      setConnectedIntegrationName(integrationName)
+    }
     setAiInsights(undefined)
     
     // Refresh history if a new dataset was uploaded
@@ -265,6 +290,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       notifications, unreadNotificationsCount,
       markNotificationAsRead, markAllNotificationsAsRead, addNotification,
       activeIntegrationName, setActiveIntegrationName,
+      connectedIntegrationName, loadIntegrationData,
       recordPipelineRun
     }}>
       {children}
