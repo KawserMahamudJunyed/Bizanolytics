@@ -15,6 +15,7 @@ export default function ProfilePage() {
     full_name: "",
     company_name: "",
   })
+  const [syncFreq, setSyncFreq] = useState("daily")
 
   useEffect(() => {
     async function loadProfile() {
@@ -43,6 +44,10 @@ export default function ProfilePage() {
           full_name: session.user.user_metadata?.full_name || ""
         }))
       }
+      
+      const freq = localStorage.getItem("bizanolytics_sync_freq") || "daily"
+      setSyncFreq(freq)
+      
       setIsLoading(false)
     }
     loadProfile()
@@ -102,13 +107,22 @@ export default function ProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         className="card-base p-6 md:p-8 space-y-8"
       >
-        <div className="flex items-center gap-4 mb-6">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
-            {profile.full_name?.charAt(0) || "U"}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
+              {profile.full_name?.charAt(0) || "U"}
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-foreground">{profile.full_name || "Profile Avatar"}</h3>
+              <p className="text-sm text-muted-foreground">{profile.company_name || "Configure your details below"}</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg font-medium text-foreground">Profile Avatar</h3>
-            <p className="text-sm text-muted-foreground">Generated from your name.</p>
+          
+          <div className="sm:ml-auto">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-secondary/50 text-xs font-medium text-foreground">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              Plan: {syncFreq === "instant" ? "BizEnterprise" : syncFreq === "hourly" ? "BizPro" : "BizBasic"}
+            </div>
           </div>
         </div>
         

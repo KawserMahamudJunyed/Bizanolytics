@@ -26,6 +26,7 @@ export default function SettingsPage() {
   const [profile, setProfile] = useState({
     currency: "BDT"
   })
+  const [syncFreq, setSyncFreq] = useState("daily")
 
   useEffect(() => {
     async function loadProfile() {
@@ -48,10 +49,21 @@ export default function SettingsPage() {
           currency: data.currency || "BDT"
         })
       }
+      
+      const freq = localStorage.getItem("bizanolytics_sync_freq") || "daily"
+      setSyncFreq(freq)
+      
       setIsLoading(false)
     }
     loadProfile()
   }, [])
+
+  const subscriptionMap: Record<string, any> = {
+    daily: { name: "BizBasic", desc: "Daily Auto-Sync", color: "text-slate-500", bg: "bg-slate-500/10", border: "border-slate-500/30", price: "Free" },
+    hourly: { name: "BizPro", desc: "Hourly Auto-Sync", color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/30", price: "$49/mo" },
+    instant: { name: "BizEnterprise", desc: "Instant Live Sync Webhooks", color: "text-primary", bg: "bg-primary/10", border: "border-primary/30", price: "$199/mo" }
+  }
+  const currentSub = subscriptionMap[syncFreq] || subscriptionMap.daily;
 
   const handleSave = async () => {
     setIsSaving(true)
@@ -168,14 +180,48 @@ export default function SettingsPage() {
             </motion.div>
           )}
 
-          {(activeTab === "billing" || activeTab === "security") && (
+          {activeTab === "billing" && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="card-base p-6 md:p-8 space-y-6"
+            >
+              <div>
+                <h3 className="text-lg font-medium text-foreground">Current Subscription</h3>
+                <p className="text-sm text-muted-foreground">Manage your Bizanolytics plan and sync frequency.</p>
+              </div>
+
+              <div className={cn("rounded-xl border p-6 flex flex-col sm:flex-row items-center justify-between gap-4", currentSub.bg, currentSub.border)}>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={cn("font-bold text-xl", currentSub.color)}>{currentSub.name}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-background text-xs font-medium text-foreground border border-border">Active</span>
+                  </div>
+                  <p className={cn("text-sm", currentSub.color)}>{currentSub.desc}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-foreground">{currentSub.price}</div>
+                  <div className="text-xs text-muted-foreground">Billed automatically</div>
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-between items-center border-t border-border">
+                <p className="text-sm text-muted-foreground">Want to change your plan?</p>
+                <Link href="/integrations" className="text-sm font-medium text-primary hover:underline">
+                  Update Sync Frequency
+                </Link>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === "security" && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="card-base p-6 md:p-12 text-center"
             >
-              <h3 className="text-lg font-medium text-foreground">Coming Soon</h3>
-              <p className="text-sm text-muted-foreground mt-2">This section is currently under development.</p>
+              <h3 className="text-lg font-medium text-foreground">Security Settings</h3>
+              <p className="text-sm text-muted-foreground mt-2">API Key Management coming soon.</p>
             </motion.div>
           )}
 
