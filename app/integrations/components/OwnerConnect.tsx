@@ -22,7 +22,6 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { createClient } from "@/utils/supabase/client"
 import {
   normalizeShopify,
   normalizeWooCommerce,
@@ -122,6 +121,7 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
   const [activePlatform, setActivePlatform] = useState<PlatformType>(PLATFORMS[0].key)
   const [currentStep, setCurrentStep] = useState<PipelineStep | "subscription">("idle")
   const [error, setError] = useState<string | null>(null)
+  const [isFinishing, setIsFinishing] = useState(false)
   
   const [fetchedData, setFetchedData] = useState<IntegrationData | null>(null)
   const [selectedFreq, setSelectedFreq] = useState("daily")
@@ -597,29 +597,36 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
         <div className="mt-6">
           {currentStep === "subscription" ? (
             <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
+              whileHover={{ scale: isFinishing ? 1 : 1.01 }}
+              whileTap={{ scale: isFinishing ? 1 : 0.99 }}
+              disabled={isFinishing}
               onClick={async () => {
+                setIsFinishing(true)
                 localStorage.setItem("bizanolytics_sync_freq", selectedFreq);
                 
-                // Update subscription tier in Supabase
-                const supabase = createClient();
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                  await supabase
-                    .from('user_integrations')
-                    .update({ subscription_tier: selectedFreq })
-                    .eq('user_id', session.user.id)
-                    .eq('platform', activePlatform);
+                // Update subscription tier via API
+                try {
+                  await fetch("/api/integrations/subscription", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      platform: activePlatform,
+                      subscription_tier: selectedFreq
+                    })
+                  });
+                } catch (e) {
+                  console.error("Failed to update subscription tier", e);
                 }
                 
                 if (fetchedData) {
                   onDataReady(fetchedData);
                 }
+                setIsFinishing(false)
               }}
-              className="w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"
+              className="w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-70 disabled:cursor-wait"
             >
-              Finish Setup & Sync
+              {isFinishing ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              {isFinishing ? "Finalizing..." : "Finish Setup & Sync"}
             </motion.button>
           ) : (
             <motion.button
