@@ -162,6 +162,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
           setActiveIntegrationName(parsed?.business?.name)
           setConnectedIntegrationName(parsed?.business?.name)
           setIsDataUploaded(true)
+          
+          // Restore AI Insights for Integration
+          const storedInsights = localStorage.getItem("bizanolytics_integration_insights")
+          if (storedInsights) {
+            setAiInsights(storedInsights)
+          }
         } catch (e) {
           if (defaultDataset) await loadDatasetData(defaultDataset, supabase)
         }
@@ -186,6 +192,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
         setConnectedIntegrationName(parsed.business?.name)
         setIsDataUploaded(true)
         localStorage.setItem("bizanolytics_active_view_mode", "integration")
+        
+        const storedInsights = localStorage.getItem("bizanolytics_integration_insights")
+        if (storedInsights) {
+          setAiInsights(storedInsights)
+        }
       } catch (e) {}
     }
   }
@@ -244,6 +255,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
     if (datasetId) {
       const supabase = createClient()
       await supabase.from('datasets').update({ ai_insights: insights }).eq('id', datasetId)
+    } else if (activeIntegrationName) {
+      localStorage.setItem("bizanolytics_integration_insights", insights)
     }
     addNotification("AI Forecast Generated", "Your new business forecast and AI insights are ready to view.")
   }
