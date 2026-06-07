@@ -1,14 +1,23 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
 export async function POST(req: Request) {
   try {
-    const supabase = await createClient();
-    
     const authHeader = req.headers.get('authorization');
     const token = authHeader ? authHeader.replace('Bearer ', '') : undefined;
+
+    // Create a client initialized with the token so RLS works
+    const supabase = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        global: {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        }
+      }
+    );
     
-    const { data: { user }, error: authError } = token ? await supabase.auth.getUser(token) : await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (!user) {
       console.error("Auth error in subscription POST:", authError);
