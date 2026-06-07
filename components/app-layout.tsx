@@ -60,7 +60,7 @@ export function AppLayout({ children, user: serverUser }: { children: React.Reac
           </div>
         )}
 
-        <div className="p-6 lg:p-8 min-w-0 w-full flex-1">
+        <div className="p-4 sm:p-6 lg:p-8 min-w-0 w-full flex-1">
           <DataGuard>
             {children}
           </DataGuard>

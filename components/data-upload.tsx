@@ -240,7 +240,7 @@ export function DataUpload() {
 
       <div
         className={cn(
-          "relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 transition-colors",
+          "relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-4 sm:p-8 transition-colors",
           dragActive ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50",
           uploadState === "success" && "border-emerald-500/50 bg-emerald-500/5",
           (uploadState === "error" || uploadState === "insufficient") && "border-red-500/50 bg-red-500/5"
