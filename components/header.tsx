@@ -146,7 +146,7 @@ export function Header() {
                   <DropdownMenuItem onClick={loadIntegrationData} className="flex justify-between items-center cursor-pointer text-foreground hover:bg-secondary">
                     <span className="truncate flex-1 pr-2 flex items-center">
                       <span className="w-2 h-2 rounded-full bg-muted-foreground shrink-0 mr-2" />
-                      {connectedIntegrationName} (Click to View)
+                      {connectedIntegrationName}
                     </span>
                   </DropdownMenuItem>
                 ) : (
@@ -160,16 +160,25 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Your Datasets</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {datasetHistory.map((dataset) => (
-                  <DropdownMenuItem 
-                    key={dataset.id}
-                    onClick={() => loadDatasetById(dataset.id)}
-                    className="flex justify-between items-center cursor-pointer"
-                  >
-                    <span className="truncate flex-1 pr-2">{dataset.file_name}</span>
-                    <span className="text-xs text-muted-foreground shrink-0">{formatTimeAgo(dataset.created_at)}</span>
-                  </DropdownMenuItem>
-                ))}
+                {datasetHistory.map((dataset) => {
+                  const isDatasetActive = !activeIntegrationName && dataset.id === datasetId;
+                  return (
+                    <DropdownMenuItem 
+                      key={dataset.id}
+                      onClick={() => loadDatasetById(dataset.id)}
+                      className={cn(
+                        "flex justify-between items-center cursor-pointer",
+                        isDatasetActive ? "text-emerald-500" : "text-foreground hover:bg-secondary"
+                      )}
+                    >
+                      <span className="truncate flex-1 pr-2 flex items-center">
+                        <span className={cn("w-2 h-2 rounded-full shrink-0 mr-2", isDatasetActive ? "bg-emerald-500" : "bg-transparent")} />
+                        {dataset.file_name}
+                      </span>
+                      <span className="text-xs text-muted-foreground shrink-0">{formatTimeAgo(dataset.created_at)}</span>
+                    </DropdownMenuItem>
+                  )
+                })}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={resetData} className="cursor-pointer text-primary">
                   <Plus className="w-4 h-4 mr-2" /> Upload New Dataset
