@@ -78,9 +78,9 @@ export function Header() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="sticky top-0 z-30 flex flex-col sm:flex-row min-h-[80px] items-start sm:items-center justify-between gap-4 border-b border-border bg-background/80 px-4 sm:px-6 py-4 sm:py-0 backdrop-blur-md pr-16 lg:pr-8 lg:px-8"
+      className="sticky top-0 z-30 w-full flex flex-wrap min-h-[80px] items-center justify-between gap-4 border-b border-border bg-background/80 px-4 sm:px-6 py-4 backdrop-blur-md pr-16 lg:px-8"
     >
-      <div className="flex flex-col gap-1 pt-2 lg:pt-0">
+      <div className="flex flex-col gap-1">
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -100,7 +100,7 @@ export function Header() {
       </div>
 
       {datasetHistory.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+        <div className="flex flex-wrap items-center gap-2">
           {isRenaming ? (
             <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-md border border-border">
               <input 
