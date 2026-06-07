@@ -273,7 +273,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const processingMs = Math.floor(400 + Math.random() * 200)
       await supabase.from('pipeline_runs').insert({
         user_id: session.user.id,
-        run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}|${sourceName}`,
+        run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
+        source: sourceName,
         status: "success",
         duration: `${processingMs}ms`,
         records

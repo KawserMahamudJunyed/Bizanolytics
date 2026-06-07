@@ -55,13 +55,18 @@ export default function PipelinePage() {
         
         if (data) {
           setPipelineRuns(data.map((r: any) => {
+            // Check if source column exists, otherwise fallback to parsing legacy run_id or default
+            let source = r.source
             let actualId = r.run_id
-            let source = "CSV Upload"
-            if (r.run_id && r.run_id.includes('|')) {
+            
+            if (!source && r.run_id && r.run_id.includes('|')) {
               const parts = r.run_id.split('|')
               actualId = parts[0]
               source = parts.slice(1).join('|')
+            } else if (!source) {
+              source = "CSV Upload"
             }
+            
             return {
               id: actualId,
               source: source,
