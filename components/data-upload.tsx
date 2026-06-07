@@ -109,7 +109,7 @@ export function DataUpload() {
             const processingMs = Math.max(45, Math.min(500, Math.round(currentFile.size / 80 + Math.random() * 30)))
             await supabase.from('pipeline_runs').insert({
               user_id: user.id,
-              run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
+              run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}|${currentFile.name}`,
               status: "success",
               duration: processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`,
               records: parsedData.length

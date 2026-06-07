@@ -57,7 +57,7 @@ interface DataContextType {
   markNotificationAsRead: (id: string) => Promise<void>
   markAllNotificationsAsRead: () => Promise<void>
   addNotification: (title: string, message: string) => Promise<void>
-  recordPipelineRun: (records: number) => Promise<void>
+  recordPipelineRun: (records: number, sourceName: string) => Promise<void>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -266,14 +266,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const recordPipelineRun = async (records: number) => {
+  const recordPipelineRun = async (records: number, sourceName: string) => {
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     if (session?.user) {
       const processingMs = Math.floor(400 + Math.random() * 200)
       await supabase.from('pipeline_runs').insert({
         user_id: session.user.id,
-        run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
+        run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}|${sourceName}`,
         status: "success",
         duration: `${processingMs}ms`,
         records

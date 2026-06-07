@@ -12,7 +12,7 @@ export default function BizPOSPage() {
 
   const handleComplete = () => {
     addNotification("BizPOS Connected", "Successfully synced live data from BizPOS.")
-    recordPipelineRun(1)
+    recordPipelineRun(1, "BizPOS API")
     router.push("/dashboard")
   }
 

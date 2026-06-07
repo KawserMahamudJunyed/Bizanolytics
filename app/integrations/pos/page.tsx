@@ -17,7 +17,7 @@ export default function POSPage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
     setUploadedData(mapIntegrationToSMEData(newData), undefined, newData.business.name)
     addNotification("POS Connected", "Successfully synced data from your Point of Sale system.")
-    recordPipelineRun(newData.products?.length || 0)
+    recordPipelineRun(newData.products?.length || 0, newData.business.name || "POS")
     router.push("/dashboard")
   }
 

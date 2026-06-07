@@ -17,7 +17,7 @@ export default function DatabasesPage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
     setUploadedData(mapIntegrationToSMEData(newData), undefined, newData.business?.name || "Database Connection")
     addNotification("Database Connected", "Successfully synced data from your custom database or spreadsheet.")
-    recordPipelineRun(newData.products?.length || newData.length || 0)
+    recordPipelineRun(newData.products?.length || newData.length || 0, newData.business?.name || "Database Connection")
     router.push("/dashboard")
   }
 

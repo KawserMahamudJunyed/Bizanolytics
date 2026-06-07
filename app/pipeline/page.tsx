@@ -11,6 +11,7 @@ import { toast } from "sonner"
 
 type PipelineRun = {
   id: string
+  source: string
   status: "success" | "warning" | "error"
   duration: string
   records: number
@@ -53,13 +54,23 @@ export default function PipelinePage() {
           .limit(10)
         
         if (data) {
-          setPipelineRuns(data.map((r: any) => ({
-            id: r.run_id,
-            status: r.status as any,
-            duration: r.duration,
-            records: r.records,
-            timestamp: new Date(r.created_at)
-          })))
+          setPipelineRuns(data.map((r: any) => {
+            let actualId = r.run_id
+            let source = "CSV Upload"
+            if (r.run_id && r.run_id.includes('|')) {
+              const parts = r.run_id.split('|')
+              actualId = parts[0]
+              source = parts.slice(1).join('|')
+            }
+            return {
+              id: actualId,
+              source: source,
+              status: r.status as any,
+              duration: r.duration,
+              records: r.records,
+              timestamp: new Date(r.created_at)
+            }
+          }))
         }
       }
     }
@@ -225,6 +236,7 @@ function PipelineRunsTable({ runs }: { runs: PipelineRun[] }) {
             <thead>
               <tr className="border-b border-border">
                 <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Run ID</th>
+                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Source</th>
                 <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Status</th>
                 <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Duration</th>
                 <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Records</th>
@@ -241,6 +253,7 @@ function PipelineRunsTable({ runs }: { runs: PipelineRun[] }) {
                   className="group"
                 >
                   <td className="py-3 text-sm font-mono text-foreground">{run.id}</td>
+                  <td className="py-3 text-sm font-medium text-foreground">{run.source}</td>
                   <td className="py-3">
                     <span className={cn(
                       "inline-flex rounded-full border px-2 py-0.5 text-xs font-medium capitalize",
@@ -256,7 +269,7 @@ function PipelineRunsTable({ runs }: { runs: PipelineRun[] }) {
               ))}
               {runs.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
+                  <td colSpan={6} className="py-8 text-center text-sm text-muted-foreground">
                     Upload data or Connect an Integration to view pipeline runs.
                   </td>
                 </tr>
