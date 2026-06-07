@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Plus, Edit2, Check, X, Database, Bell } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
@@ -27,6 +28,7 @@ function formatTimeAgo(dateStr: string) {
 }
 
 export function Header() {
+  const router = useRouter()
   const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
   const [isRenaming, setIsRenaming] = useState(false)
   const [editName, setEditName] = useState("")
@@ -126,6 +128,9 @@ export function Header() {
                     No active integration
                   </DropdownMenuItem>
                 )}
+                <DropdownMenuItem onClick={() => router.push('/integrations')} className="cursor-pointer text-emerald-500">
+                  <Plus className="w-4 h-4 mr-2" /> Connect New Integration
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Your Datasets</DropdownMenuLabel>
                 <DropdownMenuSeparator />
