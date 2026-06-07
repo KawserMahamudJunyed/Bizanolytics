@@ -167,12 +167,15 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
     setCurrentStep("fetching")
 
     try {
-      const res = await fetch("/api/integrations/shopify", {
+      const res = await fetch("/api/integrations/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          domain: shopifyDomain.trim(),
-          storefrontToken: shopifyToken.trim(),
+          platform: "shopify",
+          url: shopifyDomain.trim(),
+          keys: {
+            storefrontToken: shopifyToken.trim(),
+          }
         }),
       })
 
@@ -180,7 +183,7 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
       if (!res.ok) throw new Error(data.error || "Failed to connect to Shopify")
 
       setCurrentStep("extracting")
-      const normalized = normalizeShopify(data.products, data.domain)
+      const normalized = data; // data is already normalized from the sync endpoint
 
       if (normalized.products.length === 0) throw new Error("No products found in this Shopify store.")
 
@@ -250,12 +253,15 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
     setCurrentStep("fetching")
 
     try {
-      const res = await fetch("/api/integrations/custom", {
+      const res = await fetch("/api/integrations/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          endpointUrl: validUrl,
-          bearerToken: customToken.trim() || undefined,
+          platform: "custom",
+          url: validUrl,
+          keys: {
+            bearerToken: customToken.trim() || undefined,
+          }
         }),
       })
 
@@ -263,7 +269,7 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
       if (!res.ok) throw new Error(data.error || "Failed to fetch from your API")
 
       setCurrentStep("extracting")
-      const normalized = normalizeCustom(data.products, data.endpointUrl)
+      const normalized = data; // data is already normalized from the sync endpoint
 
       if (normalized.products.length === 0) throw new Error("No products found from your API endpoint.")
 

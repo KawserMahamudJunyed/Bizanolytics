@@ -34,6 +34,42 @@ export async function POST(req: Request) {
       
       const rawProducts = await response.json();
       resultData = normalizeWooCommerce(rawProducts, validUrl);
+      
+    } else if (platform === 'shopify') {
+      const { storefrontToken } = keys;
+      const shopUrl = url.includes('myshopify.com') ? url : `${url}.myshopify.com`;
+      const endpoint = `https://${shopUrl}/api/2024-01/graphql.json`;
+      const query = `{ products(first: 50) { edges { node { id title description productType totalInventory variants(first: 1) { edges { node { price { amount } } } } } } } }`;
+      
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': storefrontToken },
+        body: JSON.stringify({ query })
+      });
+      if (!response.ok) throw new Error(`Shopify connection failed: ${response.status}`);
+      const data = await response.json();
+      const edges = data.data?.products?.edges || [];
+      edges.forEach((edge: any) => {
+        const variants = edge.node?.variants?.edges || [];
+        variants.forEach((vEdge: any) => {
+          if (vEdge.node?.price?.amount) vEdge.node.price = vEdge.node.price.amount;
+        });
+      });
+      resultData = normalizeShopify(edges, shopUrl);
+      
+    } else if (platform === 'custom') {
+      const { bearerToken } = keys;
+      let validUrl = url.trim();
+      if (!validUrl.startsWith("http")) validUrl = `https://${validUrl}`;
+      
+      const headers: any = { 'Accept': 'application/json' };
+      if (bearerToken) headers['Authorization'] = `Bearer ${bearerToken}`;
+      
+      const response = await fetch(validUrl, { headers });
+      if (!response.ok) throw new Error(`Custom API connection failed: ${response.status}`);
+      const rawProducts = await response.json();
+      resultData = normalizeCustom(Array.isArray(rawProducts) ? rawProducts : (rawProducts.products || rawProducts.items || []), validUrl);
+      
     } else {
       return NextResponse.json({ error: 'Platform not fully implemented for auto-sync yet' }, { status: 400 });
     }
@@ -117,6 +153,40 @@ export async function GET(req: Request) {
       
       const rawProducts = await response.json();
       const resultData = normalizeWooCommerce(rawProducts, config.url);
+      return NextResponse.json(resultData);
+      
+    } else if (platform === 'shopify') {
+      const { storefrontToken } = keys;
+      const shopUrl = config.url.includes('myshopify.com') ? config.url : `${config.url}.myshopify.com`;
+      const endpoint = `https://${shopUrl}/api/2024-01/graphql.json`;
+      const query = `{ products(first: 50) { edges { node { id title description productType totalInventory variants(first: 1) { edges { node { price { amount } } } } } } } }`;
+      
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': storefrontToken },
+        body: JSON.stringify({ query })
+      });
+      if (!response.ok) throw new Error(`Shopify connection failed: ${response.status}`);
+      const data = await response.json();
+      const edges = data.data?.products?.edges || [];
+      edges.forEach((edge: any) => {
+        const variants = edge.node?.variants?.edges || [];
+        variants.forEach((vEdge: any) => {
+          if (vEdge.node?.price?.amount) vEdge.node.price = vEdge.node.price.amount;
+        });
+      });
+      const resultData = normalizeShopify(edges, shopUrl);
+      return NextResponse.json(resultData);
+      
+    } else if (platform === 'custom') {
+      const { bearerToken } = keys;
+      const headers: any = { 'Accept': 'application/json' };
+      if (bearerToken) headers['Authorization'] = `Bearer ${bearerToken}`;
+      
+      const response = await fetch(config.url, { headers });
+      if (!response.ok) throw new Error(`Custom API connection failed: ${response.status}`);
+      const rawProducts = await response.json();
+      const resultData = normalizeCustom(Array.isArray(rawProducts) ? rawProducts : (rawProducts.products || rawProducts.items || []), config.url);
       return NextResponse.json(resultData);
     }
 
