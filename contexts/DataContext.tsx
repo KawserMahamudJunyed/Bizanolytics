@@ -144,23 +144,31 @@ export function DataProvider({ children }: { children: ReactNode }) {
       
       setDatasetHistory(datasets)
       
-      // Load the latest dataset by default
+      // Load the latest dataset by default but wait to set it active
+      let defaultDataset = null;
       if (datasets.length > 0) {
-        await loadDatasetData(datasets[0], supabase)
+        defaultDataset = datasets[0];
       }
 
       // Check if integration is active
       const storedIntegration = localStorage.getItem("bizanolytics_integration_data")
-      if (!storedIntegration) {
-        await loadDatasetData(datasets[0], supabase)
-      } else {
+      const activeViewMode = localStorage.getItem("bizanolytics_active_view_mode")
+
+      if (activeViewMode === 'integration' && storedIntegration) {
         try {
           const parsed = JSON.parse(storedIntegration)
-          if (parsed?.business?.name) {
-            setActiveIntegrationName(parsed.business.name)
-            setConnectedIntegrationName(parsed.business.name)
-          }
-        } catch (e) {}
+          const { mapIntegrationToSMEData } = await import("@/app/integrations/utils/normalize")
+          setRawData(mapIntegrationToSMEData(parsed))
+          setActiveIntegrationName(parsed?.business?.name)
+          setConnectedIntegrationName(parsed?.business?.name)
+          setIsDataUploaded(true)
+        } catch (e) {
+          if (defaultDataset) await loadDatasetData(defaultDataset, supabase)
+        }
+      } else {
+        if (defaultDataset) {
+          await loadDatasetData(defaultDataset, supabase)
+        }
       }
     }
     fetchHistory()
@@ -177,6 +185,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         setActiveIntegrationName(parsed.business?.name)
         setConnectedIntegrationName(parsed.business?.name)
         setIsDataUploaded(true)
+        localStorage.setItem("bizanolytics_active_view_mode", "integration")
       } catch (e) {}
     }
   }
@@ -185,6 +194,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const supabase = createClient()
     const dataset = datasetHistory.find(d => d.id === id)
     if (!dataset) return
+    localStorage.setItem("bizanolytics_active_view_mode", "dataset")
     await loadDatasetData(dataset, supabase)
   }
 
@@ -203,6 +213,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setActiveIntegrationName(integrationName)
     if (integrationName) {
       setConnectedIntegrationName(integrationName)
+      localStorage.setItem("bizanolytics_active_view_mode", "integration")
+    } else {
+      localStorage.setItem("bizanolytics_active_view_mode", "dataset")
     }
     setAiInsights(undefined)
     
@@ -223,6 +236,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setDatasetId(undefined)
     setAiInsights(undefined)
     setActiveIntegrationName(undefined)
+    localStorage.removeItem("bizanolytics_active_view_mode")
   }
 
   const saveAiInsights = async (insights: string) => {
