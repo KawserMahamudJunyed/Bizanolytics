@@ -11,12 +11,13 @@ const STORAGE_KEY = "bizanolytics_integration_data"
 
 export default function POSPage() {
   const router = useRouter()
-  const { setUploadedData, addNotification } = useData()
+  const { setUploadedData, addNotification, recordPipelineRun } = useData()
 
   const handleDataReady = (newData: any) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
     setUploadedData(mapIntegrationToSMEData(newData), undefined, newData.business.name)
     addNotification("POS Connected", "Successfully synced data from your Point of Sale system.")
+    recordPipelineRun(newData.products?.length || 0)
     router.push("/dashboard")
   }
 

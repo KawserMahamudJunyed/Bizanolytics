@@ -99,7 +99,9 @@ export function PerformanceRadarChart() {
 
 // Industrial-grade Pipeline with Y-fork architecture
 export function DataFlowVisualization() {
-  const { rawData, isDataUploaded, activeIntegrationName } = useData()
+  const { rawData, isDataUploaded, activeIntegrationName, datasetId, datasetHistory } = useData()
+  
+  const activeDatasetName = datasetHistory?.find(d => d.id === datasetId)?.file_name
   
   // Calculate real metrics based on the uploaded data
   const recordCount = isDataUploaded ? rawData.length : 0
@@ -123,7 +125,7 @@ export function DataFlowVisualization() {
   //   State splits: UP to AI API, DOWN to Dashboard
   //   AI API also feeds DOWN into Dashboard
   const stages = [
-    { id: "upload", label: activeIntegrationName ? "Live Sync" : "Upload", description: activeIntegrationName ? activeIntegrationName : "CSV/Excel Data", icon: activeIntegrationName ? Globe : Database, x: 100, y: 170 },
+    { id: "upload", label: activeIntegrationName ? "Live Sync" : "Upload", description: activeIntegrationName ? activeIntegrationName : (activeDatasetName || "CSV/Excel Data"), icon: activeIntegrationName ? Globe : Database, x: 100, y: 170 },
     { id: "parse", label: "Parse", description: activeIntegrationName ? "Normalize Data" : "Client-side ETL", icon: Cog, x: 250, y: 170 },
     { id: "state", label: "State", description: "React Context", icon: HardDrive, x: 400, y: 170 },
     { id: "ai", label: "AI API", description: "Llama 3 via Groq", icon: Brain, x: 580, y: 75 },

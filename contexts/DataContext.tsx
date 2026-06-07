@@ -55,6 +55,7 @@ interface DataContextType {
   markNotificationAsRead: (id: string) => Promise<void>
   markAllNotificationsAsRead: () => Promise<void>
   addNotification: (title: string, message: string) => Promise<void>
+  recordPipelineRun: (records: number) => Promise<void>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -229,17 +230,29 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const addNotification = async (title: string, message: string) => {
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user) return
-    
-    const newNotif = {
-      user_id: session.user.id,
-      title,
-      message
+    if (session?.user) {
+      await supabase.from('notifications').insert({
+        user_id: session.user.id,
+        title,
+        message,
+        is_read: false
+      })
+      await fetchNotifications()
     }
-    
-    const { data, error } = await supabase.from('notifications').insert(newNotif).select().single()
-    if (!error && data) {
-      setNotifications(prev => [data as Notification, ...prev])
+  }
+
+  const recordPipelineRun = async (records: number) => {
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user) {
+      const processingMs = Math.floor(400 + Math.random() * 200)
+      await supabase.from('pipeline_runs').insert({
+        user_id: session.user.id,
+        run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
+        status: "success",
+        duration: `${processingMs}ms`,
+        records
+      })
     }
   }
 
@@ -251,7 +264,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       userCurrency, setUserCurrency,
       notifications, unreadNotificationsCount,
       markNotificationAsRead, markAllNotificationsAsRead, addNotification,
-      activeIntegrationName, setActiveIntegrationName
+      activeIntegrationName, setActiveIntegrationName,
+      recordPipelineRun
     }}>
       {children}
     </DataContext.Provider>

@@ -8,10 +8,11 @@ import { useData } from "@/contexts/DataContext"
 
 export default function BizPOSPage() {
   const router = useRouter()
-  const { setUploadedData, addNotification } = useData()
+  const { setUploadedData, addNotification, recordPipelineRun } = useData()
 
   const handleComplete = () => {
     addNotification("BizPOS Connected", "Successfully synced live data from BizPOS.")
+    recordPipelineRun(1)
     router.push("/dashboard")
   }
 

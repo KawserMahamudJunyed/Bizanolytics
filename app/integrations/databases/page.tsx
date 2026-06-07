@@ -11,12 +11,13 @@ const STORAGE_KEY = "bizanolytics_integration_data"
 
 export default function DatabasesPage() {
   const router = useRouter()
-  const { setUploadedData, addNotification } = useData()
+  const { setUploadedData, addNotification, recordPipelineRun } = useData()
 
   const handleDataReady = (newData: any) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
-    setUploadedData(mapIntegrationToSMEData(newData), undefined, newData.business.name)
-    addNotification("Database Connected", "Successfully synced data from your external Database.")
+    setUploadedData(mapIntegrationToSMEData(newData), undefined, newData.business?.name || "Database Connection")
+    addNotification("Database Connected", "Successfully synced data from your custom database or spreadsheet.")
+    recordPipelineRun(newData.products?.length || newData.length || 0)
     router.push("/dashboard")
   }
 
