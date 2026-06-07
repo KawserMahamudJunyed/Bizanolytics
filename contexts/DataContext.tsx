@@ -52,6 +52,7 @@ interface DataContextType {
   unreadNotificationsCount: number
   markNotificationAsRead: (id: string) => Promise<void>
   markAllNotificationsAsRead: () => Promise<void>
+  addNotification: (title: string, message: string) => Promise<void>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -188,6 +189,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const supabase = createClient()
       await supabase.from('datasets').update({ ai_insights: insights }).eq('id', datasetId)
     }
+    addNotification("AI Forecast Generated", "Your new business forecast and AI insights are ready to view.")
   }
 
   const markNotificationAsRead = async (id: string) => {
@@ -208,6 +210,23 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const addNotification = async (title: string, message: string) => {
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return
+    
+    const newNotif = {
+      user_id: session.user.id,
+      title,
+      message
+    }
+    
+    const { data, error } = await supabase.from('notifications').insert(newNotif).select().single()
+    if (!error && data) {
+      setNotifications(prev => [data as Notification, ...prev])
+    }
+  }
+
   return (
     <DataContext.Provider value={{ 
       isDataUploaded, rawData, setUploadedData, resetData, 
@@ -215,7 +234,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       aiInsights, saveAiInsights,
       userCurrency, setUserCurrency,
       notifications, unreadNotificationsCount,
-      markNotificationAsRead, markAllNotificationsAsRead
+      markNotificationAsRead, markAllNotificationsAsRead, addNotification
     }}>
       {children}
     </DataContext.Provider>

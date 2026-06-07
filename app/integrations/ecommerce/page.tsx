@@ -11,11 +11,12 @@ const STORAGE_KEY = "bizanolytics_integration_data"
 
 export default function EcommercePage() {
   const router = useRouter()
-  const { setUploadedData } = useData()
+  const { setUploadedData, addNotification } = useData()
 
   const handleDataReady = (newData: any) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
     setUploadedData(mapIntegrationToSMEData(newData))
+    addNotification("E-commerce Connected", "Successfully synced data from your e-commerce integration.")
     router.push("/integrations")
   }
 

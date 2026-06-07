@@ -21,7 +21,7 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general")
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  const { setUserCurrency } = useData()
+  const { setUserCurrency, addNotification } = useData()
   
   const [profile, setProfile] = useState({
     currency: "BDT"
@@ -79,6 +79,7 @@ export default function SettingsPage() {
     } else {
       toast.success("Settings saved successfully!")
       setUserCurrency(profile.currency) // Update global state
+      addNotification("Settings Updated", "Your profile preferences have been successfully updated.")
     }
   }
 

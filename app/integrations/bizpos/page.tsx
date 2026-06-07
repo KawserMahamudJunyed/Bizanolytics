@@ -4,11 +4,14 @@ import { BizPOS } from "../components/BizPOS"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
+import { useData } from "@/contexts/DataContext"
 
 export default function BizPOSPage() {
   const router = useRouter()
+  const { setUploadedData, addNotification } = useData()
 
   const handleComplete = () => {
+    addNotification("BizPOS Connected", "Successfully synced live data from BizPOS.")
     router.push("/integrations")
   }
 
