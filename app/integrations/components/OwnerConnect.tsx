@@ -590,8 +590,8 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
                 <div className="grid gap-3">
                   {[
                     { id: "daily", name: "BizBasic (Free)", desc: "Daily Auto-Sync", color: "border-border hover:border-slate-500/50 hover:bg-slate-500/5" },
-                    { id: "hourly", name: "BizPro ($49/mo)", desc: "Hourly Auto-Sync", color: "border-border hover:border-blue-500/50 hover:bg-blue-500/5" },
-                    { id: "instant", name: "BizEnterprise ($199/mo)", desc: "Instant Live Sync Webhooks", color: "border-primary/30 hover:border-primary bg-primary/5 hover:bg-primary/10" }
+                    { id: "hourly", name: "BizPro (299 BDT/mo)", desc: "Hourly Auto-Sync", color: "border-border hover:border-blue-500/50 hover:bg-blue-500/5" },
+                    { id: "instant", name: "BizEnterprise (499 BDT/mo)", desc: "Instant Live Sync Webhooks", color: "border-primary/30 hover:border-primary bg-primary/5 hover:bg-primary/10" }
                   ].map((plan) => (
                     <div
                       key={plan.id}
