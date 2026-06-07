@@ -121,7 +121,7 @@ export default function ProfilePage() {
           <div className="sm:ml-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-secondary/50 text-xs font-medium text-foreground">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Plan: {syncFreq === "instant" ? "BizEnterprise" : syncFreq === "hourly" ? "BizPro" : "BizBasic"}
+              Plan: {syncFreq === "instant" ? "BizUltimate" : syncFreq === "hourly" ? "BizPro" : "BizBasic"}
             </div>
           </div>
         </div>

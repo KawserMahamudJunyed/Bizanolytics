@@ -60,8 +60,8 @@ export default function SettingsPage() {
 
   const subscriptionMap: Record<string, any> = {
     daily: { name: "BizBasic", desc: "Daily Auto-Sync", color: "text-slate-500", bg: "bg-slate-500/10", border: "border-slate-500/30", price: "Free" },
-    hourly: { name: "BizPro", desc: "Hourly Auto-Sync", color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/30", price: "$49/mo" },
-    instant: { name: "BizEnterprise", desc: "Instant Live Sync Webhooks", color: "text-primary", bg: "bg-primary/10", border: "border-primary/30", price: "$199/mo" }
+    hourly: { name: "BizPro", desc: "Hourly Auto-Sync", color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/30", price: "299 BDT/mo" },
+    instant: { name: "BizUltimate", desc: "Instant Live Sync Webhooks", color: "text-primary", bg: "bg-primary/10", border: "border-primary/30", price: "499 BDT/mo" }
   }
   const currentSub = subscriptionMap[syncFreq] || subscriptionMap.daily;
 

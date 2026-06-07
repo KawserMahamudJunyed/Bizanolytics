@@ -105,7 +105,7 @@ export default function IntegrationsPage() {
     if (freq === "instant") {
       const toastId = toast.loading("Establishing real-time webhook connection...")
       setTimeout(() => {
-        toast.success("BizEnterprise Activated: Real-time webhook connection established!", { id: toastId })
+        toast.success("BizUltimate Activated: Real-time webhook connection established!", { id: toastId })
       }, 1500)
     } else if (freq === "hourly") {
       toast.success("BizPro Activated: Hourly sync schedule updated.")
@@ -161,6 +161,7 @@ export default function IntegrationsPage() {
                 title="Hourly Sync" 
                 desc="Updates every hour" 
                 tier="BizPro" 
+                price="299 BDT/mo"
                 icon={Clock} 
                 active={syncFreq === "hourly"} 
                 onClick={() => handleSetSyncFreq("hourly")} 
@@ -168,7 +169,8 @@ export default function IntegrationsPage() {
               <SyncCard 
                 title="Instant Live Sync" 
                 desc="Real-time webhooks" 
-                tier="BizEnterprise" 
+                tier="BizUltimate" 
+                price="499 BDT/mo"
                 icon={Zap} 
                 active={syncFreq === "instant"} 
                 onClick={() => handleSetSyncFreq("instant")} 
