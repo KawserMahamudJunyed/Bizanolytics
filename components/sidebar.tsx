@@ -128,7 +128,7 @@ export function Sidebar({
             <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="hidden lg:block w-8 shrink-0" />
           )}
 
-          <Link href="/">
+          <Link href="/dashboard">
             <AnimatePresence mode="wait">
               {isEffectivelyCollapsed ? (
                 <motion.img 
