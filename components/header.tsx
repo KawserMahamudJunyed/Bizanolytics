@@ -186,62 +186,64 @@ export function Header() {
             </DropdownMenu>
           )}
 
-          {(activeDataset || activeIntegrationName) && !isRenaming && (
-            <Button variant="ghost" size="icon" onClick={handleRenameStart} className="h-9 w-9" title="Rename">
-              <Edit2 className="w-4 h-4 text-muted-foreground" />
-            </Button>
-          )}
-
-          {/* Notifications */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9 relative">
-                <Bell className="w-4 h-4 text-muted-foreground" />
-                {unreadNotificationsCount > 0 && (
-                  <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border border-background"></span>
-                )}
+          <div className="flex items-center gap-2 shrink-0">
+            {(activeDataset || activeIntegrationName) && !isRenaming && (
+              <Button variant="ghost" size="icon" onClick={handleRenameStart} className="h-9 w-9 shrink-0" title="Rename">
+                <Edit2 className="w-4 h-4 text-muted-foreground" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
-              <div className="flex items-center justify-between px-2 py-1.5">
-                <DropdownMenuLabel className="p-0">Notifications</DropdownMenuLabel>
-                {unreadNotificationsCount > 0 && (
-                  <button 
-                    onClick={markAllNotificationsAsRead}
-                    className="text-xs text-primary hover:underline"
-                  >
-                    Mark all as read
-                  </button>
-                )}
-              </div>
-              <DropdownMenuSeparator />
-              <div className="flex flex-col gap-1 p-1 max-h-[300px] overflow-y-auto">
-                {notifications.length === 0 ? (
-                  <p className="text-sm text-muted-foreground p-4 text-center">No notifications yet.</p>
-                ) : (
-                  notifications.map((notif) => (
-                    <div 
-                      key={notif.id}
-                      onClick={() => !notif.is_read && markNotificationAsRead(notif.id)}
-                      className={cn(
-                        "rounded-lg p-3 transition-colors cursor-pointer border",
-                        notif.is_read 
-                          ? "bg-transparent border-transparent hover:bg-secondary/50" 
-                          : "bg-primary/5 border-primary/20 hover:bg-primary/10"
-                      )}
+            )}
+
+            {/* Notifications */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 relative">
+                  <Bell className="w-4 h-4 text-muted-foreground" />
+                  {unreadNotificationsCount > 0 && (
+                    <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border border-background"></span>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80">
+                <div className="flex items-center justify-between px-2 py-1.5">
+                  <DropdownMenuLabel className="p-0">Notifications</DropdownMenuLabel>
+                  {unreadNotificationsCount > 0 && (
+                    <button 
+                      onClick={markAllNotificationsAsRead}
+                      className="text-xs text-primary hover:underline"
                     >
-                      <div className="flex justify-between gap-2">
-                        <p className="text-sm font-semibold text-foreground">{notif.title}</p>
-                        {!notif.is_read && <span className="h-2 w-2 rounded-full bg-primary mt-1 shrink-0"></span>}
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+                <DropdownMenuSeparator />
+                <div className="flex flex-col gap-1 p-1 max-h-[300px] overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <p className="text-sm text-muted-foreground p-4 text-center">No notifications yet.</p>
+                  ) : (
+                    notifications.map((notif) => (
+                      <div 
+                        key={notif.id}
+                        onClick={() => !notif.is_read && markNotificationAsRead(notif.id)}
+                        className={cn(
+                          "rounded-lg p-3 transition-colors cursor-pointer border",
+                          notif.is_read 
+                            ? "bg-transparent border-transparent hover:bg-secondary/50" 
+                            : "bg-primary/5 border-primary/20 hover:bg-primary/10"
+                        )}
+                      >
+                        <div className="flex justify-between gap-2">
+                          <p className="text-sm font-semibold text-foreground">{notif.title}</p>
+                          {!notif.is_read && <span className="h-2 w-2 rounded-full bg-primary mt-1 shrink-0"></span>}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{notif.message}</p>
+                        <p className="text-[10px] font-medium text-muted-foreground/70 mt-2">{formatTimeAgo(notif.created_at)}</p>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{notif.message}</p>
-                      <p className="text-[10px] font-medium text-muted-foreground/70 mt-2">{formatTimeAgo(notif.created_at)}</p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                    ))
+                  )}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       )}
     </motion.header>

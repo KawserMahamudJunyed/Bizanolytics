@@ -55,14 +55,14 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link 
                 href="/dashboard" 
-                className="group flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full font-medium hover:bg-primary/90 transition-all hover:scale-105"
+                className="group flex items-center justify-center w-full sm:w-auto gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full font-medium hover:bg-primary/90 transition-all hover:scale-105"
               >
                 Start Exploring Free
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link 
                 href="#features" 
-                className="flex items-center gap-2 bg-secondary text-foreground px-8 py-4 rounded-full font-medium hover:bg-secondary/80 transition-all"
+                className="flex items-center justify-center w-full sm:w-auto gap-2 bg-secondary text-foreground px-8 py-4 rounded-full font-medium hover:bg-secondary/80 transition-all"
               >
                 See Features
               </Link>
@@ -144,7 +144,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-4 gap-4 mb-16">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
               <div className="card-base p-6 text-center hover:border-primary/50 transition-colors">
                 <div className="h-12 w-12 mx-auto rounded-full bg-secondary flex items-center justify-center mb-4">
                   <ShoppingBag className="h-5 w-5 text-foreground" />
@@ -175,7 +175,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="card-base p-8 md:p-12 border-primary/20 bg-gradient-to-b from-background to-primary/5 relative overflow-hidden">
+            <div className="card-base p-6 md:p-12 border-primary/20 bg-gradient-to-b from-background to-primary/5 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-8 opacity-10 blur-xl">
                 <Zap className="h-48 w-48 text-primary" />
               </div>
@@ -206,7 +206,7 @@ export default function LandingPage() {
 
         {/* CTA Section */}
         <section className="max-w-4xl mx-auto py-24 text-center">
-          <div className="rounded-3xl bg-primary/10 border border-primary/20 p-12">
+          <div className="rounded-3xl bg-primary/10 border border-primary/20 p-8 md:p-12">
             <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to see the future?</h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
               Join the next generation of data-driven businesses optimizing their operations with Bizanolytics.
