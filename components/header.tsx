@@ -29,7 +29,7 @@ function formatTimeAgo(dateStr: string) {
 
 export function Header() {
   const router = useRouter()
-  const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
+  const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, setActiveIntegrationName, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
   const [isRenaming, setIsRenaming] = useState(false)
   const [editName, setEditName] = useState("")
 
@@ -41,14 +41,33 @@ export function Header() {
   const activeDataset = datasetHistory.find(d => d.id === datasetId)
 
   const handleRenameStart = () => {
-    if (activeDataset) {
+    if (activeIntegrationName) {
+      setEditName(activeIntegrationName)
+      setIsRenaming(true)
+    } else if (activeDataset) {
       setEditName(activeDataset.file_name)
       setIsRenaming(true)
     }
   }
 
   const handleRenameSave = () => {
-    if (datasetId && editName.trim()) {
+    if (!editName.trim()) {
+      setIsRenaming(false)
+      return
+    }
+    
+    if (activeIntegrationName) {
+      setActiveIntegrationName(editName.trim())
+      const stored = localStorage.getItem("bizanolytics_integration_data")
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored)
+          if (!parsed.business) parsed.business = {}
+          parsed.business.name = editName.trim()
+          localStorage.setItem("bizanolytics_integration_data", JSON.stringify(parsed))
+        } catch(e) {}
+      }
+    } else if (datasetId) {
       renameDataset(datasetId, editName.trim())
     }
     setIsRenaming(false)
@@ -152,8 +171,8 @@ export function Header() {
             </DropdownMenu>
           )}
 
-          {activeDataset && !isRenaming && (
-            <Button variant="ghost" size="icon" onClick={handleRenameStart} className="h-9 w-9" title="Rename Dataset">
+          {(activeDataset || activeIntegrationName) && !isRenaming && (
+            <Button variant="ghost" size="icon" onClick={handleRenameStart} className="h-9 w-9" title="Rename">
               <Edit2 className="w-4 h-4 text-muted-foreground" />
             </Button>
           )}
