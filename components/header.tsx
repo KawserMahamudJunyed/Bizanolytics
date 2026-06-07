@@ -78,7 +78,7 @@ export function Header() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="sticky top-0 z-30 w-full flex flex-wrap min-h-[80px] items-center justify-between gap-4 border-b border-border bg-background/80 px-4 sm:px-6 py-4 backdrop-blur-md pr-16 lg:px-8"
+      className="sticky top-0 z-30 w-full flex flex-wrap min-h-[80px] items-center justify-between gap-4 border-b border-border bg-background/80 py-4 backdrop-blur-md pl-4 pr-16 sm:pl-6 sm:pr-16 lg:pl-8 lg:pr-16"
     >
       <div className="flex flex-col gap-1">
         <motion.h1
