@@ -145,7 +145,6 @@ export function Header() {
                 ) : connectedIntegrationName ? (
                   <DropdownMenuItem onClick={loadIntegrationData} className="flex justify-between items-center cursor-pointer text-foreground hover:bg-secondary">
                     <span className="truncate flex-1 pr-2 flex items-center">
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground shrink-0 mr-2" />
                       {connectedIntegrationName}
                     </span>
                   </DropdownMenuItem>
