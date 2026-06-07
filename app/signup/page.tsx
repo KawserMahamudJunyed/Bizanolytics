@@ -38,7 +38,7 @@ export default function SignupPage() {
     const salesChannel = formData.get('salesChannel') as string
     
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password: pass,
         options: {
@@ -55,6 +55,15 @@ export default function SignupPage() {
         setError(error.message)
         setLoading(false)
       } else {
+        if (data.user) {
+          // Insert a welcome notification
+          await supabase.from('notifications').insert({
+            user_id: data.user.id,
+            title: "Welcome to Bizanolytics!",
+            message: "Your account has been successfully created. Get started by connecting your e-commerce data or uploading a sales CSV.",
+            is_read: false
+          })
+        }
         setTimeout(() => {
           window.location.href = '/login?signup=success'
         }, 500)
