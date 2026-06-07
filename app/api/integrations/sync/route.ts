@@ -57,13 +57,17 @@ export async function POST(req: Request) {
     // Let's just insert for now to be safe with the exact schema provided in plan.
     if (dbError) {
        // Just insert it and order by created_at desc later
-       await supabase.from('user_integrations').insert({
+       const { error: insertError } = await supabase.from('user_integrations').insert({
          user_id: session.user.id,
          platform,
          url,
          encrypted_keys: encryptedKeys,
          subscription_tier: subscription_tier || 'daily'
        });
+       if (insertError) {
+         console.error("Supabase Insert Error:", insertError);
+         throw new Error(`Database error: ${insertError.message}`);
+       }
     }
 
     return NextResponse.json(resultData);

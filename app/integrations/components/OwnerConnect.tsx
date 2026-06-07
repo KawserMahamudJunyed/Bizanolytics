@@ -606,7 +606,7 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
                 
                 // Update subscription tier via API
                 try {
-                  await fetch("/api/integrations/subscription", {
+                  const subRes = await fetch("/api/integrations/subscription", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -614,8 +614,17 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
                       subscription_tier: selectedFreq
                     })
                   });
-                } catch (e) {
+                  const subData = await subRes.json();
+                  if (!subRes.ok) {
+                    toast.error(`Database error: ${subData.error || 'Failed to update subscription'}`);
+                    setIsFinishing(false);
+                    return; // Stop the redirect so user sees the error
+                  }
+                } catch (e: any) {
                   console.error("Failed to update subscription tier", e);
+                  toast.error("Network error updating subscription");
+                  setIsFinishing(false);
+                  return;
                 }
                 
                 if (fetchedData) {
