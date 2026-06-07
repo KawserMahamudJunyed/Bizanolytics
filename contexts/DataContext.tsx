@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react"
 import Papa from "papaparse"
 import { createClient } from "@/utils/supabase/client"
+import { toast } from "sonner"
 
 export type SMEDataRow = {
   Date: string
@@ -345,13 +346,21 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     if (session?.user) {
-      await supabase.from('notifications').insert({
+      const { data, error } = await supabase.from('notifications').insert({
         user_id: session.user.id,
         title,
-        message,
-        is_read: false
-      })
-      await fetchNotifications()
+        message
+      }).select().single()
+      
+      if (data && !error) {
+        setNotifications(prev => [data, ...prev])
+        toast.info(title, { description: message })
+      }
+    } else {
+      // For anonymous users testing locally
+      const mockId = `mock-${Date.now()}`
+      setNotifications(prev => [{ id: mockId, title, message, is_read: false, created_at: new Date().toISOString() }, ...prev])
+      toast.info(title, { description: message })
     }
   }
 
