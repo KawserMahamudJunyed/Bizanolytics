@@ -36,8 +36,34 @@ export function DataUpload() {
       return
     }
     
-    // Check Critical Columns
-    const firstRow = parsedData[0]
+    // Normalize column names using synonyms
+    const keyAliases: Record<string, string[]> = {
+      'Date': ['date', 'time', 'timestamp', 'orderdate', 'createdat', 'day'],
+      'Product_Name': ['product', 'productname', 'item', 'itemname', 'name', 'article', 'title'],
+      'Units_Sold': ['units', 'unitssold', 'quantity', 'qty', 'count', 'amount'],
+      'Revenue_BDT': ['revenue', 'revenuebdt', 'sales', 'totalsales', 'total', 'price', 'value', 'amountbdt', 'earning'],
+      'Category': ['category', 'type', 'class', 'group', 'department'],
+      'Location': ['location', 'region', 'city', 'branch', 'store', 'area']
+    }
+
+    const normalizedData = parsedData.map(row => {
+      const newRow: any = {};
+      for (const key in row) {
+        const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+        let mappedKey = key; // default to original
+        for (const [canonical, aliases] of Object.entries(keyAliases)) {
+          if (aliases.includes(normalizedKey)) {
+            mappedKey = canonical;
+            break;
+          }
+        }
+        newRow[mappedKey] = row[key];
+      }
+      return newRow;
+    });
+    
+    // Check Critical Columns on the normalized data
+    const firstRow = normalizedData[0]
     const hasCritical = firstRow.hasOwnProperty('Date') && 
                         firstRow.hasOwnProperty('Product_Name') && 
                         firstRow.hasOwnProperty('Units_Sold') && 
@@ -53,7 +79,7 @@ export function DataUpload() {
     const hasCategory = firstRow.hasOwnProperty('Category')
     if (!hasCategory) {
       setUploadState("imputing")
-      const uniqueProducts = Array.from(new Set(parsedData.map(row => row.Product_Name))).filter(Boolean)
+      const uniqueProducts = Array.from(new Set(normalizedData.map(row => row.Product_Name))).filter(Boolean)
       
       try {
         const res = await fetch("/api/impute-data", {
@@ -69,7 +95,7 @@ export function DataUpload() {
           const mapDict: Record<string, string> = {}
           data.mapping.forEach((item: any) => { mapDict[item.productName] = item.category })
           
-          parsedData.forEach(row => {
+          normalizedData.forEach(row => {
             row.Category = mapDict[row.Product_Name] || "General"
           })
         }
@@ -99,7 +125,8 @@ export function DataUpload() {
           const { data: insertedData, error: insertError } = await supabase.from('datasets').insert({
             user_id: user.id,
             file_name: currentFile.name,
-            file_path: filePath
+            file_path: filePath,
+            record_count: normalizedData.length
           }).select()
           
           if (!insertError && insertedData && insertedData.length > 0) {
@@ -113,14 +140,14 @@ export function DataUpload() {
               source: currentFile.name,
               status: "success",
               duration: processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`,
-              records: parsedData.length
+              records: normalizedData.length
             })
 
             // Generate Notification
             await supabase.from('notifications').insert({
               user_id: user.id,
               title: "Data Upload Successful",
-              message: `Successfully processed and imported ${parsedData.length} rows from ${currentFile.name}.`
+              message: `Successfully processed and imported ${normalizedData.length} rows from ${currentFile.name}.`
             })
           }
         }
@@ -129,11 +156,13 @@ export function DataUpload() {
       console.error("Failed to sync to Supabase", err)
     }
 
+    setUploadState("success")
+    setProgress(100)
+    
     setTimeout(() => {
-      setUploadState("success")
-      setUploadedData(parsedData as any, newDatasetId)
+      setUploadedData(normalizedData as any, newDatasetId)
       router.push("/dashboard") // Redirect to dashboard to see results
-    }, 200)
+    }, 1000)
   }
 
   const processFile = (fileToProcess: File) => {
