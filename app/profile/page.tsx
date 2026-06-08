@@ -84,9 +84,13 @@ export default function ProfilePage() {
       if (dbError) console.error("Supabase Profiles Error:", dbError);
       if (authError) console.error("Supabase Auth Error:", authError);
       
-      // If one succeeds and the other fails, it's a partial success. 
-      // But we should surface the DB error so they know why it didn't update in Supabase.
-      toast.error(`Error saving profile to database: ${dbError?.message || authError?.message}`)
+      if (!authError && dbError) {
+        toast.warning(`Profile saved, but database sync failed (Likely missing RLS policy): ${dbError.message}`)
+        // Auth succeeded, so we still want to reload the UI to reflect the new Auth name!
+        setTimeout(() => window.location.reload(), 2500)
+      } else {
+        toast.error(`Error saving profile: ${authError?.message}`)
+      }
     } else {
       toast.success("Profile saved successfully!")
       // Hard refresh to ensure the sidebar component re-fetches the auth session
