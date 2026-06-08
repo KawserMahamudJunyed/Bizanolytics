@@ -1,12 +1,16 @@
 export const keyAliases: Record<string, string[]> = {
   'Date': ['date', 'time', 'timestamp', 'orderdate', 'createdat', 'day'],
+  'Product_ID': ['id', 'productid', 'itemid', 'sku'],
   'Product_Name': ['product', 'productname', 'item', 'itemname', 'name', 'article', 'title'],
   'Units_Sold': ['units', 'unitssold', 'quantity', 'qty', 'count', 'amount'],
   'Revenue_BDT': ['revenue', 'revenuebdt', 'sales', 'totalsales', 'total', 'value', 'amountbdt', 'earning'],
   'Unit_Price': ['price', 'unitprice', 'costperunit'],
   'Cost_Price': ['cost', 'costprice', 'cogs', 'buyprice'],
   'Category': ['category', 'type', 'class', 'group', 'department'],
-  'Location': ['location', 'region', 'city', 'branch', 'store', 'area']
+  'Location': ['location', 'region', 'city', 'branch', 'store', 'area'],
+  'Sales_Channel': ['channel', 'saleschannel', 'platform', 'source', 'medium'],
+  'Current_Stock': ['stock', 'currentstock', 'inventory', 'stocklevel', 'qtyonhand'],
+  'Customer_Segment': ['segment', 'customersegment', 'audience', 'target', 'demographic']
 };
 
 export function normalizeCsvData(parsedData: any[]) {
