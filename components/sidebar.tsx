@@ -53,6 +53,7 @@ export function Sidebar({
   user: any
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [displayName, setDisplayName] = useState(user?.user_metadata?.full_name || "User")
   const pathname = usePathname()
 
   const isEffectivelyCollapsed = isCollapsed && !isHovered
@@ -66,6 +67,23 @@ export function Sidebar({
     window.addEventListener('open-sidebar', handleOpenSidebar)
     return () => window.removeEventListener('open-sidebar', handleOpenSidebar)
   }, [setIsCollapsed])
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchLatestName = async () => {
+      const supabase = createClient()
+      const { data } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
+      if (data?.full_name) {
+        setDisplayName(data.full_name)
+      } else {
+        const { data: sessionData } = await supabase.auth.getSession()
+        if (sessionData?.session?.user?.user_metadata?.full_name) {
+          setDisplayName(sessionData.session.user.user_metadata.full_name)
+        }
+      }
+    }
+    fetchLatestName()
+  }, [user])
 
   const handleLogout = async () => {
     // 1. Clear client-side local storage session
@@ -267,11 +285,11 @@ export function Sidebar({
               isEffectivelyCollapsed && "justify-center p-0"
             )}>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-foreground ring-1 ring-border shrink-0">
-                {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase() || "U"}
+                {displayName.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || "U"}
               </div>
               {!isEffectivelyCollapsed && (
                 <div className="flex-1 overflow-hidden">
-                  <p className="truncate text-sm font-medium text-foreground">{user.user_metadata?.full_name || "User"}</p>
+                  <p className="truncate text-sm font-medium text-foreground">{displayName}</p>
                   <p className="truncate text-[10px] text-muted-foreground">{user.email}</p>
                 </div>
               )}
