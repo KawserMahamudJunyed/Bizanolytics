@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { createClient } from '@/utils/supabase/client'
-import { Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
+import { Loader2, ArrowRight, Eye, EyeOff, Globe } from 'lucide-react'
 import Link from 'next/link'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export default function SignupPage() {
+  const { t, language, setLanguage } = useLanguage()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
@@ -84,12 +86,23 @@ export default function SignupPage() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md card-base p-8 relative z-10"
       >
-        <div className="mb-8 text-center">
+        <div className="absolute top-4 right-4">
+          <button
+            type="button"
+            onClick={() => setLanguage(language === 'en' ? 'bn' : 'en')}
+            className="flex items-center gap-1.5 rounded-full bg-secondary/50 px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            <Globe className="h-3.5 w-3.5" />
+            {language === 'en' ? 'বাংলা' : 'EN'}
+          </button>
+        </div>
+
+        <div className="mb-8 text-center pt-4">
           <h1 className="text-2xl font-bold text-foreground">
-            Create your account
+            {t('create_account')}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Join Bizanolytics to save your data
+            {t('signup_desc')}
           </p>
         </div>
 
@@ -101,7 +114,7 @@ export default function SignupPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Full Name</label>
+            <label className="text-sm font-medium text-foreground">{t('full_name')}</label>
             <input
               name="fullName"
               type="text"
@@ -111,7 +124,7 @@ export default function SignupPage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Company Name (Optional)</label>
+            <label className="text-sm font-medium text-foreground">{t('company_name')}</label>
             <input
               name="companyName"
               type="text"
@@ -149,7 +162,7 @@ export default function SignupPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Email</label>
+            <label className="text-sm font-medium text-foreground">{t('email')}</label>
             <input
               name="email"
               type="email"
@@ -160,7 +173,7 @@ export default function SignupPage() {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Password</label>
+            <label className="text-sm font-medium text-foreground">{t('password')}</label>
             <div className="relative">
               <input
                 name="password"
@@ -209,7 +222,7 @@ export default function SignupPage() {
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>
-                Create Account
+                {t('create_account')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </>
             )}
@@ -217,15 +230,15 @@ export default function SignupPage() {
         </form>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
+          {t('already_account')}{" "}
           <Link href="/login" className="text-foreground hover:underline font-medium">
-            Log in
+            {t('log_in')}
           </Link>
         </div>
         
         <div className="mt-8 pt-6 border-t border-border/50 text-center">
           <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            Continue without logging in (Guest Mode)
+            {t('guest_mode')}
           </Link>
         </div>
       </motion.div>

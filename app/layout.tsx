@@ -5,6 +5,7 @@ import './globals.css'
 import 'leaflet/dist/leaflet.css'
 import { AppLayout } from '@/components/app-layout'
 import { DataProvider } from '@/contexts/DataContext'
+import { LanguageProvider } from '@/contexts/LanguageContext'
 import { Toaster } from 'sonner'
 
 const inter = Inter({ 
@@ -37,11 +38,13 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark bg-background" style={{ colorScheme: 'dark' }}>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
-        <DataProvider>
-          <AppLayout user={user}>
-            {children}
-          </AppLayout>
-        </DataProvider>
+        <LanguageProvider>
+          <DataProvider>
+            <AppLayout user={user}>
+              {children}
+            </AppLayout>
+          </DataProvider>
+        </LanguageProvider>
         <Toaster theme="dark" position="bottom-right" />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

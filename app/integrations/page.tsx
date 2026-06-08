@@ -21,8 +21,8 @@ import {
   Plus
 } from "lucide-react"
 import Link from "next/link"
-import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
+import { useLanguage } from "@/contexts/LanguageContext"
 import { mapIntegrationToSMEData } from "./utils/normalize"
 import type { IntegrationData } from "./utils/types"
 
@@ -73,6 +73,7 @@ const CATEGORIES = [
 ]
 
 export default function IntegrationsPage() {
+  const { t } = useLanguage()
   const [data, setData] = useState<IntegrationData | null>(null)
   const [syncFreq, setSyncFreq] = useState<"daily" | "hourly" | "instant">("daily")
   const [hasHydrated, setHasHydrated] = useState(false)
@@ -119,31 +120,32 @@ export default function IntegrationsPage() {
   // Success State for connected API
   if (data) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6 pt-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground tracking-tight">Integration Active</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Your store is connected and syncing data to Bizanolytics.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={() => setData(null)} className="flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80 transition-colors">
-              <Plus className="h-4 w-4" /> Connect Another
-            </button>
-            <button onClick={handleClear} className="flex items-center gap-2 rounded-xl bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-500/20 transition-colors">
-              <Trash2 className="h-4 w-4" /> Disconnect
-            </button>
-          </div>
+      <div className="max-w-4xl mx-auto space-y-8 pt-8 pb-12 relative z-10">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('connect_integration')}</h1>
+          <p className="text-muted-foreground mt-2">{t('sync_data_realtime')}</p>
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card-base p-8 space-y-8">
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 mb-2">
-              <CheckCircle className="h-10 w-10" />
+          <div className="flex items-center justify-between mb-8 border-b border-border/50 pb-6">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                <CheckCircle className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-foreground">{t('active_connection')}</h2>
+                <p className="text-sm text-muted-foreground">
+                  {data.integrationType === 'custom' ? 'Custom API' : 'Manual API'} • Last synced {new Date(data.lastSync || Date.now()).toLocaleString()}
+                </p>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold">Store Connected: {data.business.name}</h2>
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-500">
-              <Sparkles className="h-4 w-4" /> {data.products.length} Products Synced Successfully
-            </div>
+            <button
+              onClick={handleClear}
+              className="group flex items-center gap-2 rounded-lg bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-500 hover:text-white"
+            >
+              <Trash2 className="h-4 w-4" />
+              {t('disconnect')}
+            </button>
           </div>
 
           <div className="border-t border-border pt-8">
@@ -179,9 +181,9 @@ export default function IntegrationsPage() {
             </div>
           </div>
 
-          <div className="flex gap-4 justify-center pt-6">
-            <Link href="/dashboard" className="px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
-              Go to Dashboard
+          <div className="mt-8 flex justify-end gap-3 pt-6 border-t border-border/50">
+            <Link href="/dashboard" className="rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary">
+              {t('go_to_dashboard')}
             </Link>
           </div>
         </motion.div>
@@ -196,9 +198,9 @@ export default function IntegrationsPage() {
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           <Link2 className="h-8 w-8" />
         </div>
-        <h1 className="text-3xl font-bold text-foreground">Integrations Hub</h1>
+        <h1 className="text-3xl font-bold text-foreground">{t('integrations_hub')}</h1>
         <p className="text-muted-foreground max-w-xl mx-auto">
-          Connect your favorite platforms, sync your databases, or log manual sales using BizPOS. Choose a category to get started.
+          {t('integrations_description')}
         </p>
       </div>
 

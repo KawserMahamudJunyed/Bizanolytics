@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Save, User, Building2, Loader2, ArrowLeft, Settings } from "lucide-react"
+import { Save, User, Building2, Loader2, ArrowLeft, Settings, CheckCircle } from "lucide-react"
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import Link from "next/link"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export default function ProfilePage() {
+  const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   
@@ -85,14 +87,14 @@ export default function ProfilePage() {
       if (authError) console.error("Supabase Auth Error:", authError);
       
       if (!authError && dbError) {
-        toast.warning(`Profile saved, but database sync failed (Likely missing RLS policy): ${dbError.message}`)
+        toast.warning(`${t('profile_saved_db_failed')}: ${dbError.message}`)
         // Auth succeeded, so we still want to reload the UI to reflect the new Auth name!
         setTimeout(() => window.location.reload(), 2500)
       } else {
-        toast.error(`Error saving profile: ${authError?.message}`)
+        toast.error(t('error_saving'))
       }
     } else {
-      toast.success("Profile saved successfully!")
+      toast.success(t('profile_saved'))
       // Hard refresh to ensure the sidebar component re-fetches the auth session
       setTimeout(() => window.location.reload(), 1000)
     }
@@ -109,12 +111,12 @@ export default function ProfilePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8 pt-8 pb-12">
       <Link href="/settings" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
-        <Settings className="w-4 h-4" /> Go to Account Settings
+        <Settings className="w-4 h-4" /> {t('go_to_account_settings')}
       </Link>
       
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Profile</h1>
-        <p className="text-muted-foreground mt-2">Manage your personal and company details.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('your_profile')}</h1>
+        <p className="text-muted-foreground mt-2">{t('manage_profile')}</p>
       </div>
 
       <motion.div
@@ -143,7 +145,7 @@ export default function ProfilePage() {
         
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">Full Name</label>
+            <label className="block text-sm font-medium text-foreground mb-1.5">{t('full_name')}</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
@@ -156,7 +158,7 @@ export default function ProfilePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">Company Name</label>
+            <label className="block text-sm font-medium text-foreground mb-1.5">{t('company_name')}</label>
             <div className="relative">
               <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
@@ -173,10 +175,14 @@ export default function ProfilePage() {
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all disabled:opacity-50"
+            className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
           >
-            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            {isSaving ? "Saving..." : "Save Profile"}
+            {isSaving ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <CheckCircle className="h-4 w-4" />
+            )}
+            {t('save_profile')}
           </button>
         </div>
       </motion.div>

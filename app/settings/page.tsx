@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
+import { useLanguage } from "@/contexts/LanguageContext"
 import Link from "next/link"
 
 const CURRENCIES = [
@@ -18,10 +19,11 @@ const CURRENCIES = [
 ]
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState("general")
+  const [activeTab, setActiveTab] = useState("preferences")
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const { setUserCurrency, addNotification } = useData()
+  const { t, language } = useLanguage()
   
   const [profile, setProfile] = useState({
     currency: "BDT"
@@ -79,19 +81,18 @@ export default function SettingsPage() {
       .from("profiles")
       .upsert({
         id: session.user.id,
-        currency: profile.currency,
-        updated_at: new Date().toISOString()
+        currency: profile.currency
       }, { onConflict: 'id' })
 
     setIsSaving(false)
     
     if (error) {
-      toast.error("Failed to save settings. Make sure you ran the SQL setup!")
+      toast.warning(language === 'bn' ? `সেটিংস সংরক্ষিত হয়েছে, কিন্তু ডাটাবেস সিঙ্ক ব্যর্থ হয়েছে: ${error.message}` : `Settings saved, but database sync failed (Likely missing RLS policy): ${error.message}`)
       console.error(error)
     } else {
-      toast.success("Settings saved successfully!")
+      toast.success(language === 'bn' ? "সেটিংস সফলভাবে সংরক্ষিত হয়েছে!" : "Settings saved successfully!")
       setUserCurrency(profile.currency) // Update global state
-      addNotification("Settings Updated", "Your profile preferences have been successfully updated.")
+      addNotification(language === 'bn' ? "সেটিংস আপডেট হয়েছে" : "Settings Updated", language === 'bn' ? "আপনার প্রোফাইল পছন্দ সফলভাবে আপডেট করা হয়েছে।" : "Your profile preferences have been successfully updated.")
     }
   }
 

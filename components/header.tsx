@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
+import { useLanguage } from "@/contexts/LanguageContext"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,13 +31,14 @@ function formatTimeAgo(dateStr: string) {
 export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
   const router = useRouter()
   const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, setActiveIntegrationName, connectedIntegrationName, loadIntegrationData, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
+  const { t } = useLanguage()
   const [isRenaming, setIsRenaming] = useState(false)
   const [editName, setEditName] = useState("")
 
   const hour = new Date().getHours()
-  let greeting = "Good evening"
-  if (hour >= 5 && hour < 12) greeting = "Good morning"
-  else if (hour >= 12 && hour < 17) greeting = "Good afternoon"
+  let greetingKey: 'good_evening' | 'good_morning' | 'good_afternoon' = 'good_evening'
+  if (hour >= 5 && hour < 12) greetingKey = "good_morning"
+  else if (hour >= 12 && hour < 17) greetingKey = "good_afternoon"
 
   const activeDataset = datasetHistory.find(d => d.id === datasetId)
 
@@ -87,7 +89,7 @@ export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
           transition={{ delay: 0.2, duration: 0.4 }}
           className="text-2xl font-semibold tracking-tight text-foreground"
         >
-          {greeting}!
+          {t(greetingKey)}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -95,7 +97,7 @@ export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
           transition={{ delay: 0.3, duration: 0.4 }}
           className="text-sm text-muted-foreground"
         >
-          Ready to analyze. Here's your forecast overview.
+          {t('dashboard_subtitle')}
         </motion.p>
       </div>
 

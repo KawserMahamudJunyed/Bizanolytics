@@ -18,9 +18,10 @@ export async function POST(req: Request) {
   }
 
   const rawData = body?.rawData || [];
+  const language = body?.language || 'en';
   
   if (rawData.length === 0) {
-    return NextResponse.json({ insight: "No data uploaded to analyze." }, { status: 400 });
+    return NextResponse.json({ insight: language === 'bn' ? "বিশ্লেষণ করার জন্য কোন ডেটা আপলোড করা হয়নি।" : "No data uploaded to analyze." }, { status: 400 });
   }
 
   // Summarize the data for the LLM
@@ -35,12 +36,16 @@ export async function POST(req: Request) {
     - Sample Data (first 3 rows): ${JSON.stringify(rawData.slice(0, 3))}
   `;
 
+  const systemPrompt = language === 'bn' 
+    ? "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Keep it very professional and direct. Provide a concise, actionable, 2-3 sentence forecasting insight based on the data summary provided. YOU MUST WRITE YOUR ENTIRE RESPONSE IN BENGALI (BANGLA)."
+    : "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Keep it very professional and direct. Provide a concise, actionable, 2-3 sentence forecasting insight based on the data summary provided.";
+
   try {
     const chatCompletion = await groq.chat.completions.create({
       messages: [
         {
           role: "system",
-          content: "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Keep it very professional and direct. Provide a concise, actionable, 2-3 sentence forecasting insight based on the data summary provided."
+          content: systemPrompt
         },
         {
           role: "user",

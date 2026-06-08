@@ -13,11 +13,13 @@ import {
   Users,
 } from "lucide-react"
 import { useData } from "@/contexts/DataContext"
+import { useLanguage } from "@/contexts/LanguageContext"
 import { cn } from "@/lib/utils"
 import { formatCurrency } from "@/utils/currency"
 
 export default function Dashboard() {
   const { rawData, isDataUploaded, userCurrency } = useData()
+  const { t } = useLanguage()
 
   // Calculate dynamic metrics
   const totalRevenue = rawData.reduce((acc, row) => acc + (row.Revenue_BDT || 0), 0)
@@ -39,28 +41,28 @@ export default function Dashboard() {
 
   const metrics = [
     {
-      title: "Total Revenue",
+      title: t('total_revenue'),
       value: formatCurrency(totalRevenue, userCurrency),
       change: 12.5,
       changeLabel: "vs last month",
       icon: <Coins className="h-5 w-5" />,
     },
     {
-      title: "Active Products",
+      title: t('active_products'),
       value: uniqueProducts.toLocaleString(),
       change: 4.2,
       changeLabel: "new this month",
       icon: <Package className="h-5 w-5" />,
     },
     {
-      title: "Forecast Accuracy",
+      title: t('forecast_accuracy'),
       value: accuracyStr,
       change: forecastAccuracy > 0 ? 2.1 : 0,
       changeLabel: "improvement",
       icon: <TrendingUp className="h-5 w-5" />,
     },
     {
-      title: "Total Units Sold",
+      title: t('total_units'),
       value: rawData.reduce((acc, row) => acc + (row.Units_Sold || 0), 0).toLocaleString(),
       change: 8.4,
       changeLabel: "vs last week",

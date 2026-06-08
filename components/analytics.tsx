@@ -3,6 +3,7 @@
 import { useMemo, useEffect, useState } from "react"
 import { useData } from "@/contexts/DataContext"
 import { formatCurrency, CURRENCY_SYMBOLS, CurrencyCode } from "@/utils/currency"
+import { useLanguage } from "@/contexts/LanguageContext"
 import { motion } from "framer-motion"
 import {
   LineChart,
@@ -52,6 +53,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export function TrendAnalysis() {
   const { rawData } = useData();
+  const { t } = useLanguage();
   const [processedData, setProcessedData] = useState<any[]>([]);
   
   useEffect(() => {
@@ -108,8 +110,8 @@ export function TrendAnalysis() {
       <div className="card-base p-6 flex flex-col h-full justify-between">
         <div className="flex flex-row items-start justify-between pb-4">
           <div>
-            <h3 className="text-base font-semibold text-foreground">Trend Analysis</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">8-week performance with moving average</p>
+            <h3 className="text-base font-semibold text-foreground">{t('trend_analysis')}</h3>
+            <p className="mt-0.5 text-xs text-muted-foreground">{t('trend_desc')}</p>
           </div>
           <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-500">
             <TrendingUp className="h-3.5 w-3.5" />
@@ -183,6 +185,7 @@ export function TrendAnalysis() {
 
 export function ForecastAccuracy() {
   const { rawData } = useData();
+  const { t } = useLanguage();
   const [metrics, setMetrics] = useState<any[]>([
     { label: "MAPE", value: "...", description: "Mean Absolute Percentage Error" },
     { label: "RMSE", value: "...", description: "Root Mean Square Error" },
@@ -230,8 +233,8 @@ export function ForecastAccuracy() {
     >
       <div className="card-base p-6 flex flex-col h-full justify-between">
         <div className="mb-4">
-          <h3 className="text-base font-semibold text-foreground">Forecast Accuracy</h3>
-          <p className="mt-0.5 text-xs text-muted-foreground">Model performance metrics</p>
+          <h3 className="text-base font-semibold text-foreground">{t('forecast_accuracy')}</h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">{t('model_performance')}</p>
         </div>
         <div className="space-y-3">
           {metrics.map((metric, index) => (
@@ -295,6 +298,7 @@ const ParetoTooltip = ({ active, payload, label, userCurrency }: any) => {
 
 export function ParetoChart() {
   const { rawData, userCurrency } = useData();
+  const { t } = useLanguage();
   const sym = CURRENCY_SYMBOLS[userCurrency as CurrencyCode] || "৳";
   const [processedParetoData, setProcessedParetoData] = useState<any[]>([]);
   
@@ -343,8 +347,8 @@ export function ParetoChart() {
       <div className="card-base p-6 flex flex-col h-full justify-between">
         <div className="flex flex-row items-start justify-between pb-4">
           <div>
-            <h3 className="text-base font-semibold text-foreground">Profit Pareto Analysis</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">80/20 Rule based on product profitability</p>
+            <h3 className="text-base font-semibold text-foreground">{t('profit_pareto')}</h3>
+            <p className="mt-0.5 text-xs text-muted-foreground">{t('profit_pareto_desc')}</p>
           </div>
           <div className="flex items-center gap-1.5 rounded-full bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-500">
             <Package className="h-3.5 w-3.5" />
@@ -422,6 +426,7 @@ const ForecastTooltip = ({ active, payload, label, capacity }: any) => {
 
 export function DemandForecastChart() {
   const { rawData, isDataUploaded, userCurrency } = useData()
+  const { t } = useLanguage();
   const sym = CURRENCY_SYMBOLS[userCurrency as CurrencyCode] || "৳";
   const [chartState, setChartState] = useState({ processedForecastData: [] as any[], inventoryCapacity: 0, restockMonth: null as string | null });
 
@@ -528,8 +533,8 @@ export function DemandForecastChart() {
 
         <div className="flex flex-row items-start justify-between pb-4">
           <div>
-            <h3 className="text-base font-semibold text-foreground">Demand Forecast</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">Projected demand vs. inventory capacity</p>
+            <h3 className="text-base font-semibold text-foreground">{t('demand_forecast')}</h3>
+            <p className="mt-0.5 text-xs text-muted-foreground">{t('demand_forecast_desc')}</p>
           </div>
         </div>
         
@@ -548,13 +553,13 @@ export function DemandForecastChart() {
                 <ReferenceLine y={inventoryCapacity} stroke="var(--amber-500)" strokeDasharray="4 4" strokeWidth={2} label={{ value: 'Capacity', position: 'insideTopLeft', fill: 'var(--amber-500)', fontSize: 11 }} />
                 
                 <Area type="monotone" dataKey="uncertaintyRange" stroke="none" fill="var(--chart-4)" fillOpacity={0.15} activeDot={false} />
-                <Line type="monotone" dataKey="actual" name="Actual Demand" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4, fill: "var(--primary)", strokeWidth: 0 }} activeDot={{ r: 6 }} />
-                <Line type="monotone" dataKey="yhat" name="Forecast" stroke="var(--chart-4)" strokeWidth={3} strokeDasharray="5 5" dot={false} activeDot={{ r: 6, fill: "var(--chart-4)" }} />
+                <Line type="monotone" dataKey="actual" name={t('actual_demand')} stroke="var(--primary)" strokeWidth={3} dot={{ r: 4, fill: "var(--primary)", strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="yhat" name={t('forecast')} stroke="var(--chart-4)" strokeWidth={3} strokeDasharray="5 5" dot={false} activeDot={{ r: 6, fill: "var(--chart-4)" }} />
               </ComposedChart>
             </ResponsiveContainer>
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground border-dashed rounded-lg border">
-              Upload data to see forecast
+              {t('upload_data_forecast')}
             </div>
           )}
         </div>

@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { normalizeCsvData } from "@/lib/normalizeCsv"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export function DataUpload() {
   const [dragActive, setDragActive] = useState(false)
@@ -19,6 +20,7 @@ export function DataUpload() {
   const [progress, setProgress] = useState(0)
   const [errorMessage, setErrorMessage] = useState("")
   const { setUploadedData } = useData()
+  const { t } = useLanguage()
   const router = useRouter()
 
   const handleDrag = (e: React.DragEvent) => {
@@ -246,10 +248,10 @@ export function DataUpload() {
       className="card-base overflow-hidden p-6 mb-6"
     >
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-foreground">Connect Data Source</h3>
-        <p className="mt-1 text-sm text-muted-foreground">Upload your raw sales data (CSV or Excel) to let our AI process and forecast demand.</p>
+        <h3 className="text-lg font-semibold text-foreground">{t('connect_data_source')}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{t('upload_instructions')}</p>
         <p className="mt-2 text-xs font-medium text-emerald-500/80">
-          Required Columns: Date, Product_Name, Category, Location, Sales_Channel, Units_Sold, Revenue_BDT, Cost_Price, Current_Stock
+          {t('required_columns')}
         </p>
       </div>
 
@@ -278,13 +280,13 @@ export function DataUpload() {
                 <Upload className="h-6 w-6 text-muted-foreground" />
               </div>
               <p className="mb-1 text-sm font-medium text-foreground">
-                Drag and drop your CSV or Excel file here
+                {t('drag_drop')}
               </p>
               <p className="mb-4 text-xs text-muted-foreground">
-                or click to browse from your computer
+                {t('click_upload')}
               </p>
               <label className="cursor-pointer rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
-                Browse Files
+                {t('browse_files')}
                 <input
                   type="file"
                   className="hidden"
@@ -293,7 +295,7 @@ export function DataUpload() {
                 />
               </label>
               <div className="mt-4 flex gap-4 text-xs text-muted-foreground">
-                <a href="/sample-sme-sales.csv" download className="text-primary hover:underline">Download Sample Dataset</a>
+                <a href="/sample-sme-sales.csv" download className="text-primary hover:underline">{t('download_sample')}</a>
               </div>
             </motion.div>
           )}

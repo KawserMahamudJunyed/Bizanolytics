@@ -27,6 +27,8 @@ import {
 import { cn } from "@/lib/utils"
 import { logout } from "@/app/login/actions"
 import { createClient } from "@/utils/supabase/client"
+import { useLanguage } from "@/contexts/LanguageContext"
+import { Language } from "@/lib/i18n"
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", active: true },
@@ -55,6 +57,7 @@ export function Sidebar({
   const [isOpen, setIsOpen] = useState(false)
   const [displayName, setDisplayName] = useState(user?.user_metadata?.full_name || "User")
   const pathname = usePathname()
+  const { language, setLanguage, t } = useLanguage()
 
   const isEffectivelyCollapsed = isCollapsed && !isHovered
   const sidebarWidth = isEffectivelyCollapsed ? "w-16" : "w-64"
@@ -215,20 +218,28 @@ export function Sidebar({
         {/* Navigation - Main Items */}
         <nav className="relative flex-1 overflow-y-auto px-3 py-2">
           {!isEffectivelyCollapsed && (
-            <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-              Main Menu
-            </p>
+            <div className="flex items-center justify-between mb-2 px-2">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                {t('dashboard')} MENU
+              </p>
+              <button 
+                onClick={() => setLanguage(language === 'en' ? 'bn' : 'en')}
+                className="text-[10px] font-medium px-2 py-0.5 rounded-sm bg-secondary/50 text-foreground hover:bg-secondary transition-colors"
+              >
+                {language === 'en' ? 'বাংলা' : 'EN'}
+              </button>
+            </div>
           )}
           <ul className="space-y-1">
             {[
-              { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-              { icon: Database, label: "Data Sources", href: "/data" },
-              { icon: TrendingUp, label: "Forecasts", href: "/forecasts" },
-              { icon: BarChart3, label: "Analytics", href: "/analytics" },
-              { icon: Layers, label: "Integrations", href: "/integrations" },
-              { icon: Activity, label: "Data Pipeline", href: "/pipeline" },
-              { icon: Bell, label: "Notifications", href: "/notifications" },
-              { icon: Settings, label: "Settings", href: "/settings" },
+              { icon: LayoutDashboard, label: t('dashboard'), href: "/dashboard" },
+              { icon: Database, label: t('data_sources'), href: "/data" },
+              { icon: TrendingUp, label: t('forecasts'), href: "/forecasts" },
+              { icon: BarChart3, label: t('analytics'), href: "/analytics" },
+              { icon: Layers, label: t('integrations'), href: "/integrations" },
+              { icon: Activity, label: t('data_pipeline'), href: "/pipeline" },
+              { icon: Bell, label: t('notifications'), href: "/notifications" },
+              { icon: Settings, label: t('settings'), href: "/settings" },
             ].map((item, index) => {
               const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
               return (

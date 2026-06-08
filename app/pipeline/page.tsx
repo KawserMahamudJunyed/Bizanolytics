@@ -6,6 +6,7 @@ import { DataFlowVisualization } from "@/components/spider-web"
 import { cn } from "@/lib/utils"
 
 import { useData } from "@/contexts/DataContext"
+import { useLanguage } from "@/contexts/LanguageContext"
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 
@@ -35,6 +36,7 @@ function formatTimeAgo(date: Date) {
 
 export default function PipelinePage() {
   const { rawData, isDataUploaded } = useData()
+  const { t } = useLanguage()
   const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([])
   const prevDataLenRef = useRef(0)
   const [, forceUpdate] = useState(0)
@@ -159,19 +161,19 @@ export default function PipelinePage() {
       {/* Pipeline Stats */}
       <div className="grid gap-6 md:grid-cols-3">
         <PipelineStatCard
-          title={syncFreq ? "Sync Frequency" : "Data Throughput"}
+          title={syncFreq ? t('sync_frequency') : t('data_throughput')}
           value={syncFreq ? syncFreq.charAt(0).toUpperCase() + syncFreq.slice(1) : throughput}
           description={syncFreq ? "Active integration refresh rate" : "Average processing volume"}
           trend={syncFreq ? 0 : throughputTrend}
         />
         <PipelineStatCard
-          title={syncFreq ? "API Latency" : "Pipeline Latency"}
+          title={syncFreq ? t('api_latency') : t('pipeline_latency')}
           value={isDataUploaded ? `${latencyMs}ms` : "0ms"}
           description="End-to-end processing time"
           trend={latencyTrend}
         />
         <PipelineStatCard
-          title="Success Rate"
+          title={t('success_rate')}
           value={successRate}
           description="Pipeline execution success"
           trend={successRateTrend}
@@ -179,7 +181,7 @@ export default function PipelinePage() {
       </div>
 
       {/* Recent Pipeline Runs */}
-      <PipelineRunsTable runs={pipelineRuns} />
+      <PipelineRunsTable runs={pipelineRuns} t={t} />
     </motion.div>
   )
 }
@@ -220,7 +222,7 @@ function PipelineStatCard({
   )
 }
 
-function PipelineRunsTable({ runs }: { runs: PipelineRun[] }) {
+function PipelineRunsTable({ runs, t }: { runs: PipelineRun[], t: any }) {
   const statusStyles = {
     success: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
     warning: "bg-amber-500/10 text-amber-500 border-amber-500/20",
@@ -234,18 +236,18 @@ function PipelineRunsTable({ runs }: { runs: PipelineRun[] }) {
       className="card-base overflow-hidden"
     >
       <div className="p-6">
-        <h3 className="mb-4 text-base font-semibold text-foreground">Recent Pipeline Runs</h3>
+        <h3 className="mb-4 text-base font-semibold text-foreground">{t('recent_pipeline_runs')}</h3>
         
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Run ID</th>
-                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Source</th>
-                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Status</th>
-                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Duration</th>
-                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Records</th>
-                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Time</th>
+                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{t('run_id')}</th>
+                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{t('source')}</th>
+                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{t('status')}</th>
+                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{t('duration')}</th>
+                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{t('records')}</th>
+                <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{t('time')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -275,7 +277,7 @@ function PipelineRunsTable({ runs }: { runs: PipelineRun[] }) {
               {runs.length === 0 && (
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-sm text-muted-foreground">
-                    Upload data or Connect an Integration to view pipeline runs.
+                    {t('upload_data_view_pipeline')}
                   </td>
                 </tr>
               )}
