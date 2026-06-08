@@ -201,7 +201,7 @@ export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
                 <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 relative">
                   <Bell className="w-4 h-4 text-muted-foreground" />
                   {unreadNotificationsCount > 0 && (
-                    <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border border-background"></span>
+                    <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-red-500 border border-background"></span>
                   )}
                 </Button>
               </DropdownMenuTrigger>
@@ -234,10 +234,18 @@ export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
                         )}
                       >
                         <div className="flex justify-between gap-2">
-                          <p className="text-sm font-semibold text-foreground">{notif.title}</p>
+                          <p className="text-sm font-semibold text-foreground">
+                            {notif.title === "Data Upload Successful" ? t('notif_upload_success_title') : 
+                             notif.title === "AI Forecast Generated" ? t('notif_ai_forecast_title') : 
+                             notif.title}
+                          </p>
                           {!notif.is_read && <span className="h-2 w-2 rounded-full bg-primary mt-1 shrink-0"></span>}
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{notif.message}</p>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                          {notif.message === "Your new business forecast and AI insights are ready to view." ? t('notif_ai_forecast_msg') :
+                           notif.message.startsWith("Successfully processed and imported") ? t('notif_upload_success_msg') :
+                           notif.message}
+                        </p>
                         <p className="text-[10px] font-medium text-muted-foreground/70 mt-2">{formatTimeAgo(notif.created_at)}</p>
                       </div>
                     ))

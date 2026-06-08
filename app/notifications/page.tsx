@@ -20,6 +20,7 @@ function formatTimeAgoFull(dateStr: string) {
 
 export default function NotificationsPage() {
   const { notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
+  const { t } = useLanguage()
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pt-4 pb-12">
@@ -27,14 +28,14 @@ export default function NotificationsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <Bell className="h-6 w-6 text-foreground" />
-            Notifications
+            {t('notifications')}
             {unreadNotificationsCount > 0 && (
               <span className="ml-2 inline-flex items-center justify-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-500">
-                {unreadNotificationsCount} New
+                {unreadNotificationsCount} {t('new')}
               </span>
             )}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">Stay updated on your pipeline runs and system alerts.</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t('notifications_desc')}</p>
         </div>
         {unreadNotificationsCount > 0 && (
           <button 
@@ -42,7 +43,7 @@ export default function NotificationsPage() {
             className="flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80 transition-colors"
           >
             <CheckCircle2 className="h-4 w-4" />
-            Mark all as read
+            {t('mark_all_read')}
           </button>
         )}
       </div>
@@ -58,8 +59,8 @@ export default function NotificationsPage() {
             <div className="h-16 w-16 rounded-full bg-secondary flex items-center justify-center mb-4">
               <Bell className="h-8 w-8 text-muted-foreground/50" />
             </div>
-            <h3 className="text-lg font-medium text-foreground">You're all caught up!</h3>
-            <p className="text-muted-foreground mt-1">No new notifications at the moment.</p>
+            <h3 className="text-lg font-medium text-foreground">{t('all_caught_up')}</h3>
+            <p className="text-muted-foreground mt-1">{t('no_new_notifications')}</p>
           </div>
         ) : (
           <div className="divide-y divide-border">
@@ -89,7 +90,9 @@ export default function NotificationsPage() {
                 <div className="flex-1 space-y-1">
                   <div className="flex items-start justify-between gap-2">
                     <p className={cn("text-sm font-medium", notif.is_read ? "text-foreground" : "text-emerald-500")}>
-                      {notif.title}
+                      {notif.title === "Data Upload Successful" ? t('notif_upload_success_title') : 
+                       notif.title === "AI Forecast Generated" ? t('notif_ai_forecast_title') : 
+                       notif.title}
                     </p>
                     <span className="flex items-center gap-1 text-xs text-muted-foreground shrink-0 whitespace-nowrap">
                       <Clock className="h-3 w-3" />
@@ -97,7 +100,9 @@ export default function NotificationsPage() {
                     </span>
                   </div>
                   <p className={cn("text-sm leading-relaxed", notif.is_read ? "text-muted-foreground" : "text-foreground/90")}>
-                    {notif.message}
+                    {notif.message === "Your new business forecast and AI insights are ready to view." ? t('notif_ai_forecast_msg') :
+                     notif.message.startsWith("Successfully processed and imported") ? t('notif_upload_success_msg') :
+                     notif.message}
                   </p>
                 </div>
               </motion.div>

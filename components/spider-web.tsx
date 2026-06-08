@@ -11,10 +11,12 @@ import {
 } from "recharts"
 import { Database, Cog, Brain, HardDrive, Zap } from "lucide-react"
 import { useData } from "@/contexts/DataContext"
+import { useLanguage } from "@/contexts/LanguageContext"
 import { Globe } from "lucide-react"
 
 // Performance Radar Chart - Spider visualization for metrics
 export function PerformanceRadarChart() {
+  const { t } = useLanguage()
   const data = [
     { metric: "Accuracy", current: 94, previous: 88, benchmark: 85 },
     { metric: "Speed", current: 87, previous: 78, benchmark: 80 },
@@ -34,17 +36,17 @@ export function PerformanceRadarChart() {
       <div className="card-base p-6 flex flex-col h-full overflow-hidden">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-semibold text-foreground">Performance Metrics</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">Multi-dimensional analysis</p>
+            <h3 className="text-base font-semibold text-foreground">{t('performance_metrics')}</h3>
+            <p className="mt-0.5 text-xs text-muted-foreground">{t('multi_dimensional_analysis')}</p>
           </div>
           <div className="flex items-center gap-4 text-xs">
             <div className="flex items-center gap-1.5">
               <div className="h-2 w-2 rounded-full bg-[var(--chart-1)]" />
-              <span className="text-muted-foreground">Current</span>
+              <span className="text-muted-foreground">{t('current')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="h-2 w-2 rounded-full bg-[var(--chart-3)]" />
-              <span className="text-muted-foreground">Previous</span>
+              <span className="text-muted-foreground">{t('previous')}</span>
             </div>
           </div>
         </div>
@@ -66,7 +68,7 @@ export function PerformanceRadarChart() {
                 tickCount={5}
               />
               <Radar
-                name="Benchmark"
+                name={t('benchmark')}
                 dataKey="benchmark"
                 stroke="var(--muted-foreground)"
                 fill="transparent"
@@ -74,7 +76,7 @@ export function PerformanceRadarChart() {
                 strokeDasharray="4 4"
               />
               <Radar
-                name="Previous"
+                name={t('previous')}
                 dataKey="previous"
                 stroke="var(--chart-3)"
                 fill="var(--chart-3)"
@@ -82,7 +84,7 @@ export function PerformanceRadarChart() {
                 fillOpacity={0.3}
               />
               <Radar
-                name="Current"
+                name={t('current')}
                 dataKey="current"
                 stroke="var(--chart-1)"
                 fill="var(--chart-1)"
@@ -100,6 +102,7 @@ export function PerformanceRadarChart() {
 // Industrial-grade Pipeline with Y-fork architecture
 export function DataFlowVisualization() {
   const { rawData, isDataUploaded, activeIntegrationName, datasetId, datasetHistory } = useData()
+  const { t } = useLanguage()
   
   const activeDatasetName = datasetHistory?.find(d => d.id === datasetId)?.file_name
   
@@ -125,11 +128,11 @@ export function DataFlowVisualization() {
   //   State splits: UP to AI API, DOWN to Dashboard
   //   AI API also feeds DOWN into Dashboard
   const stages = [
-    { id: "upload", label: activeIntegrationName ? "Live Sync" : "Upload", description: activeIntegrationName ? activeIntegrationName : (activeDatasetName || "CSV/Excel Data"), icon: activeIntegrationName ? Globe : Database, x: 100, y: 170 },
-    { id: "parse", label: "Parse", description: activeIntegrationName ? "Normalize Data" : "Client-side ETL", icon: Cog, x: 250, y: 170 },
-    { id: "state", label: "State", description: "React Context", icon: HardDrive, x: 400, y: 170 },
-    { id: "ai", label: "AI API", description: "Llama 3 via Groq", icon: Brain, x: 580, y: 75 },
-    { id: "dashboard", label: "Dashboard", description: "Live Display", icon: Zap, x: 580, y: 280 },
+    { id: "upload", label: activeIntegrationName ? t('live_sync') : t('upload'), description: activeIntegrationName ? activeIntegrationName : (activeDatasetName || t('csv_excel_data')), icon: activeIntegrationName ? Globe : Database, x: 100, y: 170 },
+    { id: "parse", label: t('parse'), description: activeIntegrationName ? t('normalize_data') : t('client_side_etl'), icon: Cog, x: 250, y: 170 },
+    { id: "state", label: t('state'), description: t('react_context'), icon: HardDrive, x: 400, y: 170 },
+    { id: "ai", label: t('ai_api'), description: t('llama3_via_groq'), icon: Brain, x: 580, y: 75 },
+    { id: "dashboard", label: t('dashboard_live_display').split(' ')[0] || "Dashboard", description: t('dashboard_live_display'), icon: Zap, x: 580, y: 280 },
   ]
 
   return (
@@ -142,15 +145,15 @@ export function DataFlowVisualization() {
       <div className="card-base p-6 flex flex-col h-full overflow-hidden">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-semibold text-foreground">Data Pipeline</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">Real-time data flow visualization</p>
+            <h3 className="text-base font-semibold text-foreground">{t('data_pipeline')}</h3>
+            <p className="mt-0.5 text-xs text-muted-foreground">{t('real_time_data_flow')}</p>
           </div>
           <div className="flex items-center gap-2">
             <span className="relative flex h-2.5 w-2.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
             </span>
-            <span className="text-xs font-medium text-emerald-500">Active</span>
+            <span className="text-xs font-medium text-emerald-500">{t('active')}</span>
           </div>
         </div>
 
@@ -242,7 +245,7 @@ export function DataFlowVisualization() {
               animate={{ opacity: 0.7 }}
               transition={{ delay: 0.5 }}
             >
-              AI Insights
+              {t('ai_insights')}
             </motion.text>
             <motion.text
               x="510"
@@ -253,7 +256,7 @@ export function DataFlowVisualization() {
               animate={{ opacity: 0.7 }}
               transition={{ delay: 0.55 }}
             >
-              Charts &amp; Data
+              {t('charts_and_data')}
             </motion.text>
 
             {/* === JUNCTION DOT at the split point === */}
@@ -413,10 +416,10 @@ export function DataFlowVisualization() {
       {/* Pipeline stats */}
       <div className="mt-8 grid grid-cols-2 gap-4 border-t border-border pt-6 md:grid-cols-4">
         {[
-          { label: "Rows Processed", value: recordCount.toLocaleString() },
-          { label: "Data Volume", value: dataSizeDisplay },
-          { label: "Processing Latency", value: processingTime },
-          { label: "Success Rate", value: successRate },
+          { label: t('rows_processed'), value: recordCount.toLocaleString() },
+          { label: t('data_volume'), value: dataSizeDisplay },
+          { label: t('processing_latency'), value: processingTime },
+          { label: t('success_rate_stat'), value: successRate },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}

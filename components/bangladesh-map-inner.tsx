@@ -10,11 +10,11 @@ import { cn } from "@/lib/utils"
 import bdGeoData from './bangladesh.json'
 
 import { useData } from "@/contexts/DataContext"
-
-
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export default function BangladeshMapInner() {
   const { rawData } = useData();
+  const { t } = useLanguage();
   const [selectedArea, setSelectedArea] = useState<any>(null)
   
   const mapContainerRef = useRef<HTMLDivElement>(null)
@@ -202,10 +202,10 @@ export default function BangladeshMapInner() {
         <div>
           <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
             <Globe className="h-4 w-4 text-foreground" />
-            Bangladesh Demand Forecast
+            {t('bangladesh_demand_forecast')}
           </h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            District-level demand heatmap powered by Leaflet
+            {t('district_level_heatmap')}
           </p>
         </div>
       </div>
@@ -213,13 +213,13 @@ export default function BangladeshMapInner() {
       {/* Stats Bar */}
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
-          { label: "Total Demand", value: `${(regionStats.totalDemand / 1000).toFixed(1)}k`, sub: "units" },
-          { label: "Total Stock", value: `${(regionStats.totalStock / 1000).toFixed(1)}k`, sub: "units" },
-          { label: "Avg Confidence", value: `${regionStats.avgConfidence}%`, sub: "accuracy" },
+          { label: t('total_demand'), value: `${(regionStats.totalDemand / 1000).toFixed(1)}k`, sub: t('units') },
+          { label: t('total_stock'), value: `${(regionStats.totalStock / 1000).toFixed(1)}k`, sub: t('units') },
+          { label: t('avg_confidence'), value: `${regionStats.avgConfidence}%`, sub: t('accuracy') },
           {
-            label: "Avg Growth",
+            label: t('avg_growth'),
             value: `${regionStats.avgGrowth > 0 ? "+" : ""}${regionStats.avgGrowth}%`,
-            sub: "vs last period",
+            sub: t('vs_last_period'),
             positive: regionStats.avgGrowth >= 0,
           },
         ].map((stat, i) => (
@@ -292,19 +292,19 @@ export default function BangladeshMapInner() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Demand</span>
+                  <span className="text-xs text-muted-foreground">{t('demand')}</span>
                   <span className="text-xs font-semibold tabular-nums text-foreground">
                     {selectedArea.demand.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Stock</span>
+                  <span className="text-xs text-muted-foreground">{t('stock')}</span>
                   <span className="text-xs font-semibold tabular-nums text-foreground">
                     {selectedArea.stock.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Growth</span>
+                  <span className="text-xs text-muted-foreground">{t('growth')}</span>
                   <span
                     className={cn(
                       "flex items-center gap-1 text-xs font-semibold tabular-nums",
@@ -344,7 +344,7 @@ export default function BangladeshMapInner() {
       {/* Bottom: Top Markets */}
       <div className="pt-4">
         <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Top Divisions by Forecasted Demand
+          {t('top_divisions_forecast')}
         </p>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {dynamicForecastData
@@ -365,7 +365,7 @@ export default function BangladeshMapInner() {
                   />
                   <div>
                     <p className="text-sm font-medium text-foreground">{division.name}</p>
-                    <p className="text-[10px] text-muted-foreground">Bangladesh</p>
+                    <p className="text-[10px] text-muted-foreground">{t('bangladesh')}</p>
                   </div>
                 </div>
                 <div className="text-right">
