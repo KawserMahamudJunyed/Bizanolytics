@@ -64,7 +64,13 @@ export default function ProfilePage() {
       return
     }
 
-    const { error } = await supabase
+    // Update auth metadata so the sidebar automatically gets the new name
+    const { error: authError } = await supabase.auth.updateUser({
+      data: { full_name: profile.full_name, company_name: profile.company_name }
+    })
+
+    // Also try updating the public profiles table (if it exists)
+    const { error: dbError } = await supabase
       .from("profiles")
       .upsert({
         id: session.user.id,
@@ -75,11 +81,13 @@ export default function ProfilePage() {
 
     setIsSaving(false)
     
-    if (error) {
-      toast.error("Failed to save profile.")
-      console.error(error)
+    if (authError && dbError) {
+      toast.error(`Failed to save profile: ${dbError?.message || authError?.message}`)
+      console.error(dbError, authError)
     } else {
       toast.success("Profile saved successfully!")
+      // Hard refresh to ensure the sidebar component re-fetches the auth session
+      setTimeout(() => window.location.reload(), 1000)
     }
   }
 
@@ -109,7 +117,7 @@ export default function ProfilePage() {
       >
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary shrink-0">
               {profile.full_name?.charAt(0) || "U"}
             </div>
             <div>
