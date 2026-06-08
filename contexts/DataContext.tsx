@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react"
 import Papa from "papaparse"
 import { createClient } from "@/utils/supabase/client"
+import { normalizeCsvData } from "@/lib/normalizeCsv"
 import { toast } from "sonner"
 
 export type SMEDataRow = {
@@ -98,7 +99,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       skipEmptyLines: true,
       complete: (results) => {
         if (results.data && results.data.length > 0) {
-          setRawData(results.data as SMEDataRow[])
+          const normalized = normalizeCsvData(results.data)
+          setRawData(normalized as SMEDataRow[])
           setIsDataUploaded(true)
         }
       }

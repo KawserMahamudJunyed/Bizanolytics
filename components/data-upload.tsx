@@ -10,6 +10,7 @@ import { useData } from "@/contexts/DataContext"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
+import { normalizeCsvData } from "@/lib/normalizeCsv"
 
 export function DataUpload() {
   const [dragActive, setDragActive] = useState(false)
@@ -38,30 +39,7 @@ export function DataUpload() {
     }
     
     // Normalize column names using synonyms
-    const keyAliases: Record<string, string[]> = {
-      'Date': ['date', 'time', 'timestamp', 'orderdate', 'createdat', 'day'],
-      'Product_Name': ['product', 'productname', 'item', 'itemname', 'name', 'article', 'title'],
-      'Units_Sold': ['units', 'unitssold', 'quantity', 'qty', 'count', 'amount'],
-      'Revenue_BDT': ['revenue', 'revenuebdt', 'sales', 'totalsales', 'total', 'price', 'value', 'amountbdt', 'earning'],
-      'Category': ['category', 'type', 'class', 'group', 'department'],
-      'Location': ['location', 'region', 'city', 'branch', 'store', 'area']
-    }
-
-    const normalizedData = parsedData.map(row => {
-      const newRow: any = {};
-      for (const key in row) {
-        const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
-        let mappedKey = key; // default to original
-        for (const [canonical, aliases] of Object.entries(keyAliases)) {
-          if (aliases.includes(normalizedKey)) {
-            mappedKey = canonical;
-            break;
-          }
-        }
-        newRow[mappedKey] = row[key];
-      }
-      return newRow;
-    });
+    const normalizedData = normalizeCsvData(parsedData);
     
     // Check Critical Columns on the normalized data
     const firstRow = normalizedData[0]
