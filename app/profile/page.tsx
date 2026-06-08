@@ -75,15 +75,18 @@ export default function ProfilePage() {
       .upsert({
         id: session.user.id,
         full_name: profile.full_name,
-        company_name: profile.company_name,
-        updated_at: new Date().toISOString()
+        company_name: profile.company_name
       }, { onConflict: 'id' })
 
     setIsSaving(false)
     
-    if (authError && dbError) {
-      toast.error(`Failed to save profile: ${dbError?.message || authError?.message}`)
-      console.error(dbError, authError)
+    if (authError || dbError) {
+      if (dbError) console.error("Supabase Profiles Error:", dbError);
+      if (authError) console.error("Supabase Auth Error:", authError);
+      
+      // If one succeeds and the other fails, it's a partial success. 
+      // But we should surface the DB error so they know why it didn't update in Supabase.
+      toast.error(`Error saving profile to database: ${dbError?.message || authError?.message}`)
     } else {
       toast.success("Profile saved successfully!")
       // Hard refresh to ensure the sidebar component re-fetches the auth session
