@@ -73,15 +73,15 @@ export default function NotificationsPage() {
                 transition={{ delay: i * 0.05 }}
                 onClick={() => !notif.is_read && markNotificationAsRead(notif.id)}
                 className={cn(
-                  "p-6 flex gap-4 transition-colors cursor-pointer",
+                  "p-6 flex items-center gap-4 transition-colors cursor-pointer",
                   notif.is_read ? "hover:bg-secondary/50" : "bg-primary/5 hover:bg-primary/10"
                 )}
               >
-                <div className="pt-1 shrink-0">
+                <div className="shrink-0">
                   {notif.is_read ? (
-                    <Circle className="h-2 w-2 text-muted-foreground/40 mt-1.5" />
+                    <Circle className="h-2 w-2 text-muted-foreground/40" />
                   ) : (
-                    <div className="relative mt-1.5">
+                    <div className="relative">
                       <Circle className="h-2 w-2 text-emerald-500 fill-emerald-500" />
                       <span className="absolute inset-0 rounded-full animate-ping bg-emerald-500 opacity-20"></span>
                     </div>
@@ -89,22 +89,21 @@ export default function NotificationsPage() {
                 </div>
                 
                 <div className="flex-1 space-y-1">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className={cn("text-sm font-medium", notif.is_read ? "text-foreground" : "text-emerald-500")}>
-                      {notif.title === "Data Upload Successful" ? t('notif_upload_success_title') : 
-                       notif.title === "AI Forecast Generated" ? t('notif_ai_forecast_title') : 
-                       notif.title}
-                    </p>
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground shrink-0 whitespace-nowrap">
-                      <Clock className="h-3 w-3" />
-                      {formatTimeAgoFull(notif.created_at)}
-                    </span>
-                  </div>
+                  <p className={cn("text-sm font-medium", notif.is_read ? "text-foreground" : "text-emerald-500")}>
+                    {notif.title === "Data Upload Successful" ? t('notif_upload_success_title') : 
+                     notif.title === "AI Forecast Generated" ? t('notif_ai_forecast_title') : 
+                     notif.title}
+                  </p>
                   <p className={cn("text-sm leading-relaxed", notif.is_read ? "text-muted-foreground" : "text-foreground/90")}>
                     {notif.message === "Your new business forecast and AI insights are ready to view." ? t('notif_ai_forecast_msg') :
                      notif.message.startsWith("Successfully processed and imported") ? t('notif_upload_success_msg') :
                      notif.message}
                   </p>
+                </div>
+
+                <div className="shrink-0 flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
+                  <Clock className="h-3 w-3" />
+                  {formatTimeAgoFull(notif.created_at)}
                 </div>
               </motion.div>
             ))}
