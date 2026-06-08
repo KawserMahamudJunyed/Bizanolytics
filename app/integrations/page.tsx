@@ -30,11 +30,11 @@ import type { IntegrationData } from "./utils/types"
 const STORAGE_KEY = "bizanolytics_integration_data"
 const SYNC_FREQ_KEY = "bizanolytics_sync_freq"
 
-const CATEGORIES = [
+const CATEGORIES = (t: any) => [
   {
     id: "ecommerce",
-    title: "E-Commerce",
-    description: "Connect Shopify, WooCommerce, or Custom API",
+    title: t('ecommerce'),
+    description: t('ecommerce_desc'),
     icon: ShoppingBag,
     color: "text-blue-500",
     bg: "bg-blue-500/10",
@@ -43,8 +43,8 @@ const CATEGORIES = [
   },
   {
     id: "pos",
-    title: "Retail POS",
-    description: "Sync with Square, Lightspeed, or Clover",
+    title: t('retail_pos'),
+    description: t('retail_pos_desc'),
     icon: Store,
     color: "text-purple-500",
     bg: "bg-purple-500/10",
@@ -53,8 +53,8 @@ const CATEGORIES = [
   },
   {
     id: "databases",
-    title: "Databases & Spreadsheets",
-    description: "Connect Sheets, Excel, or API Endpoints",
+    title: t('databases'),
+    description: t('databases_desc'),
     icon: Database,
     color: "text-emerald-500",
     bg: "bg-emerald-500/10",
@@ -63,8 +63,8 @@ const CATEGORIES = [
   },
   {
     id: "bizpos",
-    title: "BizPOS (Manual Entry)",
-    description: "Native manual point-of-sale logging",
+    title: t('bizpos'),
+    description: t('bizpos_desc'),
     icon: Calculator,
     color: "text-amber-500",
     bg: "bg-amber-500/10",
@@ -150,19 +150,19 @@ export default function IntegrationsPage() {
           </div>
 
           <div className="border-t border-border pt-8">
-            <h3 className="text-lg font-semibold mb-4 text-center">Select Sync Frequency (Subscription)</h3>
+            <h3 className="text-lg font-semibold mb-4 text-center">{t('select_sync_freq')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SyncCard 
-                title="Daily Sync" 
-                desc="Updates once every 24 hours" 
+                title={t('daily_sync')}
+                desc={t('daily_sync_desc')}
                 tier="BizBasic" 
                 icon={Calendar} 
                 active={syncFreq === "daily"} 
                 onClick={() => handleSetSyncFreq("daily")} 
               />
               <SyncCard 
-                title="Hourly Sync" 
-                desc="Updates every hour" 
+                title={t('hourly_sync')}
+                desc={t('hourly_sync_desc')}
                 tier="BizPro" 
                 price="299 BDT/mo"
                 icon={Clock} 
@@ -170,8 +170,8 @@ export default function IntegrationsPage() {
                 onClick={() => handleSetSyncFreq("hourly")} 
               />
               <SyncCard 
-                title="Instant Live Sync" 
-                desc="Real-time webhooks" 
+                title={t('instant_sync')}
+                desc={t('instant_sync_desc')}
                 tier="BizUltimate" 
                 price="499 BDT/mo"
                 icon={Zap} 
@@ -206,7 +206,7 @@ export default function IntegrationsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {CATEGORIES.map((cat) => (
+        {CATEGORIES(t).map((cat) => (
           <motion.div
             key={cat.id}
             initial={{ opacity: 0, y: 10 }}

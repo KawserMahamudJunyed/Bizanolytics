@@ -131,12 +131,12 @@ export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
                         <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mr-2" />
                         {activeIntegrationName}
                       </>
-                    ) : activeDataset ? activeDataset.file_name : "Select Dataset"}
+                    ) : activeDataset ? activeDataset.file_name : t('select_dataset')}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64">
-                <DropdownMenuLabel>Live Integrations</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('live_integrations')}</DropdownMenuLabel>
                 {activeIntegrationName ? (
                   <DropdownMenuItem className="flex justify-between items-center cursor-default text-emerald-500">
                     <span className="truncate flex-1 pr-2 flex items-center">
@@ -152,14 +152,14 @@ export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem className="text-muted-foreground cursor-default">
-                    No active integration
+                    {t('no_active_integration')}
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onClick={() => router.push('/integrations')} className="cursor-pointer text-muted-foreground focus:text-emerald-500 focus:bg-emerald-500/10 hover:text-emerald-500 hover:bg-emerald-500/10">
-                  <Plus className="w-4 h-4 mr-2" /> Connect New Integration
+                  <Plus className="w-4 h-4 mr-2" /> {t('connect_new_integration')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel>Your Datasets</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('your_datasets')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {datasetHistory.map((dataset) => {
                   const isDatasetActive = !activeIntegrationName && dataset.id === datasetId;
@@ -182,7 +182,7 @@ export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
                 })}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={resetData} className="cursor-pointer text-muted-foreground focus:text-emerald-500 focus:bg-emerald-500/10 hover:text-emerald-500 hover:bg-emerald-500/10">
-                  <Plus className="w-4 h-4 mr-2" /> Upload New Dataset
+                  <Plus className="w-4 h-4 mr-2" /> {t('upload_new_dataset')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -207,20 +207,20 @@ export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-80">
                 <div className="flex items-center justify-between px-2 py-1.5">
-                  <DropdownMenuLabel className="p-0">Notifications</DropdownMenuLabel>
+                  <DropdownMenuLabel className="p-0">{t('notifications')}</DropdownMenuLabel>
                   {unreadNotificationsCount > 0 && (
                     <button 
                       onClick={markAllNotificationsAsRead}
                       className="text-xs text-primary hover:underline"
                     >
-                      Mark all as read
+                      {t('mark_all_read')}
                     </button>
                   )}
                 </div>
                 <DropdownMenuSeparator />
                 <div className="flex flex-col gap-1 p-1 max-h-[300px] overflow-y-auto">
                   {notifications.length === 0 ? (
-                    <p className="text-sm text-muted-foreground p-4 text-center">No notifications yet.</p>
+                    <p className="text-sm text-muted-foreground p-4 text-center">{t('no_notifications')}</p>
                   ) : (
                     notifications.map((notif) => (
                       <div 

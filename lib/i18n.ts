@@ -132,7 +132,35 @@ export const dictionaries = {
     duration: "Duration",
     records: "Records",
     time: "Time",
-    upload_data_view_pipeline: "Upload data or Connect an Integration to view pipeline runs."
+    upload_data_view_pipeline: "Upload data or Connect an Integration to view pipeline runs.",
+    
+    // Header & Notifications
+    select_dataset: "Select Dataset",
+    live_integrations: "Live Integrations",
+    your_datasets: "Your Datasets",
+    no_active_integration: "No active integration",
+    connect_new_integration: "Connect New Integration",
+    upload_new_dataset: "Upload New Dataset",
+    notifications: "Notifications",
+    mark_all_read: "Mark all as read",
+    no_notifications: "No notifications yet.",
+    
+    // Integration Categories & Sync
+    ecommerce: "E-Commerce",
+    ecommerce_desc: "Connect Shopify, WooCommerce, or Custom API",
+    retail_pos: "Retail POS",
+    retail_pos_desc: "Sync with Square, Lightspeed, or Clover",
+    databases: "Databases & Spreadsheets",
+    databases_desc: "Connect Sheets, Excel, or API Endpoints",
+    bizpos: "BizPOS (Manual Entry)",
+    bizpos_desc: "Native manual point-of-sale logging",
+    select_sync_freq: "Select Sync Frequency (Subscription)",
+    daily_sync: "Daily Sync",
+    daily_sync_desc: "Updates once every 24 hours",
+    hourly_sync: "Hourly Sync",
+    hourly_sync_desc: "Updates every hour",
+    instant_sync: "Instant Live Sync",
+    instant_sync_desc: "Real-time webhooks"
   },
   bn: {
     // Sidebar
@@ -265,7 +293,35 @@ export const dictionaries = {
     duration: "সময়কাল",
     records: "রেকর্ডস",
     time: "সময়",
-    upload_data_view_pipeline: "পাইপলাইন রান দেখতে ডেটা আপলোড করুন বা একটি ইন্টিগ্রেশন সংযুক্ত করুন।"
+    upload_data_view_pipeline: "পাইপলাইন রান দেখতে ডেটা আপলোড করুন বা একটি ইন্টিগ্রেশন সংযুক্ত করুন।",
+    
+    // Header & Notifications
+    select_dataset: "ডেটাসেট নির্বাচন করুন",
+    live_integrations: "লাইভ ইন্টিগ্রেশন",
+    your_datasets: "আপনার ডেটাসেট",
+    no_active_integration: "কোন সক্রিয় ইন্টিগ্রেশন নেই",
+    connect_new_integration: "নতুন ইন্টিগ্রেশন সংযুক্ত করুন",
+    upload_new_dataset: "নতুন ডেটাসেট আপলোড করুন",
+    notifications: "বিজ্ঞপ্তি",
+    mark_all_read: "সব পড়া হিসেবে চিহ্নিত করুন",
+    no_notifications: "এখনও কোন বিজ্ঞপ্তি নেই।",
+
+    // Integration Categories & Sync
+    ecommerce: "ই-কমার্স",
+    ecommerce_desc: "Shopify, WooCommerce, বা কাস্টম এপিআই সংযুক্ত করুন",
+    retail_pos: "খুচরা পিওএস",
+    retail_pos_desc: "Square, Lightspeed, বা Clover এর সাথে সিঙ্ক করুন",
+    databases: "ডাটাবেস এবং স্প্রেডশিট",
+    databases_desc: "Sheets, Excel, বা এপিআই এন্ডপয়েন্ট সংযুক্ত করুন",
+    bizpos: "বিজপিওএস (ম্যানুয়াল এন্ট্রি)",
+    bizpos_desc: "নেটিভ ম্যানুয়াল পয়েন্ট-অফ-সেল লগিং",
+    select_sync_freq: "সিঙ্ক ফ্রিকোয়েন্সি নির্বাচন করুন (সাবস্ক্রিপশন)",
+    daily_sync: "দৈনিক সিঙ্ক",
+    daily_sync_desc: "প্রতি ২৪ ঘণ্টায় একবার আপডেট হয়",
+    hourly_sync: "ঘণ্টায় সিঙ্ক",
+    hourly_sync_desc: "প্রতি ঘণ্টায় আপডেট হয়",
+    instant_sync: "ইনস্ট্যান্ট লাইভ সিঙ্ক",
+    instant_sync_desc: "রিয়েল-টাইম ওয়েবহুক"
   }
 };
 
