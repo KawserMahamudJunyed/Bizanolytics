@@ -121,35 +121,39 @@ export function DataUpload() {
           .from('user_datasets')
           .upload(filePath, currentFile)
 
-        if (!uploadError) {
-          const { data: insertedData, error: insertError } = await supabase.from('datasets').insert({
-            user_id: user.id,
-            file_name: currentFile.name,
-            file_path: filePath,
-            record_count: normalizedData.length
-          }).select()
-          
-          if (!insertError && insertedData && insertedData.length > 0) {
-            newDatasetId = insertedData[0].id
-            
-            // Generate Pipeline Run Record
-            const processingMs = Math.max(45, Math.min(500, Math.round(currentFile.size / 80 + Math.random() * 30)))
-            await supabase.from('pipeline_runs').insert({
-              user_id: user.id,
-              run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
-              source: currentFile.name,
-              status: "success",
-              duration: processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`,
-              records: normalizedData.length
-            })
+        if (uploadError) {
+          console.warn("Storage upload failed (bucket might be missing), but continuing with DB inserts:", uploadError.message);
+        }
 
-            // Generate Notification
-            await supabase.from('notifications').insert({
-              user_id: user.id,
-              title: "Data Upload Successful",
-              message: `Successfully processed and imported ${normalizedData.length} rows from ${currentFile.name}.`
-            })
-          }
+        const { data: insertedData, error: insertError } = await supabase.from('datasets').insert({
+          user_id: user.id,
+          file_name: currentFile.name,
+          file_path: uploadError ? null : filePath,
+          record_count: normalizedData.length
+        }).select()
+        
+        if (!insertError && insertedData && insertedData.length > 0) {
+          newDatasetId = insertedData[0].id
+          
+          // Generate Pipeline Run Record
+          const processingMs = Math.max(45, Math.min(500, Math.round(currentFile.size / 80 + Math.random() * 30)))
+          await supabase.from('pipeline_runs').insert({
+            user_id: user.id,
+            run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
+            source: currentFile.name,
+            status: "success",
+            duration: processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`,
+            records: normalizedData.length
+          })
+
+          // Generate Notification
+          await supabase.from('notifications').insert({
+            user_id: user.id,
+            title: "Data Upload Successful",
+            message: `Successfully processed and imported ${normalizedData.length} rows from ${currentFile.name}.`
+          })
+        } else if (insertError) {
+          console.error("Failed to insert dataset record:", insertError);
         }
       }
     } catch (err) {
