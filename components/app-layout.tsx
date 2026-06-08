@@ -49,7 +49,7 @@ export function AppLayout({ children, user: serverUser }: { children: React.Reac
         "relative z-10 flex flex-col min-w-0 flex-1 transition-all duration-300",
         (isCollapsed && !isHovered) ? "lg:pl-16" : "lg:pl-64"
       )}>
-        <Header isCollapsed={isCollapsed} />
+        <Header isCollapsed={isCollapsed} user={user} />
 
         {!user && (
           <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-3 flex items-center gap-3 text-sm text-amber-500">

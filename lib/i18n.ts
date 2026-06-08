@@ -21,9 +21,10 @@ export const dictionaries = {
     command_menu: "Command Menu",
 
     // Dashboard
-    good_morning: "Good morning!",
-    good_afternoon: "Good afternoon!",
-    good_evening: "Good evening!",
+    good_morning: "Good morning",
+    good_afternoon: "Good afternoon",
+    good_evening: "Good evening",
+    good_night: "Good night",
     dashboard_subtitle: "Ready to analyze. Here's your forecast overview.",
     total_revenue: "Total Revenue",
     total_units: "Total Units Sold",
@@ -235,9 +236,10 @@ export const dictionaries = {
     command_menu: "কমান্ড মেনু",
 
     // Dashboard
-    good_morning: "শুভ সকাল!",
-    good_afternoon: "শুভ অপরাহ্ন!",
-    good_evening: "শুভ সন্ধ্যা!",
+    good_morning: "শুভ সকাল",
+    good_afternoon: "শুভ অপরাহ্ন",
+    good_evening: "শুভ সন্ধ্যা",
+    good_night: "শুভ রাত্রি",
     dashboard_subtitle: "বিশ্লেষণের জন্য প্রস্তুত। এখানে আপনার পূর্বাভাসের ওভারভিউ।",
     total_revenue: "মোট আয়",
     total_units: "মোট ইউনিট বিক্রি",

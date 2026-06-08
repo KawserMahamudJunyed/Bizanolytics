@@ -79,10 +79,10 @@ export default function NotificationsPage() {
               >
                 <div className="pt-1 shrink-0">
                   {notif.is_read ? (
-                    <Circle className="h-4 w-4 text-muted-foreground/40" />
+                    <Circle className="h-2 w-2 text-muted-foreground/40 mt-1.5" />
                   ) : (
-                    <div className="relative">
-                      <Circle className="h-4 w-4 text-emerald-500 fill-emerald-500" />
+                    <div className="relative mt-1.5">
+                      <Circle className="h-2 w-2 text-emerald-500 fill-emerald-500" />
                       <span className="absolute inset-0 rounded-full animate-ping bg-emerald-500 opacity-20"></span>
                     </div>
                   )}

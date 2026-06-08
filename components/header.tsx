@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Plus, Edit2, Check, X, Database, Bell, Menu } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
@@ -28,17 +29,31 @@ function formatTimeAgo(dateStr: string) {
   return `${Math.floor(hours / 24)}d ago`
 }
 
-export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
+export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: any }) {
   const router = useRouter()
   const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, setActiveIntegrationName, connectedIntegrationName, loadIntegrationData, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
   const { t } = useLanguage()
   const [isRenaming, setIsRenaming] = useState(false)
   const [editName, setEditName] = useState("")
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const hour = new Date().getHours()
-  let greetingKey: 'good_evening' | 'good_morning' | 'good_afternoon' = 'good_evening'
+  let greetingKey: 'good_evening' | 'good_morning' | 'good_afternoon' | 'good_night' = 'good_evening'
   if (hour >= 5 && hour < 12) greetingKey = "good_morning"
   else if (hour >= 12 && hour < 17) greetingKey = "good_afternoon"
+  else if (hour >= 21 || hour < 5) greetingKey = "good_night"
+
+  const greetingStr = mounted ? t(greetingKey) : ''
+  const firstName = user?.user_metadata?.full_name?.split(' ')[0]
+  const displayGreeting = mounted ? (firstName ? `${greetingStr}, ${firstName}!` : `${greetingStr}!`) : ''
+
+  // System emergency message override
+  const emergencyMessage = null; // Set this string to broadcast an emergency message to all users
+  const finalGreeting = emergencyMessage ? emergencyMessage : displayGreeting
 
   const activeDataset = datasetHistory.find(d => d.id === datasetId)
 
@@ -87,9 +102,9 @@ export function Header({ isCollapsed }: { isCollapsed?: boolean }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
-          className="text-2xl font-semibold tracking-tight text-foreground"
+          className={cn("text-2xl font-semibold tracking-tight", emergencyMessage ? "text-red-500" : "text-foreground")}
         >
-          {t(greetingKey)}
+          {finalGreeting}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
