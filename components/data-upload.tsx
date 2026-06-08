@@ -49,7 +49,7 @@ export function DataUpload() {
                         firstRow.hasOwnProperty('Revenue_BDT')
     
     if (!hasCritical) {
-      setErrorMessage("Missing critical columns. Must have: Date, Product_Name, Units_Sold, Revenue_BDT.")
+      setErrorMessage("Missing critical data columns. Your file must contain: a Date, a Product or Item Name, Quantity or Units Sold, and Total Sales/Revenue.")
       setUploadState("insufficient")
       return
     }
