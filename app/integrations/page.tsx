@@ -21,6 +21,7 @@ import {
   Plus
 } from "lucide-react"
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { mapIntegrationToSMEData } from "./utils/normalize"
