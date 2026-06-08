@@ -42,10 +42,10 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
   }, [])
 
   const hour = new Date().getHours()
-  let greetingKey: 'good_evening' | 'good_morning' | 'good_afternoon' | 'good_night' = 'good_evening'
+  let greetingKey: 'good_evening' | 'good_morning' | 'hi' | 'hello' = 'good_evening'
   if (hour >= 5 && hour < 12) greetingKey = "good_morning"
-  else if (hour >= 12 && hour < 17) greetingKey = "good_afternoon"
-  else if (hour >= 21 || hour < 5) greetingKey = "good_night"
+  else if (hour >= 12 && hour < 17) greetingKey = "hi"
+  else if (hour >= 21 || hour < 5) greetingKey = "hello"
 
   const greetingStr = mounted ? t(greetingKey) : ''
   const firstName = user?.user_metadata?.full_name?.split(' ')[0]

@@ -22,9 +22,9 @@ export const dictionaries = {
 
     // Dashboard
     good_morning: "Good morning",
-    good_afternoon: "Good afternoon",
+    hi: "Hi",
     good_evening: "Good evening",
-    good_night: "Good night",
+    hello: "Hello",
     dashboard_subtitle: "Ready to analyze. Here's your forecast overview.",
     total_revenue: "Total Revenue",
     total_units: "Total Units Sold",
@@ -237,9 +237,9 @@ export const dictionaries = {
 
     // Dashboard
     good_morning: "শুভ সকাল",
-    good_afternoon: "শুভ অপরাহ্ন",
+    hi: "হাই",
     good_evening: "শুভ সন্ধ্যা",
-    good_night: "শুভ রাত্রি",
+    hello: "হ্যালো",
     dashboard_subtitle: "বিশ্লেষণের জন্য প্রস্তুত। এখানে আপনার পূর্বাভাসের ওভারভিউ।",
     total_revenue: "মোট আয়",
     total_units: "মোট ইউনিট বিক্রি",
