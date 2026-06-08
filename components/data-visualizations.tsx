@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts"
-import { ArrowUpDown, ArrowUp, ArrowDown, Download, Filter } from "lucide-react"
+import { ArrowUpDown, ArrowUp, ArrowDown, Download, Filter, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
 import { formatCurrency, CURRENCY_SYMBOLS, CurrencyCode } from "@/utils/currency"
@@ -249,7 +249,80 @@ export function RegionalPerformance() {
 // Raw Data Table
 export function RawDataTable() {
   const { rawData, isDataUploaded, userCurrency } = useData();
-  const displayData = isDataUploaded && rawData.length > 0 ? rawData : [];
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  
+  const itemsPerPage = 50;
+  
+  const displayData = useMemo(() => {
+    if (!isDataUploaded || !rawData || rawData.length === 0) return [];
+    
+    let filtered = rawData;
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      filtered = rawData.filter((row: any) => 
+        (row.Product_Name || row.product || "").toLowerCase().includes(q) ||
+        (row.Product_ID || "").toLowerCase().includes(q) ||
+        (row.Location || row.region || "").toLowerCase().includes(q) ||
+        (row.Category || "").toLowerCase().includes(q)
+      );
+    }
+    return filtered;
+  }, [rawData, isDataUploaded, searchQuery]);
+
+  const totalPages = Math.ceil(displayData.length / itemsPerPage) || 1;
+  const currentData = displayData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  React.useEffect(() => {
+    setCurrentPage(1); // Reset to page 1 on search
+  }, [searchQuery]);
+
+  const handleExport = () => {
+    if (displayData.length === 0) return;
+    
+    const headers = ["Date", "Region", "ID", "Product", "Category", "Channel", "Segment", "Units", "Price", "Cost", "Revenue", "Stock", "Profit", "Margin", "Stock Value", "Stock Ratio"];
+    
+    const csvRows = displayData.map((row: any) => {
+      const revenue = Number(row.Revenue_BDT || row.revenue || 0);
+      const cost = Number(row.Cost_Price || row.cost || 0);
+      const units = Number(row.Units_Sold || row.units || 0);
+      const stock = Number(row.Current_Stock || 0);
+      const totalCost = cost * units;
+      const profit = revenue - totalCost;
+      let marginVal = row.margin;
+      if (marginVal === undefined && revenue > 0) marginVal = parseFloat(((profit / revenue) * 100).toFixed(1));
+      
+      return [
+        row.Date || row.date || "",
+        row.Location || row.region || "",
+        row.Product_ID || "",
+        `"${(row.Product_Name || row.product || "").replace(/"/g, '""')}"`,
+        row.Category || "",
+        row.Sales_Channel || "",
+        row.Customer_Segment || "",
+        units,
+        Number(row.Unit_Price || 0),
+        cost,
+        revenue,
+        stock,
+        profit,
+        marginVal || "",
+        stock * cost,
+        units > 0 ? (stock / units).toFixed(1) : ""
+      ].join(",");
+    });
+    
+    const csvString = [headers.join(","), ...csvRows].join("\n");
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "bizanolytics_export.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <motion.div
@@ -271,18 +344,21 @@ export function RawDataTable() {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-9 w-64 rounded-lg border border-border bg-background pl-9 pr-4 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            />
+          </div>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-2 rounded-lg bg-secondary px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <Filter className="h-4 w-4" />
-            Filter
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            onClick={handleExport}
             className="flex items-center gap-2 rounded-lg bg-foreground px-3 py-2 text-sm font-medium text-background"
           >
             <Download className="h-4 w-4" />
@@ -326,7 +402,7 @@ export function RawDataTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {displayData.slice(0, 100).map((row: any, index: number) => (
+              {currentData.map((row: any, index: number) => (
                 <motion.tr
                   key={index}
                   initial={{ opacity: 0 }}
@@ -400,13 +476,21 @@ export function RawDataTable() {
         </div>
         <div className="mt-4 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">
-            Showing {Math.min(100, displayData.length)} of {displayData.length} records
+            Showing {currentData.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} to {Math.min(currentPage * itemsPerPage, displayData.length)} of {displayData.length} records
           </span>
           <div className="flex items-center gap-2">
-            <button className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Previous
             </button>
-            <button className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Next
             </button>
           </div>
