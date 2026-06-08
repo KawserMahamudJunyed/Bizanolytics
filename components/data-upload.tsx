@@ -43,13 +43,15 @@ export function DataUpload() {
     
     // Check Critical Columns on the normalized data
     const firstRow = normalizedData[0]
-    const hasCritical = firstRow.hasOwnProperty('Date') && 
-                        firstRow.hasOwnProperty('Product_Name') && 
-                        firstRow.hasOwnProperty('Units_Sold') && 
-                        firstRow.hasOwnProperty('Revenue_BDT')
     
-    if (!hasCritical) {
-      setErrorMessage("Missing critical data columns. Your file must contain: a Date, a Product or Item Name, Quantity or Units Sold, and Total Sales/Revenue.")
+    const missingColumns = [];
+    if (!firstRow.hasOwnProperty('Date')) missingColumns.push("Date");
+    if (!firstRow.hasOwnProperty('Product_Name')) missingColumns.push("Product or Item Name");
+    if (!firstRow.hasOwnProperty('Units_Sold')) missingColumns.push("Quantity or Units Sold");
+    if (!firstRow.hasOwnProperty('Revenue_BDT')) missingColumns.push("Total Sales/Revenue");
+    
+    if (missingColumns.length > 0) {
+      setErrorMessage(`Missing critical data columns. Your file is missing: ${missingColumns.join(", ")}.`);
       setUploadState("insufficient")
       return
     }
