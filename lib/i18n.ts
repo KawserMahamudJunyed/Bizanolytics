@@ -214,7 +214,29 @@ export const dictionaries = {
     stock: "Stock",
     growth: "Growth",
     top_divisions_forecast: "Top Divisions by Forecasted Demand",
-    bangladesh: "Bangladesh"
+    bangladesh: "Bangladesh",
+    
+    // Settings Page
+    settings_title: "Settings",
+    settings_desc: "Manage your account settings and preferences.",
+    go_to_profile: "Go to Profile",
+    preferences: "Preferences",
+    billing_plans: "Billing & Plans",
+    security: "Security",
+    regional_preferences: "Regional Preferences",
+    regional_desc: "Set your default currency for dashboard and analytics.",
+    display_currency: "Display Currency",
+    currency_desc: "This currency will be applied globally across Bizanolytics.",
+    current_subscription: "Current Subscription",
+    subscription_desc: "Manage your Bizanolytics plan and sync frequency.",
+    billed_automatically: "Billed automatically",
+    change_plan: "Want to change your plan?",
+    update_sync_freq: "Update Sync Frequency",
+    security_settings: "Security Settings",
+    api_coming_soon: "API Key Management coming soon.",
+    saving: "Saving...",
+    save_changes: "Save Changes",
+    login_required_settings: "You must be logged in to save settings."
   },
   bn: {
     // Sidebar
@@ -429,7 +451,29 @@ export const dictionaries = {
     stock: "স্টক",
     growth: "প্রবৃদ্ধি",
     top_divisions_forecast: "পূর্বাভাসিত চাহিদা অনুযায়ী শীর্ষ বিভাগ",
-    bangladesh: "বাংলাদেশ"
+    bangladesh: "বাংলাদেশ",
+    
+    // Settings Page
+    settings_title: "সেটিংস",
+    settings_desc: "আপনার অ্যাকাউন্ট সেটিংস এবং পছন্দগুলি পরিচালনা করুন।",
+    go_to_profile: "প্রোফাইলে যান",
+    preferences: "পছন্দসমূহ",
+    billing_plans: "বিলিং ও প্ল্যান",
+    security: "নিরাপত্তা",
+    regional_preferences: "আঞ্চলিক পছন্দ",
+    regional_desc: "ড্যাশবোর্ড এবং অ্যানালিটিক্সের জন্য আপনার ডিফল্ট মুদ্রা সেট করুন।",
+    display_currency: "প্রদর্শন মুদ্রা",
+    currency_desc: "এই মুদ্রা বিজানালিটিক্স জুড়ে বিশ্বব্যাপী প্রয়োগ করা হবে।",
+    current_subscription: "বর্তমান সাবস্ক্রিপশন",
+    subscription_desc: "আপনার বিজানালিটিক্স প্ল্যান এবং সিঙ্ক ফ্রিকোয়েন্সি পরিচালনা করুন।",
+    billed_automatically: "স্বয়ংক্রিয়ভাবে বিল করা হয়",
+    change_plan: "আপনার প্ল্যান পরিবর্তন করতে চান?",
+    update_sync_freq: "সিঙ্ক ফ্রিকোয়েন্সি আপডেট করুন",
+    security_settings: "নিরাপত্তা সেটিংস",
+    api_coming_soon: "এপিআই কী ম্যানেজমেন্ট শীঘ্রই আসছে।",
+    saving: "সংরক্ষণ হচ্ছে...",
+    save_changes: "পরিবর্তন সংরক্ষণ করুন",
+    login_required_settings: "সেটিংস সংরক্ষণ করতে আপনাকে লগ ইন করতে হবে।"
   }
 };
 

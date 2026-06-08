@@ -73,7 +73,7 @@ export default function SettingsPage() {
     const { data: { session } } = await supabase.auth.getSession()
     
     if (!session?.user) {
-      toast.error("You must be logged in to save settings.")
+      toast.error(t('login_required_settings'))
       setIsSaving(false)
       return
     }
@@ -97,9 +97,9 @@ export default function SettingsPage() {
   }
 
   const tabs = [
-    { id: "preferences", label: "Preferences", icon: Coins },
-    { id: "billing", label: "Billing & Plans", icon: CreditCard },
-    { id: "security", label: "Security", icon: Shield },
+    { id: "preferences", label: t('preferences'), icon: Coins },
+    { id: "billing", label: t('billing_plans'), icon: CreditCard },
+    { id: "security", label: t('security'), icon: Shield },
   ]
 
   if (isLoading) {
@@ -114,11 +114,11 @@ export default function SettingsPage() {
     <div className="max-w-5xl mx-auto space-y-8 pb-12 pt-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Settings</h1>
-          <p className="text-muted-foreground mt-2">Manage your account settings and preferences.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('settings_title')}</h1>
+          <p className="text-muted-foreground mt-2">{t('settings_desc')}</p>
         </div>
         <Link href="/profile" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-secondary transition-colors">
-          <User className="w-4 h-4" /> Go to Profile
+          <User className="w-4 h-4" /> {t('go_to_profile')}
         </Link>
       </div>
 
@@ -154,13 +154,13 @@ export default function SettingsPage() {
               className="card-base p-6 md:p-8 space-y-8"
             >
               <div>
-                <h3 className="text-lg font-medium text-foreground">Regional Preferences</h3>
-                <p className="text-sm text-muted-foreground">Set your default currency for dashboard and analytics.</p>
+                <h3 className="text-lg font-medium text-foreground">{t('regional_preferences')}</h3>
+                <p className="text-sm text-muted-foreground">{t('regional_desc')}</p>
               </div>
 
               <div className="space-y-4 max-w-md">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">Display Currency</label>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">{t('display_currency')}</label>
                   <div className="relative">
                     <Coins className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <select
@@ -174,7 +174,7 @@ export default function SettingsPage() {
                     </select>
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    This currency will be applied globally across Bizanolytics.
+                    {t('currency_desc')}
                   </p>
                 </div>
               </div>
@@ -188,28 +188,28 @@ export default function SettingsPage() {
               className="card-base p-6 md:p-8 space-y-6"
             >
               <div>
-                <h3 className="text-lg font-medium text-foreground">Current Subscription</h3>
-                <p className="text-sm text-muted-foreground">Manage your Bizanolytics plan and sync frequency.</p>
+                <h3 className="text-lg font-medium text-foreground">{t('current_subscription')}</h3>
+                <p className="text-sm text-muted-foreground">{t('subscription_desc')}</p>
               </div>
 
               <div className={cn("rounded-xl border p-6 flex flex-col sm:flex-row items-center justify-between gap-4", currentSub.bg, currentSub.border)}>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className={cn("font-bold text-xl", currentSub.color)}>{currentSub.name}</span>
-                    <span className="px-2 py-0.5 rounded-full bg-background text-xs font-medium text-foreground border border-border">Active</span>
+                    <span className="px-2 py-0.5 rounded-full bg-background text-xs font-medium text-foreground border border-border">{t('active')}</span>
                   </div>
                   <p className={cn("text-sm", currentSub.color)}>{currentSub.desc}</p>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-foreground">{currentSub.price}</div>
-                  <div className="text-xs text-muted-foreground">Billed automatically</div>
+                  <div className="text-xs text-muted-foreground">{t('billed_automatically')}</div>
                 </div>
               </div>
 
               <div className="pt-4 flex justify-between items-center border-t border-border">
-                <p className="text-sm text-muted-foreground">Want to change your plan?</p>
+                <p className="text-sm text-muted-foreground">{t('change_plan')}</p>
                 <Link href="/integrations" className="text-sm font-medium text-primary hover:underline">
-                  Update Sync Frequency
+                  {t('update_sync_freq')}
                 </Link>
               </div>
             </motion.div>
@@ -221,8 +221,8 @@ export default function SettingsPage() {
               animate={{ opacity: 1, y: 0 }}
               className="card-base p-6 md:p-12 text-center"
             >
-              <h3 className="text-lg font-medium text-foreground">Security Settings</h3>
-              <p className="text-sm text-muted-foreground mt-2">API Key Management coming soon.</p>
+              <h3 className="text-lg font-medium text-foreground">{t('security_settings')}</h3>
+              <p className="text-sm text-muted-foreground mt-2">{t('api_coming_soon')}</p>
             </motion.div>
           )}
 
@@ -235,7 +235,7 @@ export default function SettingsPage() {
                 className="flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all disabled:opacity-50"
               >
                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                {isSaving ? "Saving..." : "Save Changes"}
+                {isSaving ? t('saving') : t('save_changes')}
               </button>
             </div>
           )}
