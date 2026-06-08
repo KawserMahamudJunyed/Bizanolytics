@@ -9,6 +9,7 @@ import * as XLSX from "xlsx"
 import { useData } from "@/contexts/DataContext"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
+import { toast } from "sonner"
 
 export function DataUpload() {
   const [dragActive, setDragActive] = useState(false)
@@ -128,8 +129,7 @@ export function DataUpload() {
         const { data: insertedData, error: insertError } = await supabase.from('datasets').insert({
           user_id: user.id,
           file_name: currentFile.name,
-          file_path: uploadError ? null : filePath,
-          record_count: normalizedData.length
+          file_path: uploadError ? null : filePath
         }).select()
         
         if (!insertError && insertedData && insertedData.length > 0) {
@@ -154,10 +154,12 @@ export function DataUpload() {
           })
         } else if (insertError) {
           console.error("Failed to insert dataset record:", insertError);
+          toast.error(`Database error (datasets): ${insertError.message}`);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to sync to Supabase", err)
+      toast.error(`Sync error: ${err.message}`);
     }
 
     setUploadState("success")
