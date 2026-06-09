@@ -8,11 +8,14 @@ import { useData } from "@/contexts/DataContext"
 import { toast } from "sonner"
 import type { IntegrationData } from "../utils/types"
 import { mapIntegrationToSMEData } from "../utils/normalize"
+import { createClient } from "@/utils/supabase/client"
 
 export function DatabaseConnect({ onDataReady }: { onDataReady: (data: IntegrationData) => void }) {
-  const [activeTab, setActiveTab] = useState<"sheets" | "sql">("sheets")
+  const [activeTab, setActiveTab] = useState<"sheets" | "sql" | "custom">("sheets")
   const [sheetsUrl, setSheetsUrl] = useState("")
   const [sqlString, setSqlString] = useState("")
+  const [customApiUrl, setCustomApiUrl] = useState("")
+  const [customApiToken, setCustomApiToken] = useState("")
   const [isConnecting, setIsConnecting] = useState(false)
   const { setUploadedData } = useData()
 
@@ -35,7 +38,7 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
 
-      const platformKey = activeTab === "sheets" ? "sheets" : "sql";
+      const platformKey = activeTab;
       const res = await fetch("/api/integrations/sync", {
         method: "POST",
         headers: { 
@@ -44,9 +47,9 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
         },
         body: JSON.stringify({
           platform: platformKey,
-          url: activeTab === "sheets" ? sheetsUrl : "sql_database_uri",
+          url: activeTab === "sheets" ? sheetsUrl : activeTab === "custom" ? customApiUrl : "sql_database_uri",
           keys: {
-            connectionString: activeTab === "sql" ? sqlString : "sheet_token",
+            connectionString: activeTab === "sql" ? sqlString : activeTab === "custom" ? customApiToken : "sheet_token",
           }
         }),
       });
@@ -79,11 +82,11 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
         </div>
       </div>
 
-      <div className="flex gap-2 mb-6 p-1 rounded-xl bg-secondary/50">
+      <div className="flex gap-2 mb-6 p-1 rounded-xl bg-secondary/50 overflow-x-auto">
         <button
           onClick={() => setActiveTab("sheets")}
           className={cn(
-            "flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all duration-200",
+            "flex-1 min-w-max flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
             activeTab === "sheets" ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/20" : "text-muted-foreground hover:text-foreground"
           )}
         >
@@ -92,11 +95,20 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
         <button
           onClick={() => setActiveTab("sql")}
           className={cn(
-            "flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all duration-200",
+            "flex-1 min-w-max flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
             activeTab === "sql" ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/20" : "text-muted-foreground hover:text-foreground"
           )}
         >
           <Server className="h-4 w-4" /> SQL Database
+        </button>
+        <button
+          onClick={() => setActiveTab("custom")}
+          className={cn(
+            "flex-1 min-w-max flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+            activeTab === "custom" ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/20" : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <Link2 className="h-4 w-4" /> Custom API
         </button>
       </div>
 
@@ -119,7 +131,7 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
               Ensure the link is set to "Anyone with the link can view". Supports Google Sheets and Excel Online. We will automatically sync the first sheet.
             </p>
           </div>
-        ) : (
+        ) : activeTab === "sql" ? (
           <div>
             <label className="block text-xs font-medium text-muted-foreground mb-1.5">Connection String (URI)</label>
             <div className="relative">
@@ -137,6 +149,37 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
               Supports PostgreSQL, MySQL, and SQL Server.
             </p>
           </div>
+        ) : (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5">Custom API Endpoint</label>
+              <div className="relative">
+                <Link2 className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                <input
+                  type="text"
+                  value={customApiUrl}
+                  onChange={(e) => setCustomApiUrl(e.target.value)}
+                  placeholder="https://api.yourcompany.com/v1/data"
+                  disabled={isConnecting}
+                  className="w-full rounded-xl border border-border bg-secondary/50 py-3 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all disabled:opacity-50"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5">Bearer Token (Optional)</label>
+              <div className="relative">
+                <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                <input
+                  type="password"
+                  value={customApiToken}
+                  onChange={(e) => setCustomApiToken(e.target.value)}
+                  placeholder="Paste your API access token here..."
+                  disabled={isConnecting}
+                  className="w-full rounded-xl border border-border bg-secondary/50 py-3 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all disabled:opacity-50 font-mono"
+                />
+              </div>
+            </div>
+          </div>
         )}
       </div>
 
@@ -145,7 +188,7 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
           whileHover={{ scale: isConnecting ? 1 : 1.01 }}
           whileTap={{ scale: isConnecting ? 1 : 0.99 }}
           onClick={handleConnect}
-          disabled={isConnecting || (activeTab === "sheets" ? !sheetsUrl : !sqlString)}
+          disabled={isConnecting || (activeTab === "sheets" ? !sheetsUrl : activeTab === "sql" ? !sqlString : !customApiUrl)}
           className={cn(
             "w-full flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all",
             isConnecting ? "bg-secondary text-emerald-600 cursor-wait" : "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600",

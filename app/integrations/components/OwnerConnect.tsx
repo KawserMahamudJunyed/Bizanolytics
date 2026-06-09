@@ -106,8 +106,18 @@ const POS_PLATFORMS = [
     accentBg: "bg-purple-500/10",
     accentText: "text-purple-500",
     accentBorder: "border-purple-500/30",
-    ringColor: "ring-purple-500/30",
     description: "Connect via Clover REST API",
+  },
+  {
+    key: "custom" as PlatformType,
+    label: "Custom POS",
+    icon: Globe,
+    gradient: "from-purple-500/80 to-purple-500",
+    accentBg: "bg-purple-500/10",
+    accentText: "text-purple-500",
+    accentBorder: "border-purple-500/30",
+    ringColor: "ring-purple-500/30",
+    description: "Connect any POS system via API",
   },
 ]
 
