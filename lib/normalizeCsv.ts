@@ -14,13 +14,19 @@ export const keyAliases: Record<string, string[]> = {
 };
 
 export function normalizeCsvData(parsedData: any[]) {
-  return parsedData.map(row => {
+  // Filter out completely blank rows that Google Sheets might export
+  const validData = parsedData.filter(row => {
+    return Object.values(row).some(val => val !== null && val !== undefined && val !== '');
+  });
+
+  return validData.map(row => {
     const newRow: any = {};
     for (const key in row) {
-      if (row[key] === undefined || row[key] === null) continue;
+      if (row[key] === undefined || row[key] === null || key.trim() === '') continue;
       
       const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
-      let mappedKey = key; // default to original
+      // Replace spaces and dashes with underscores for unmatched columns
+      let mappedKey = key.trim().replace(/[\s-]+/g, '_'); 
       
       for (const [canonical, aliases] of Object.entries(keyAliases)) {
         if (aliases.includes(normalizedKey)) {

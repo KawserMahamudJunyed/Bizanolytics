@@ -318,36 +318,33 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
       await new Promise((r) => setTimeout(r, 1000))
       setCurrentStep("extracting")
       
-      const posCategories = ["Food", "Beverages", "Apparel", "Merchandise", "Accessories"];
-      const mockProducts = Array.from({ length: 50 }).map((_, i) => {
-        const cat = posCategories[Math.floor(Math.random() * posCategories.length)];
-        return {
-          id: `pos_${i + 1}`,
-          name: `${platform.label} Item ${i + 1}`,
-          price: Math.floor(Math.random() * 100) + 5,
-          category: cat,
-          stock: Math.floor(Math.random() * 500) + 20,
-          reviewCount: Math.floor(Math.random() * 50),
-          rating: (Math.random() * 1.5 + 3.5).toFixed(1)
-        };
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const res = await fetch("/api/integrations/sync", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
+        },
+        body: JSON.stringify({
+          platform: activePlatform,
+          url: "pos_api_url",
+          keys: {
+            posToken: posToken.trim(),
+          }
+        }),
       });
 
-      const mockNormalized: IntegrationData = {
-        source: "custom_api",
-        scrapedAt: new Date().toISOString(),
-        business: { name: `My ${platform.label} Store`, type: "retail", currency: "USD" },
-        products: mockProducts,
-        categories: posCategories.map(cat => ({ name: cat, count: 10, avgPrice: 45, totalRevenue: 4500 })),
-        demandSignals: { high: [mockProducts[0].name, mockProducts[1].name], rising: [mockProducts[2].name], slow: [mockProducts[3].name] },
-        meta: { totalProducts: 50, dataConfidence: "live" }
-      }
-      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `Failed to connect to ${platform.label}`);
+
       setCurrentStep("updating")
       await new Promise((r) => setTimeout(r, 600))
       
-      setFetchedData(mockNormalized)
+      setFetchedData(data)
       setCurrentStep("subscription")
-      toast.success(`Connected to ${platform.label}! Found 2 products`)
+      toast.success(`Connected to ${platform.label}! Found ${data.products?.length || 0} products`)
     } catch (err: any) {
       setCurrentStep("error")
       setError(err.message || "Failed to connect")

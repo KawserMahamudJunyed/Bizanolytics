@@ -32,34 +32,30 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
       // Simulate connection and fetching process
       await new Promise(r => setTimeout(r, 1500))
 
-      const isSql = activeTab === "sql";
-      const categories = isSql ? ["Software", "Hardware", "Services", "Licenses"] : ["Stationery", "Office Supplies", "Furniture", "Electronics"];
-      
-      const mockProducts = Array.from({ length: 50 }).map((_, i) => {
-        const cat = categories[Math.floor(Math.random() * categories.length)];
-        return {
-          id: `item_${i + 1}`,
-          name: `${cat} Item ${i + 1}`,
-          price: Math.floor(Math.random() * 500) + 10,
-          category: cat,
-          stock: Math.floor(Math.random() * 300),
-          reviewCount: Math.floor(Math.random() * 100),
-          rating: (Math.random() * 2 + 3).toFixed(1)
-        };
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const platformKey = activeTab === "sheets" ? "sheets" : "sql";
+      const res = await fetch("/api/integrations/sync", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
+        },
+        body: JSON.stringify({
+          platform: platformKey,
+          url: activeTab === "sheets" ? sheetsUrl : "sql_database_uri",
+          keys: {
+            connectionString: activeTab === "sql" ? sqlString : "sheet_token",
+          }
+        }),
       });
 
-      const mockNormalized: IntegrationData = {
-        source: "custom_api",
-        scrapedAt: new Date().toISOString(),
-        business: { name: isSql ? "SQL Database" : "Spreadsheet Data", type: "retail", currency: "USD" },
-        products: mockProducts,
-        categories: categories.map(cat => ({ name: cat, count: 12, avgPrice: 150, totalRevenue: 15000 })),
-        demandSignals: { high: [mockProducts[0].name, mockProducts[1].name], rising: [mockProducts[2].name], slow: [mockProducts[3].name] },
-        meta: { totalProducts: 50, dataConfidence: "live" }
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to connect to database");
 
       toast.success("Database connected successfully!")
-      onDataReady(mockNormalized)
+      onDataReady(data)
     } catch (error) {
       toast.error("Failed to connect to database")
     } finally {
