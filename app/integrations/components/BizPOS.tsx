@@ -86,33 +86,30 @@ export function BizPOS({ onComplete }: { onComplete: () => void }) {
     setUnitPrice("")
     setStockLeft("")
 
-    // Cloud Backup
+    // Cloud Backup via Dedicated Table
     try {
       const supabase = createClient()
       const { data: { session } } = await supabase.auth.getSession()
       const user = session?.user
       if (user) {
-        const csv = Papa.unparse(newData)
-        const blob = new Blob([csv], { type: 'text/csv' })
-        const filePath = `${user.id}/bizpos_backup.csv`
-        
-        await supabase.storage.from('user_datasets').upload(filePath, blob, { upsert: true })
-        
-        const { data: existing } = await supabase.from('datasets').select('id').eq('user_id', user.id).eq('file_name', 'BizPOS Backup').single()
-        if (existing) {
-          await supabase.from('datasets').update({ created_at: new Date().toISOString() }).eq('id', existing.id)
-        } else {
-          await supabase.from('datasets').insert({
-            user_id: user.id,
-            file_name: 'BizPOS Backup',
-            file_path: filePath,
-            source: 'bizpos',
-            row_count: newData.length
-          })
-        }
+        await supabase.from('bizpos_sales').insert({
+          user_id: user.id,
+          product_id: newRecord.Product_ID,
+          product_name: newRecord.Product_Name,
+          category: newRecord.Category,
+          units_sold: newRecord.Units_Sold,
+          unit_price: newRecord.Unit_Price,
+          revenue_bdt: newRecord.Revenue_BDT,
+          cost_price: newRecord.Cost_Price,
+          current_stock: newRecord.Current_Stock,
+          location: newRecord.Location,
+          sales_channel: newRecord.Sales_Channel,
+          customer_segment: newRecord.Customer_Segment,
+          date: newRecord.Date
+        })
       }
     } catch (e) {
-      console.error("Failed to backup BizPOS data", e)
+      console.error("Failed to backup BizPOS data to table", e)
     }
   }
 

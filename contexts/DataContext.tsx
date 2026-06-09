@@ -90,21 +90,50 @@ export function DataProvider({ children }: { children: ReactNode }) {
       .from('user_datasets')
       .download(dataset.file_path)
 
-    if (downloadError || !fileData) return
+    if (downloadError || !fileData) return []
 
     const text = await fileData.text()
-    Papa.parse(text, {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        if (results.data && results.data.length > 0) {
-          const normalized = normalizeCsvData(results.data)
-          setRawData(normalized as SMEDataRow[])
-          setIsDataUploaded(true)
+    return new Promise<SMEDataRow[]>((resolve) => {
+      Papa.parse(text, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          if (results.data && results.data.length > 0) {
+            const normalized = normalizeCsvData(results.data)
+            resolve(normalized as SMEDataRow[])
+          } else {
+            resolve([])
+          }
         }
-      }
+      })
     })
+  }
+
+  const loadBizPOSData = async (currentData: SMEDataRow[], supabase: any, userId: string) => {
+    const { data } = await supabase.from('bizpos_sales').select('*').eq('user_id', userId).order('created_at', { ascending: false })
+    if (!data || data.length === 0) return currentData
+    
+    const bizposRows: SMEDataRow[] = data.map((row: any) => ({
+      Date: row.date || row.created_at.split('T')[0],
+      Product_ID: row.product_id,
+      Product_Name: row.product_name,
+      Category: row.category,
+      Location: row.location || "Main Register",
+      Sales_Channel: row.sales_channel || "In-Store",
+      Units_Sold: row.units_sold,
+      Revenue_BDT: Number(row.revenue_bdt),
+      Unit_Price: Number(row.unit_price),
+      Cost_Price: Number(row.cost_price),
+      Current_Stock: row.current_stock || 0,
+      Customer_Segment: row.customer_segment || "Walk-in"
+    }))
+    
+    // Check if any bizpos row is already in currentData (by ID) to avoid duplicates if they were manually baked in
+    const existingIds = new Set(currentData.map(d => d.Product_ID))
+    const uniqueBizpos = bizposRows.filter(r => !existingIds.has(r.Product_ID))
+    
+    return [...uniqueBizpos, ...currentData]
   }
 
   useEffect(() => {
@@ -161,7 +190,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
         try {
           const parsed = JSON.parse(storedIntegration)
           const { mapIntegrationToSMEData } = await import("@/app/integrations/utils/normalize")
-          setRawData(mapIntegrationToSMEData(parsed))
+          let finalData = mapIntegrationToSMEData(parsed)
+          
+          finalData = await loadBizPOSData(finalData, supabase, user.id)
+          
+          setRawData(finalData)
           setActiveIntegrationName(parsed?.business?.name)
           setConnectedIntegrationName(parsed?.business?.name)
           setIsDataUploaded(true)
@@ -172,11 +205,30 @@ export function DataProvider({ children }: { children: ReactNode }) {
             setAiInsights(storedInsights)
           }
         } catch (e) {
-          if (defaultDataset) await loadDatasetData(defaultDataset, supabase)
+          if (defaultDataset) {
+            const data = await loadDatasetData(defaultDataset, supabase)
+            const finalData = await loadBizPOSData(data || [], supabase, user.id)
+            if (finalData.length > 0) {
+              setRawData(finalData)
+              setIsDataUploaded(true)
+            }
+          }
         }
       } else {
         if (defaultDataset) {
-          await loadDatasetData(defaultDataset, supabase)
+          const data = await loadDatasetData(defaultDataset, supabase)
+          const finalData = await loadBizPOSData(data || [], supabase, user.id)
+          if (finalData.length > 0) {
+            setRawData(finalData)
+            setIsDataUploaded(true)
+          }
+        } else {
+          // Even with no dataset, load any BizPOS sales they might have
+          const finalData = await loadBizPOSData([], supabase, user.id)
+          if (finalData.length > 0) {
+            setRawData(finalData)
+            setIsDataUploaded(true)
+          }
         }
       }
     }
@@ -271,7 +323,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const dataset = datasetHistory.find(d => d.id === id)
     if (!dataset) return
     localStorage.setItem("bizanolytics_active_view_mode", "dataset")
-    await loadDatasetData(dataset, supabase)
+    
+    const { data: { session } } = await supabase.auth.getSession()
+    const data = await loadDatasetData(dataset, supabase)
+    
+    if (session?.user) {
+      const finalData = await loadBizPOSData(data || [], supabase, session.user.id)
+      setRawData(finalData)
+      setIsDataUploaded(true)
+    } else if (data) {
+      setRawData(data)
+      setIsDataUploaded(true)
+    }
   }
 
   const renameDataset = async (id: string, newName: string) => {
