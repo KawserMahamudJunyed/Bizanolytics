@@ -78,6 +78,7 @@ export default function IntegrationsPage() {
   const [data, setData] = useState<IntegrationData | null>(null)
   const [syncFreq, setSyncFreq] = useState<"daily" | "hourly" | "instant">("daily")
   const [hasHydrated, setHasHydrated] = useState(false)
+  const [showHub, setShowHub] = useState(false)
   const { setUploadedData, resetData } = useData()
 
   useEffect(() => {
@@ -119,7 +120,7 @@ export default function IntegrationsPage() {
   if (!hasHydrated) return null
 
   // Success State for connected API
-  if (data) {
+  if (data && !showHub) {
     return (
       <div className="max-w-4xl mx-auto space-y-8 pt-8 pb-12 relative z-10">
         <div>
@@ -140,13 +141,22 @@ export default function IntegrationsPage() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={handleClear}
-              className="group flex items-center gap-2 rounded-lg bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-500 hover:text-white"
-            >
-              <Trash2 className="h-4 w-4" />
-              {t('disconnect')}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowHub(true)}
+                className="group flex items-center gap-2 rounded-lg bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+              >
+                <Plus className="h-4 w-4" />
+                Connect Another
+              </button>
+              <button
+                onClick={handleClear}
+                className="group flex items-center gap-2 rounded-lg bg-red-500/10 px-4 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-500 hover:text-white"
+              >
+                <Trash2 className="h-4 w-4" />
+                {t('disconnect')}
+              </button>
+            </div>
           </div>
 
           <div className="border-t border-border pt-8">
@@ -183,7 +193,13 @@ export default function IntegrationsPage() {
           </div>
 
           <div className="mt-8 flex justify-end gap-3 pt-6 border-t border-border/50">
-            <Link href="/dashboard" className="rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary">
+            <button 
+              onClick={() => setShowHub(true)} 
+              className="rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+            >
+              Connect Another Integration
+            </button>
+            <Link href="/dashboard" className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
               {t('go_to_dashboard')}
             </Link>
           </div>
