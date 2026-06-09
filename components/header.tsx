@@ -40,6 +40,7 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
     connectedIntegrationName,
     loadIntegrationData,
     loadIntegrationByPlatform,
+    renameIntegration,
     loadDatasetById,
     renameDataset,
     resetData,
@@ -90,20 +91,18 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
     }
     
     if (activeIntegrationName) {
-      setActiveIntegrationName(editName.trim())
       const stored = localStorage.getItem("bizanolytics_integration_data")
       if (stored) {
         try {
           const parsed = JSON.parse(stored)
-          if (!parsed.business) parsed.business = {}
-          parsed.business.name = editName.trim()
-          localStorage.setItem("bizanolytics_integration_data", JSON.stringify(parsed))
-          
           let platform = parsed.source || 'woocommerce'
           if (platform === 'custom_api') platform = 'custom'
-          const customNames = JSON.parse(localStorage.getItem('bizanolytics_integration_names') || '{}')
-          customNames[platform] = editName.trim()
-          localStorage.setItem('bizanolytics_integration_names', JSON.stringify(customNames))
+          
+          if (renameIntegration) {
+            renameIntegration(platform, editName.trim())
+          } else {
+            setActiveIntegrationName(editName.trim())
+          }
         } catch(e) {}
       }
     } else if (datasetId) {
@@ -176,8 +175,7 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
                 <DropdownMenuLabel>{t('live_integrations')}</DropdownMenuLabel>
                 {integrationHistory && integrationHistory.length > 0 ? (
                   integrationHistory.map((integration) => {
-                    const customNames = mounted ? JSON.parse(localStorage.getItem('bizanolytics_integration_names') || '{}') : {}
-                    const customName = customNames[integration.platform]
+                    const customName = integration.display_name
                     
                     // Check if this integration is the active one
                     const isActive = activeIntegrationName && (activeIntegrationName === customName || activeIntegrationName.toLowerCase().includes(integration.platform) || activeIntegrationName === integration.platform);

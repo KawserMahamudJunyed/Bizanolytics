@@ -51,6 +51,7 @@ interface DataContextType {
   loadIntegrationData: () => Promise<void>
   loadIntegrationByPlatform: (platform: string) => Promise<void>
   refreshIntegrationHistory: () => Promise<void>
+  renameIntegration: (platform: string, newName: string) => Promise<void>
   loadDatasetById: (id: string) => Promise<void>
   renameDataset: (id: string, newName: string) => Promise<void>
   aiInsights?: string
@@ -214,14 +215,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
           
           let platform = parsed.source || 'woocommerce'
           if (platform === 'custom_api') platform = 'custom'
-          const customNames = JSON.parse(localStorage.getItem('bizanolytics_integration_names') || '{}')
-          const customName = customNames[platform]
+          const historyMatch = integrationHistory?.find(i => i.platform === platform)
+          const dbName = historyMatch?.display_name
 
           finalData = await loadBizPOSData(finalData, supabase, user.id)
           
           setRawData(finalData)
-          setActiveIntegrationName(customName || parsed?.business?.name)
-          setConnectedIntegrationName(customName || parsed?.business?.name)
+          setActiveIntegrationName(dbName || parsed?.business?.name)
+          setConnectedIntegrationName(dbName || parsed?.business?.name)
           setIsDataUploaded(true)
           
           // Restore AI Insights for Integration
@@ -270,11 +271,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
         setDatasetId(undefined)
         let platform = parsed.source || 'woocommerce'
         if (platform === 'custom_api') platform = 'custom'
-        const customNames = JSON.parse(localStorage.getItem('bizanolytics_integration_names') || '{}')
-        const customName = customNames[platform]
         
-        setActiveIntegrationName(customName || parsed.business?.name)
-        setConnectedIntegrationName(customName || parsed.business?.name)
+        // Find if we have a display name in DB history
+        const historyMatch = integrations?.find(i => i.platform === platform)
+        const dbName = historyMatch?.display_name
+        
+        setActiveIntegrationName(dbName || parsed.business?.name)
+        setConnectedIntegrationName(dbName || parsed.business?.name)
         setIsDataUploaded(true)
         localStorage.setItem("bizanolytics_active_view_mode", "integration")
         
@@ -305,6 +308,37 @@ export function DataProvider({ children }: { children: ReactNode }) {
       }
     } catch (e) {
       toast.error("Failed to load integration data")
+    }
+  }
+
+  const renameIntegration = async (platform: string, newName: string) => {
+    try {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) return
+
+      const { error } = await supabase
+        .from('user_integrations')
+        .update({ display_name: newName })
+        .eq('user_id', session.user.id)
+        .eq('platform', platform)
+
+      if (error) throw error
+
+      await refreshIntegrationHistory()
+      setActiveIntegrationName(newName)
+      
+      const stored = localStorage.getItem("bizanolytics_integration_data")
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (!parsed.business) parsed.business = {}
+        parsed.business.name = newName
+        localStorage.setItem("bizanolytics_integration_data", JSON.stringify(parsed))
+      }
+      
+      toast.success("Integration renamed successfully")
+    } catch (e) {
+      toast.error("Failed to rename integration")
     }
   }
 
@@ -508,6 +542,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       markNotificationAsRead, markAllNotificationsAsRead, addNotification,
       activeIntegrationName, setActiveIntegrationName,
       connectedIntegrationName, loadIntegrationData,
+      integrationHistory, loadIntegrationByPlatform,
+      refreshIntegrationHistory, renameIntegration,
       recordPipelineRun
     }}>
       {children}
