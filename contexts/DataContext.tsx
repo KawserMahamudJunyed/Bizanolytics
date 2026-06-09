@@ -50,6 +50,7 @@ interface DataContextType {
   connectedIntegrationName?: string
   loadIntegrationData: () => Promise<void>
   loadIntegrationByPlatform: (platform: string) => Promise<void>
+  refreshIntegrationHistory: () => Promise<void>
   loadDatasetById: (id: string) => Promise<void>
   renameDataset: (id: string, newName: string) => Promise<void>
   aiInsights?: string
@@ -139,6 +140,21 @@ export function DataProvider({ children }: { children: ReactNode }) {
     return [...uniqueBizpos, ...currentData]
   }
 
+  const refreshIntegrationHistory = async () => {
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return
+    const { data: integrations } = await supabase
+      .from('user_integrations')
+      .select('*')
+      .eq('user_id', session.user.id)
+      .order('updated_at', { ascending: false })
+    
+    if (integrations) {
+      setIntegrationHistory(integrations)
+    }
+  }
+
   useEffect(() => {
     async function fetchHistory() {
       const supabase = createClient()
@@ -157,16 +173,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         setUserCurrency(profile.currency)
       }
 
-      // Fetch Integrations
-      const { data: integrations } = await supabase
-        .from('user_integrations')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-      
-      if (integrations) {
-        setIntegrationHistory(integrations)
-      }
+      await refreshIntegrationHistory()
 
       // Fetch Notifications
       const { data: notifs } = await supabase
@@ -389,6 +396,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     if (integrationName) {
       setConnectedIntegrationName(integrationName)
       localStorage.setItem("bizanolytics_active_view_mode", "integration")
+      refreshIntegrationHistory() // Re-fetch integrations so new ones appear in header
     } else {
       localStorage.setItem("bizanolytics_active_view_mode", "dataset")
     }

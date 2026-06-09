@@ -98,6 +98,12 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
           if (!parsed.business) parsed.business = {}
           parsed.business.name = editName.trim()
           localStorage.setItem("bizanolytics_integration_data", JSON.stringify(parsed))
+          
+          let platform = parsed.source || 'woocommerce'
+          if (platform === 'custom_api') platform = 'custom'
+          const customNames = JSON.parse(localStorage.getItem('bizanolytics_integration_names') || '{}')
+          customNames[platform] = editName.trim()
+          localStorage.setItem('bizanolytics_integration_names', JSON.stringify(customNames))
         } catch(e) {}
       }
     } else if (datasetId) {
@@ -170,15 +176,20 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
                 <DropdownMenuLabel>{t('live_integrations')}</DropdownMenuLabel>
                 {integrationHistory && integrationHistory.length > 0 ? (
                   integrationHistory.map((integration) => {
+                    const customNames = mounted ? JSON.parse(localStorage.getItem('bizanolytics_integration_names') || '{}') : {}
+                    const customName = customNames[integration.platform]
+                    
                     // Check if this integration is the active one
-                    const isActive = activeIntegrationName && integration.url && (activeIntegrationName.toLowerCase().includes(integration.platform) || activeIntegrationName === integration.platform);
+                    const isActive = activeIntegrationName && (activeIntegrationName === customName || activeIntegrationName.toLowerCase().includes(integration.platform) || activeIntegrationName === integration.platform);
                     // Generate a human readable name
-                    const name = integration.platform === 'woocommerce' ? 'WooCommerce' : 
+                    const defaultName = integration.platform === 'woocommerce' ? 'WooCommerce' : 
                                  integration.platform === 'shopify' ? 'Shopify' :
                                  integration.platform === 'custom' ? 'Custom API' :
                                  integration.platform === 'sheets' ? 'Google Sheets' :
                                  integration.platform === 'sql' ? 'SQL Database' :
                                  integration.platform.charAt(0).toUpperCase() + integration.platform.slice(1);
+                    
+                    const name = customName || defaultName;
                     return (
                       <DropdownMenuItem 
                         key={integration.id}
