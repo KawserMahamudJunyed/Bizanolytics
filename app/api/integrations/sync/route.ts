@@ -97,9 +97,9 @@ export async function POST(req: Request) {
         rating: (Math.random() * 1.5 + 3.5).toFixed(1)
       }));
       resultData = {
-        source: "custom_api",
+        source: platform,
         scrapedAt: new Date().toISOString(),
-        business: { name: `My ${platform} Store`, type: "retail", currency: "USD" },
+        business: { name: `My ${platform.charAt(0).toUpperCase() + platform.slice(1)} Store`, type: "retail", currency: "USD" },
         products: mockProducts,
         categories: posCategories.map(cat => ({ name: cat, count: 10, avgPrice: 45, totalRevenue: 4500 })),
         demandSignals: { high: [mockProducts[0].name, mockProducts[1].name], rising: [mockProducts[2].name], slow: [mockProducts[3].name] },
@@ -120,7 +120,7 @@ export async function POST(req: Request) {
         rating: (Math.random() * 2 + 3).toFixed(1)
       }));
       resultData = {
-        source: "custom_api",
+        source: platform,
         scrapedAt: new Date().toISOString(),
         business: { name: isSql ? "SQL Database" : "Spreadsheet Data", type: "retail", currency: "USD" },
         products: mockProducts,
@@ -274,9 +274,9 @@ export async function GET(req: Request) {
         rating: (Math.random() * 1.5 + 3.5).toFixed(1)
       }));
       const resultData = {
-        source: "custom_api",
+        source: platform,
         scrapedAt: new Date().toISOString(),
-        business: { name: `My ${platform} Store`, type: "retail", currency: "USD" },
+        business: { name: `My ${platform.charAt(0).toUpperCase() + platform.slice(1)} Store`, type: "retail", currency: "USD" },
         products: mockProducts,
         categories: posCategories.map(cat => ({ name: cat, count: 10, avgPrice: 45, totalRevenue: 4500 })),
         demandSignals: { high: [mockProducts[0].name, mockProducts[1].name], rising: [mockProducts[2].name], slow: [mockProducts[3].name] },
@@ -298,7 +298,7 @@ export async function GET(req: Request) {
         rating: (Math.random() * 2 + 3).toFixed(1)
       }));
       const resultData = {
-        source: "custom_api",
+        source: platform,
         scrapedAt: new Date().toISOString(),
         business: { name: isSql ? "SQL Database" : "Spreadsheet Data", type: "retail", currency: "USD" },
         products: mockProducts,
