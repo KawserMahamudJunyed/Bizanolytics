@@ -8,6 +8,8 @@ import { useData } from "@/contexts/DataContext"
 import { toast } from "sonner"
 import type { SMEDataRow } from "@/contexts/DataContext"
 import { formatCurrency, CURRENCY_SYMBOLS, CurrencyCode } from "@/utils/currency"
+import Papa from "papaparse"
+import { createClient } from "@/utils/supabase/client"
 
 const QUICK_PRODUCTS = [
   { name: "Vintage T-Shirt", price: 25, category: "Apparel" },
@@ -83,6 +85,35 @@ export function BizPOS({ onComplete }: { onComplete: () => void }) {
     setUnitsSold(1)
     setUnitPrice("")
     setStockLeft("")
+
+    // Cloud Backup
+    try {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      const user = session?.user
+      if (user) {
+        const csv = Papa.unparse(newData)
+        const blob = new Blob([csv], { type: 'text/csv' })
+        const filePath = `${user.id}/bizpos_backup.csv`
+        
+        await supabase.storage.from('user_datasets').upload(filePath, blob, { upsert: true })
+        
+        const { data: existing } = await supabase.from('datasets').select('id').eq('user_id', user.id).eq('file_name', 'BizPOS Backup').single()
+        if (existing) {
+          await supabase.from('datasets').update({ created_at: new Date().toISOString() }).eq('id', existing.id)
+        } else {
+          await supabase.from('datasets').insert({
+            user_id: user.id,
+            file_name: 'BizPOS Backup',
+            file_path: filePath,
+            source: 'bizpos',
+            row_count: newData.length
+          })
+        }
+      }
+    } catch (e) {
+      console.error("Failed to backup BizPOS data", e)
+    }
   }
 
   return (
