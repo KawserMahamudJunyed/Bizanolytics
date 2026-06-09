@@ -145,6 +145,7 @@ export async function POST(req: Request) {
         url,
         encrypted_keys: encryptedKeys,
         subscription_tier: subscription_tier || 'daily',
+        display_name: resultData.business?.name || platform,
         updated_at: new Date().toISOString()
       }, { onConflict: 'user_id, platform' }); // assuming a user can only have 1 of each platform type for now
 
@@ -157,7 +158,8 @@ export async function POST(req: Request) {
          platform,
          url,
          encrypted_keys: encryptedKeys,
-         subscription_tier: subscription_tier || 'daily'
+         subscription_tier: subscription_tier || 'daily',
+         display_name: resultData.business?.name || platform
        });
        if (insertError) {
          console.error("Supabase Insert Error:", insertError);
