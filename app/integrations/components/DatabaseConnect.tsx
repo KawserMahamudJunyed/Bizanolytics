@@ -32,19 +32,30 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
       // Simulate connection and fetching process
       await new Promise(r => setTimeout(r, 1500))
 
+      const isSql = activeTab === "sql";
+      const categories = isSql ? ["Software", "Hardware", "Services", "Licenses"] : ["Stationery", "Office Supplies", "Furniture", "Electronics"];
+      
+      const mockProducts = Array.from({ length: 50 }).map((_, i) => {
+        const cat = categories[Math.floor(Math.random() * categories.length)];
+        return {
+          id: `item_${i + 1}`,
+          name: `${cat} Item ${i + 1}`,
+          price: Math.floor(Math.random() * 500) + 10,
+          category: cat,
+          stock: Math.floor(Math.random() * 300),
+          reviewCount: Math.floor(Math.random() * 100),
+          rating: (Math.random() * 2 + 3).toFixed(1)
+        };
+      });
+
       const mockNormalized: IntegrationData = {
         source: "custom_api",
         scrapedAt: new Date().toISOString(),
-        business: { name: activeTab === "sheets" ? "Spreadsheet Data" : "SQL Database", type: "retail", currency: "USD" },
-        products: [
-          { id: "101", name: "Imported Item A", price: 49.99, category: "General", stock: 100, reviewCount: 5, rating: 4.2 },
-          { id: "102", name: "Imported Item B", price: 19.99, category: "General", stock: 50, reviewCount: 2, rating: 3.8 }
-        ],
-        categories: [
-          { name: "General", count: 2, avgPrice: 34.99, totalRevenue: 5000 }
-        ],
-        demandSignals: { high: ["Imported Item A"], rising: [], slow: ["Imported Item B"] },
-        meta: { totalProducts: 2, dataConfidence: "live" }
+        business: { name: isSql ? "SQL Database" : "Spreadsheet Data", type: "retail", currency: "USD" },
+        products: mockProducts,
+        categories: categories.map(cat => ({ name: cat, count: 12, avgPrice: 150, totalRevenue: 15000 })),
+        demandSignals: { high: [mockProducts[0].name, mockProducts[1].name], rising: [mockProducts[2].name], slow: [mockProducts[3].name] },
+        meta: { totalProducts: 50, dataConfidence: "live" }
       }
 
       toast.success("Database connected successfully!")

@@ -195,26 +195,6 @@ export function Sidebar({
           )}
         </motion.div>
 
-        {/* Search - only show when not collapsed */}
-        <AnimatePresence>
-          {!isEffectivelyCollapsed && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="relative px-3 py-2 overflow-hidden"
-            >
-              <div className="flex items-center gap-2.5 rounded-xl bg-secondary px-3 py-2.5">
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Search...</span>
-                <kbd className="ml-auto rounded bg-background px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                  /
-                </kbd>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Navigation - Main Items */}
         <nav className="relative flex-1 overflow-y-auto px-3 py-2">
           {!isEffectivelyCollapsed && (

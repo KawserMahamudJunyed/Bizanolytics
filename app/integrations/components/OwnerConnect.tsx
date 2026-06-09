@@ -318,20 +318,28 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
       await new Promise((r) => setTimeout(r, 1000))
       setCurrentStep("extracting")
       
+      const posCategories = ["Food", "Beverages", "Apparel", "Merchandise", "Accessories"];
+      const mockProducts = Array.from({ length: 50 }).map((_, i) => {
+        const cat = posCategories[Math.floor(Math.random() * posCategories.length)];
+        return {
+          id: `pos_${i + 1}`,
+          name: `${platform.label} Item ${i + 1}`,
+          price: Math.floor(Math.random() * 100) + 5,
+          category: cat,
+          stock: Math.floor(Math.random() * 500) + 20,
+          reviewCount: Math.floor(Math.random() * 50),
+          rating: (Math.random() * 1.5 + 3.5).toFixed(1)
+        };
+      });
+
       const mockNormalized: IntegrationData = {
         source: "custom_api",
         scrapedAt: new Date().toISOString(),
         business: { name: `My ${platform.label} Store`, type: "retail", currency: "USD" },
-        products: [
-          { id: "1", name: "Premium Widget", price: 29.99, category: "Accessories", stock: 150, reviewCount: 12, rating: 4.5 },
-          { id: "2", name: "Super Gadget", price: 99.99, category: "Electronics", stock: 45, reviewCount: 8, rating: 4.8 }
-        ],
-        categories: [
-          { name: "Accessories", count: 1, avgPrice: 29.99, totalRevenue: 1000 },
-          { name: "Electronics", count: 1, avgPrice: 99.99, totalRevenue: 5000 }
-        ],
-        demandSignals: { high: ["Premium Widget"], rising: ["Super Gadget"], slow: [] },
-        meta: { totalProducts: 2, dataConfidence: "live" }
+        products: mockProducts,
+        categories: posCategories.map(cat => ({ name: cat, count: 10, avgPrice: 45, totalRevenue: 4500 })),
+        demandSignals: { high: [mockProducts[0].name, mockProducts[1].name], rising: [mockProducts[2].name], slow: [mockProducts[3].name] },
+        meta: { totalProducts: 50, dataConfidence: "live" }
       }
       
       setCurrentStep("updating")
