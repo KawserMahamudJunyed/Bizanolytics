@@ -148,7 +148,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
       .from('user_integrations')
       .select('*')
       .eq('user_id', session.user.id)
-      .order('created_at', { ascending: false })
     
     if (integrations) {
       setIntegrationHistory(integrations)
