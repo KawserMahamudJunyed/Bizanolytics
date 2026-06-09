@@ -144,11 +144,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     if (!session?.user) return
-    const { data: integrations } = await supabase
+      const { data: integrations } = await supabase
       .from('user_integrations')
       .select('*')
       .eq('user_id', session.user.id)
-      .order('updated_at', { ascending: false })
+      .order('created_at', { ascending: false })
     
     if (integrations) {
       setIntegrationHistory(integrations)
@@ -213,11 +213,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
           const { mapIntegrationToSMEData } = await import("@/app/integrations/utils/normalize")
           let finalData = mapIntegrationToSMEData(parsed)
           
+          let platform = parsed.source || 'woocommerce'
+          if (platform === 'custom_api') platform = 'custom'
+          const customNames = JSON.parse(localStorage.getItem('bizanolytics_integration_names') || '{}')
+          const customName = customNames[platform]
+
           finalData = await loadBizPOSData(finalData, supabase, user.id)
           
           setRawData(finalData)
-          setActiveIntegrationName(parsed?.business?.name)
-          setConnectedIntegrationName(parsed?.business?.name)
+          setActiveIntegrationName(customName || parsed?.business?.name)
+          setConnectedIntegrationName(customName || parsed?.business?.name)
           setIsDataUploaded(true)
           
           // Restore AI Insights for Integration
@@ -264,8 +269,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const { mapIntegrationToSMEData } = await import("@/app/integrations/utils/normalize")
         setRawData(mapIntegrationToSMEData(parsed))
         setDatasetId(undefined)
-        setActiveIntegrationName(parsed.business?.name)
-        setConnectedIntegrationName(parsed.business?.name)
+        let platform = parsed.source || 'woocommerce'
+        if (platform === 'custom_api') platform = 'custom'
+        const customNames = JSON.parse(localStorage.getItem('bizanolytics_integration_names') || '{}')
+        const customName = customNames[platform]
+        
+        setActiveIntegrationName(customName || parsed.business?.name)
+        setConnectedIntegrationName(customName || parsed.business?.name)
         setIsDataUploaded(true)
         localStorage.setItem("bizanolytics_active_view_mode", "integration")
         
