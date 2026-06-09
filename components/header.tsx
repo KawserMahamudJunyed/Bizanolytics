@@ -31,7 +31,23 @@ function formatTimeAgo(dateStr: string) {
 
 export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: any }) {
   const router = useRouter()
-  const { datasetId, datasetHistory, loadDatasetById, renameDataset, resetData, activeIntegrationName, setActiveIntegrationName, connectedIntegrationName, loadIntegrationData, notifications, unreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } = useData()
+  const { 
+    datasetId,
+    datasetHistory,
+    integrationHistory,
+    activeIntegrationName,
+    setActiveIntegrationName,
+    connectedIntegrationName,
+    loadIntegrationData,
+    loadIntegrationByPlatform,
+    loadDatasetById,
+    renameDataset,
+    resetData,
+    notifications,
+    unreadNotificationsCount,
+    markNotificationAsRead,
+    markAllNotificationsAsRead 
+  } = useData()
   const { t } = useLanguage()
   const [isRenaming, setIsRenaming] = useState(false)
   const [editName, setEditName] = useState("")
@@ -152,25 +168,40 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64">
                 <DropdownMenuLabel>{t('live_integrations')}</DropdownMenuLabel>
-                {activeIntegrationName ? (
-                  <DropdownMenuItem className="flex justify-between items-center cursor-default text-emerald-500">
-                    <span className="truncate flex-1 pr-2 flex items-center">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mr-2" />
-                      {activeIntegrationName}
-                    </span>
-                  </DropdownMenuItem>
-                ) : connectedIntegrationName ? (
-                  <DropdownMenuItem onClick={loadIntegrationData} className="flex justify-between items-center cursor-pointer text-foreground hover:bg-secondary">
-                    <span className="truncate flex-1 pr-2 flex items-center">
-                      {connectedIntegrationName}
-                    </span>
-                  </DropdownMenuItem>
+                {integrationHistory && integrationHistory.length > 0 ? (
+                  integrationHistory.map((integration) => {
+                    // Check if this integration is the active one
+                    const isActive = activeIntegrationName && integration.url && (activeIntegrationName.toLowerCase().includes(integration.platform) || activeIntegrationName === integration.platform);
+                    // Generate a human readable name
+                    const name = integration.platform === 'woocommerce' ? 'WooCommerce' : 
+                                 integration.platform === 'shopify' ? 'Shopify' :
+                                 integration.platform === 'custom' ? 'Custom API' :
+                                 integration.platform === 'sheets' ? 'Google Sheets' :
+                                 integration.platform === 'sql' ? 'SQL Database' :
+                                 integration.platform.charAt(0).toUpperCase() + integration.platform.slice(1);
+                    return (
+                      <DropdownMenuItem 
+                        key={integration.id}
+                        onClick={() => !isActive && loadIntegrationByPlatform(integration.platform)}
+                        className={cn(
+                          "flex justify-between items-center cursor-pointer",
+                          isActive ? "text-emerald-500" : "text-foreground hover:bg-secondary"
+                        )}
+                      >
+                        <span className="truncate flex-1 pr-2 flex items-center">
+                          <span className={cn("w-2 h-2 rounded-full shrink-0 mr-2", isActive ? "bg-emerald-500" : "bg-transparent")} />
+                          {name}
+                        </span>
+                        <span className="text-xs text-muted-foreground shrink-0">{formatTimeAgo(integration.updated_at || integration.created_at)}</span>
+                      </DropdownMenuItem>
+                    )
+                  })
                 ) : (
                   <DropdownMenuItem className="text-muted-foreground cursor-default">
                     {t('no_active_integration')}
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={() => router.push('/integrations')} className="cursor-pointer text-muted-foreground focus:text-emerald-500 focus:bg-emerald-500/10 hover:text-emerald-500 hover:bg-emerald-500/10">
+                <DropdownMenuItem onClick={() => router.push('/integrations')} className="cursor-pointer text-muted-foreground focus:text-emerald-500 focus:bg-emerald-500/10 hover:text-emerald-500 hover:bg-emerald-500/10 mt-1">
                   <Plus className="w-4 h-4 mr-2" /> {t('connect_new_integration')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

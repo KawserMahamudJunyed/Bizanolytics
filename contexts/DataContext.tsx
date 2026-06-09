@@ -44,10 +44,12 @@ interface DataContextType {
   resetData: () => void
   datasetId?: string
   datasetHistory: DatasetMeta[]
+  integrationHistory: any[]
   activeIntegrationName?: string
   setActiveIntegrationName: (name?: string) => void
   connectedIntegrationName?: string
   loadIntegrationData: () => Promise<void>
+  loadIntegrationByPlatform: (platform: string) => Promise<void>
   loadDatasetById: (id: string) => Promise<void>
   renameDataset: (id: string, newName: string) => Promise<void>
   aiInsights?: string
@@ -69,6 +71,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [isDataUploaded, setIsDataUploaded] = useState(false)
   const [datasetId, setDatasetId] = useState<string>()
   const [datasetHistory, setDatasetHistory] = useState<DatasetMeta[]>([])
+  const [integrationHistory, setIntegrationHistory] = useState<any[]>([])
   const [activeIntegrationName, setActiveIntegrationName] = useState<string>()
   const [connectedIntegrationName, setConnectedIntegrationName] = useState<string>()
   const [aiInsights, setAiInsights] = useState<string>()
@@ -152,6 +155,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
       
       if (profile?.currency) {
         setUserCurrency(profile.currency)
+      }
+
+      // Fetch Integrations
+      const { data: integrations } = await supabase
+        .from('user_integrations')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+      
+      if (integrations) {
+        setIntegrationHistory(integrations)
       }
 
       // Fetch Notifications
@@ -253,6 +267,28 @@ export function DataProvider({ children }: { children: ReactNode }) {
           setAiInsights(storedInsights)
         }
       } catch (e) {}
+    }
+  }
+
+  const loadIntegrationByPlatform = async (platform: string) => {
+    try {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      const toastId = toast.loading("Fetching data from integration...")
+      
+      const res = await fetch(`/api/integrations/sync?platform=${platform}`, {
+        headers: { ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}) }
+      })
+      if (res.ok) {
+        const freshData = await res.json()
+        localStorage.setItem("bizanolytics_integration_data", JSON.stringify(freshData))
+        await loadIntegrationData()
+        toast.success("Successfully loaded integration data!", { id: toastId })
+      } else {
+        throw new Error("Failed to load")
+      }
+    } catch (e) {
+      toast.error("Failed to load integration data")
     }
   }
 
