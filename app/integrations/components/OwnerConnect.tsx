@@ -22,7 +22,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { createClient } from "@/utils/supabase/client"
+import { apiClient } from "@/lib/api"
 import {
   normalizeShopify,
   normalizeWooCommerce,
@@ -178,26 +178,13 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
     setCurrentStep("fetching")
 
     try {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-
-      const res = await fetch("/api/integrations/sync", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
-        },
-        body: JSON.stringify({
-          platform: "shopify",
-          url: shopifyDomain.trim(),
-          keys: {
-            storefrontToken: shopifyToken.trim(),
-          }
-        }),
+      const data = await apiClient.post<any>("/api/v1/integrations/sync", {
+        platform: "shopify",
+        url: shopifyDomain.trim(),
+        keys: {
+          storefrontToken: shopifyToken.trim(),
+        }
       })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Failed to connect to Shopify")
 
       setCurrentStep("extracting")
       const normalized = data; // data is already normalized from the sync endpoint
@@ -227,27 +214,14 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
     setCurrentStep("fetching")
 
     try {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-
-      const res = await fetch("/api/integrations/sync", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
-        },
-        body: JSON.stringify({
-          platform: "woocommerce",
-          url: wooSiteUrl.trim(),
-          keys: {
-            consumerKey: wooKey.trim(),
-            consumerSecret: wooSecret.trim(),
-          }
-        }),
+      const data = await apiClient.post<any>("/api/v1/integrations/sync", {
+        platform: "woocommerce",
+        url: wooSiteUrl.trim(),
+        keys: {
+          consumerKey: wooKey.trim(),
+          consumerSecret: wooSecret.trim(),
+        }
       })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Failed to connect to WooCommerce")
 
       setCurrentStep("updating")
       await new Promise((r) => setTimeout(r, 600))
@@ -276,26 +250,13 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
     setCurrentStep("fetching")
 
     try {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-
-      const res = await fetch("/api/integrations/sync", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
-        },
-        body: JSON.stringify({
-          platform: "custom",
-          url: validUrl,
-          keys: {
-            bearerToken: customToken.trim() || undefined,
-          }
-        }),
+      const data = await apiClient.post<any>("/api/v1/integrations/sync", {
+        platform: "custom",
+        url: validUrl,
+        keys: {
+          bearerToken: customToken.trim() || undefined,
+        }
       })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Failed to fetch from your API")
 
       setCurrentStep("extracting")
       const normalized = data; // data is already normalized from the sync endpoint
@@ -328,26 +289,13 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
       await new Promise((r) => setTimeout(r, 1000))
       setCurrentStep("extracting")
       
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-
-      const res = await fetch("/api/integrations/sync", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
-        },
-        body: JSON.stringify({
-          platform: activePlatform,
-          url: "pos_api_url",
-          keys: {
-            posToken: posToken.trim(),
-          }
-        }),
+      const data = await apiClient.post<any>("/api/v1/integrations/sync", {
+        platform: activePlatform,
+        url: "pos_api_url",
+        keys: {
+          posToken: posToken.trim(),
+        }
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `Failed to connect to ${platform.label}`);
 
       setCurrentStep("updating")
       await new Promise((r) => setTimeout(r, 600))
@@ -646,26 +594,10 @@ export function OwnerConnect({ onDataReady, mode = "ecommerce" }: OwnerConnectPr
                 
                 // Update subscription tier via API
                 try {
-                  const supabase = createClient();
-                  const { data: { session } } = await supabase.auth.getSession();
-
-                  const subRes = await fetch("/api/integrations/subscription", {
-                    method: "POST",
-                    headers: { 
-                      "Content-Type": "application/json",
-                      ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
-                    },
-                    body: JSON.stringify({
-                      platform: activePlatform,
-                      subscription_tier: selectedFreq
-                    })
+                  await apiClient.post<any>("/api/v1/integrations/subscription", {
+                    platform: activePlatform,
+                    subscription_tier: selectedFreq
                   });
-                  const subData = await subRes.json();
-                  if (!subRes.ok) {
-                    toast.error(`Database error: ${subData.error || 'Failed to update subscription'}`);
-                    setIsFinishing(false);
-                    return; // Stop the redirect so user sees the error
-                  }
                 } catch (e: any) {
                   console.error("Failed to update subscription tier", e);
                   toast.error("Network error updating subscription");

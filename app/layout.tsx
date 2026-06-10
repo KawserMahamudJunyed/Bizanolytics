@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
+import { Analytics } from '@vercel/analytics/react'
 import './globals.css'
 import 'leaflet/dist/leaflet.css'
 import { AppLayout } from '@/components/app-layout'
@@ -8,12 +8,12 @@ import { DataProvider } from '@/contexts/DataContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { Toaster } from 'sonner'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
   variable: '--font-inter'
 })
 
-const jetbrainsMono = JetBrains_Mono({ 
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: '--font-mono'
 })
@@ -24,23 +24,18 @@ export const metadata: Metadata = {
   generator: 'v0.app',
 }
 
-import { createClient } from '@/utils/supabase/server'
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const supabase = await createClient()
-  const { data: { session } } = await supabase.auth.getSession()
-  const user = session?.user ?? null
-
+  // User is now managed client-side via JWT in localStorage (no Supabase server client needed)
   return (
     <html lang="en" className="dark bg-background" style={{ colorScheme: 'dark' }}>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         <LanguageProvider>
           <DataProvider>
-            <AppLayout user={user}>
+            <AppLayout user={null}>
               {children}
             </AppLayout>
           </DataProvider>

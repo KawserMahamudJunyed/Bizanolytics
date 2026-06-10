@@ -1,82 +1,20 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
-import { createClient } from '@/utils/supabase/server'
+import { clearTokens } from '@/lib/auth'
 
-export async function login(formData: FormData) {
-  const supabase = await createClient()
-
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
-
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  if (error) {
-    return { error: error.message }
-  }
-
-  revalidatePath('/', 'layout')
+/** Stub login — actual login now done client-side in login/page.tsx via DataBox JWT */
+export async function login(_formData: FormData) {
   return { success: true }
 }
 
-export async function signup(formData: FormData) {
-  const supabase = await createClient()
-
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-  const fullName = formData.get('fullName') as string
-  const companyName = formData.get('companyName') as string
-  const industry = formData.get('industry') as string
-  const salesChannel = formData.get('salesChannel') as string
-
-  const { data: authData, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
-        company_name: companyName,
-        industry: industry,
-        sales_channel: salesChannel,
-      }
-    }
-  })
-
-  if (error) {
-    return { error: error.message }
-  }
-
-  if (authData?.user) {
-    await supabase.from('profiles').insert({
-      id: authData.user.id,
-      full_name: fullName,
-      company_name: companyName,
-      industry: industry,
-      sales_channel: salesChannel
-    })
-  }
-
-  revalidatePath('/', 'layout')
+/** Stub signup — actual signup now done client-side in signup/page.tsx via DataBox JWT */
+export async function signup(_formData: FormData) {
   return { success: true }
 }
 
-
+/** Logout — clears JWT tokens from localStorage (called from sidebar) */
 export async function logout() {
-  const supabase = await createClient()
-  await supabase.auth.signOut()
-  
-  // Forcefully delete all Supabase cookies to bypass Next.js caching bugs
-  const cookieStore = await cookies()
-  const allCookies = cookieStore.getAll()
-  allCookies.forEach(cookie => {
-    if (cookie.name.startsWith('sb-')) {
-      cookieStore.delete(cookie.name)
-    }
-  })
-  
+  // Tokens live in localStorage; actual clearing happens client-side.
+  // This server action is a no-op but kept so the sidebar import doesn't break.
   return { success: true }
 }

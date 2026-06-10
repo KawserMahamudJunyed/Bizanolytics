@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Save, User, Building2, Coins, Loader2, CreditCard, Bell, Shield } from "lucide-react"
-import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
@@ -31,33 +30,11 @@ export default function SettingsPage() {
   const [syncFreq, setSyncFreq] = useState("daily")
 
   useEffect(() => {
-    async function loadProfile() {
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      
-      if (!session?.user) {
-        setIsLoading(false)
-        return
-      }
-
-      const { data } = await supabase
-        .from("profiles")
-        .select("currency")
-        .eq("id", session.user.id)
-        .single()
-
-      if (data) {
-        setProfile({
-          currency: data.currency || "BDT"
-        })
-      }
-      
-      const freq = localStorage.getItem("bizanolytics_sync_freq") || "daily"
-      setSyncFreq(freq)
-      
-      setIsLoading(false)
-    }
-    loadProfile()
+    const currency = localStorage.getItem('bizanolytics_currency') || 'BDT'
+    setProfile({ currency })
+    const freq = localStorage.getItem('bizanolytics_sync_freq') || 'daily'
+    setSyncFreq(freq)
+    setIsLoading(false)
   }, [])
 
   const subscriptionMap: Record<string, any> = {
@@ -69,31 +46,11 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     setIsSaving(true)
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    
-    if (!session?.user) {
-      toast.error(t('login_required_settings'))
-      setIsSaving(false)
-      return
-    }
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({
-        id: session.user.id,
-        currency: profile.currency
-      }, { onConflict: 'id' })
-
+    localStorage.setItem('bizanolytics_currency', profile.currency)
+    setUserCurrency(profile.currency)
+    addNotification(language === 'bn' ? "সেটিংস আপডেট হয়েছে" : "Settings Updated", language === 'bn' ? "আপনার প্রোফাইল পছন্দ সফলভাবে আপডেট করা হয়েছে।" : "Your profile preferences have been successfully updated.")
     setIsSaving(false)
-    
-    if (error) {
-      toast.warning(language === 'bn' ? `সেটিংস সংরক্ষিত হয়েছে, কিন্তু ডাটাবেস সিঙ্ক ব্যর্থ হয়েছে: ${error.message}` : `Settings saved, but database sync failed (Likely missing RLS policy): ${error.message}`)
-      console.error(error)
-    } else {
-      toast.success(language === 'bn' ? "সেটিংস সফলভাবে সংরক্ষিত হয়েছে!" : "Settings saved successfully!")
-      setUserCurrency(profile.currency) // Update global state
-      addNotification(language === 'bn' ? "সেটিংস আপডেট হয়েছে" : "Settings Updated", language === 'bn' ? "আপনার প্রোফাইল পছন্দ সফলভাবে আপডেট করা হয়েছে।" : "Your profile preferences have been successfully updated.")
-    }
+    toast.success(language === 'bn' ? "সেটিংস সফলভাবে সংরক্ষিত হয়েছে!" : "Settings saved successfully!")
   }
 
   const tabs = [
@@ -155,7 +112,7 @@ export default function SettingsPage() {
             >
               <div>
                 <h3 className="text-lg font-medium text-foreground">{t('regional_preferences')}</h3>
-                <p className="text-sm text-muted-foreground">{t('regional_desc')}</p>
+                <p className="text-sm text-muted-foreground">{t('regional_pref_desc')}</p>
               </div>
 
               <div className="space-y-4 max-w-md">

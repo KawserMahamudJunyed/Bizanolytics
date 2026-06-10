@@ -107,8 +107,6 @@ export const dictionaries = {
     guest_mode: "Continue without logging in (Guest Mode)",
     create_account: "Create an account",
     signup_desc: "Enter your details to get started with Bizanolytics",
-    company_name: "Company Name",
-    full_name: "Full Name",
     already_account: "Already have an account?",
     
     // Integrations
@@ -142,7 +140,6 @@ export const dictionaries = {
     no_active_integration: "No active integration",
     connect_new_integration: "Connect New Integration",
     upload_new_dataset: "Upload New Dataset",
-    notifications: "Notifications",
     mark_all_read: "Mark all as read",
     no_notifications: "No notifications yet.",
     
@@ -179,10 +176,8 @@ export const dictionaries = {
     current: "Current",
     previous: "Previous",
     benchmark: "Benchmark",
-    data_pipeline: "Data Pipeline",
     real_time_data_flow: "Real-time data flow visualization",
     active: "Active",
-    ai_insights: "AI Insights",
     charts_and_data: "Charts & Data",
     live_sync: "Live Sync",
     upload: "Upload",
@@ -224,7 +219,7 @@ export const dictionaries = {
     billing_plans: "Billing & Plans",
     security: "Security",
     regional_preferences: "Regional Preferences",
-    regional_desc: "Set your default currency for dashboard and analytics.",
+    regional_pref_desc: "Set your default currency for dashboard and analytics.",
     display_currency: "Display Currency",
     currency_desc: "This currency will be applied globally across Bizanolytics.",
     current_subscription: "Current Subscription",
@@ -344,8 +339,6 @@ export const dictionaries = {
     guest_mode: "লগ ইন না করে চালিয়ে যান (গেস্ট মোড)",
     create_account: "একটি অ্যাকাউন্ট তৈরি করুন",
     signup_desc: "বিজানালিটিক্স শুরু করতে আপনার বিবরণ লিখুন",
-    company_name: "কোম্পানির নাম",
-    full_name: "পুরো নাম",
     already_account: "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?",
     
     // Integrations
@@ -379,7 +372,6 @@ export const dictionaries = {
     no_active_integration: "কোন সক্রিয় ইন্টিগ্রেশন নেই",
     connect_new_integration: "নতুন ইন্টিগ্রেশন সংযুক্ত করুন",
     upload_new_dataset: "নতুন ডেটাসেট আপলোড করুন",
-    notifications: "বিজ্ঞপ্তি",
     mark_all_read: "সব পড়া হিসেবে চিহ্নিত করুন",
     no_notifications: "এখনও কোন বিজ্ঞপ্তি নেই।",
 
@@ -416,10 +408,8 @@ export const dictionaries = {
     current: "বর্তমান",
     previous: "পূর্ববর্তী",
     benchmark: "বেঞ্চমার্ক",
-    data_pipeline: "ডেটা পাইপলাইন",
     real_time_data_flow: "রিয়েল-টাইম ডেটা ফ্লো ভিজ্যুয়ালাইজেশন",
     active: "সক্রিয়",
-    ai_insights: "এআই অন্তর্দৃষ্টি",
     charts_and_data: "চার্ট এবং ডেটা",
     live_sync: "লাইভ সিঙ্ক",
     upload: "আপলোড",
@@ -461,7 +451,7 @@ export const dictionaries = {
     billing_plans: "বিলিং ও প্ল্যান",
     security: "নিরাপত্তা",
     regional_preferences: "আঞ্চলিক পছন্দ",
-    regional_desc: "ড্যাশবোর্ড এবং অ্যানালিটিক্সের জন্য আপনার ডিফল্ট মুদ্রা সেট করুন।",
+    regional_pref_desc: "ড্যাশবোর্ড এবং অ্যানালিটিক্সের জন্য আপনার ডিফল্ট মুদ্রা সেট করুন।",
     display_currency: "প্রদর্শন মুদ্রা",
     currency_desc: "এই মুদ্রা বিজানালিটিক্স জুড়ে বিশ্বব্যাপী প্রয়োগ করা হবে।",
     current_subscription: "বর্তমান সাবস্ক্রিপশন",

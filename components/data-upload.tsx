@@ -8,10 +8,10 @@ import Papa from "papaparse"
 import * as XLSX from "xlsx"
 import { useData } from "@/contexts/DataContext"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { normalizeCsvData } from "@/lib/normalizeCsv"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { apiClient } from "@/lib/api"
 
 export function DataUpload() {
   const [dragActive, setDragActive] = useState(false)
@@ -19,7 +19,7 @@ export function DataUpload() {
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "processing" | "imputing" | "success" | "error" | "insufficient">("idle")
   const [progress, setProgress] = useState(0)
   const [errorMessage, setErrorMessage] = useState("")
-  const { setUploadedData } = useData()
+  const { setUploadedData, uploadCsvFile } = useData()
   const { t } = useLanguage()
   const router = useRouter()
 
@@ -65,14 +65,7 @@ export function DataUpload() {
       const uniqueProducts = Array.from(new Set(normalizedData.map(row => row.Product_Name))).filter(Boolean)
       
       try {
-        const res = await fetch("/api/impute-data", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ targetColumn: "Category", products: uniqueProducts })
-        })
-        const data = await res.json()
-        
-        if (!res.ok) throw new Error(data.error || "Failed to impute data")
+        const data = await apiClient.post<any>("/api/v1/ai/impute", { targetColumn: "Category", products: uniqueProducts })
         
         if (data.mapping) {
           const mapDict: Record<string, string> = {}
@@ -90,66 +83,19 @@ export function DataUpload() {
       }
     }
 
-    let newDatasetId: string | undefined = undefined;
-    
+    // Upload to DataBox and persist in Neon via /api/v1/data/upload
     try {
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      const user = session?.user
-      
-      if (user) {
-        const filePath = `${user.id}/${Date.now()}_${currentFile.name}`
-        
-        const { error: uploadError } = await supabase.storage
-          .from('user_datasets')
-          .upload(filePath, currentFile)
-
-        if (uploadError) {
-          console.warn("Storage upload failed (bucket might be missing), but continuing with DB inserts:", uploadError.message);
-        }
-
-        const { data: insertedData, error: insertError } = await supabase.from('datasets').insert({
-          user_id: user.id,
-          file_name: currentFile.name,
-          file_path: uploadError ? null : filePath
-        }).select()
-        
-        if (!insertError && insertedData && insertedData.length > 0) {
-          newDatasetId = insertedData[0].id
-          
-          // Generate Pipeline Run Record
-          const processingMs = Math.max(45, Math.min(500, Math.round(currentFile.size / 80 + Math.random() * 30)))
-          await supabase.from('pipeline_runs').insert({
-            user_id: user.id,
-            run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
-            source: currentFile.name,
-            status: "success",
-            duration: processingMs < 1000 ? `${processingMs}ms` : `${(processingMs / 1000).toFixed(1)}s`,
-            records: normalizedData.length
-          })
-
-          // Generate Notification
-          await supabase.from('notifications').insert({
-            user_id: user.id,
-            title: "Data Upload Successful",
-            message: `Successfully processed and imported ${normalizedData.length} rows from ${currentFile.name}.`
-          })
-        } else if (insertError) {
-          console.error("Failed to insert dataset record:", insertError);
-          toast.error(`Database error (datasets): ${insertError.message}`);
-        }
-      }
+      await uploadCsvFile(currentFile, 'sales')
     } catch (err: any) {
-      console.error("Failed to sync to Supabase", err)
-      toast.error(`Sync error: ${err.message}`);
+      console.warn('DataBox upload failed, continuing with local display:', err.message)
     }
 
     setUploadState("success")
     setProgress(100)
-    
+
     setTimeout(() => {
-      setUploadedData(normalizedData as any, newDatasetId)
-      router.push("/dashboard") // Redirect to dashboard to see results
+      setUploadedData(normalizedData as any, undefined)
+      router.push("/dashboard")
     }, 1000)
   }
 

@@ -8,7 +8,7 @@ import { useData } from "@/contexts/DataContext"
 import { toast } from "sonner"
 import type { IntegrationData } from "../utils/types"
 import { mapIntegrationToSMEData } from "../utils/normalize"
-import { createClient } from "@/utils/supabase/client"
+import { apiClient } from "@/lib/api"
 
 export function DatabaseConnect({ onDataReady }: { onDataReady: (data: IntegrationData) => void }) {
   const [activeTab, setActiveTab] = useState<"sheets" | "sql" | "custom">("sheets")
@@ -35,27 +35,14 @@ export function DatabaseConnect({ onDataReady }: { onDataReady: (data: Integrati
       // Simulate connection and fetching process
       await new Promise(r => setTimeout(r, 1500))
 
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-
       const platformKey = activeTab;
-      const res = await fetch("/api/integrations/sync", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
-        },
-        body: JSON.stringify({
-          platform: platformKey,
-          url: activeTab === "sheets" ? sheetsUrl : activeTab === "custom" ? customApiUrl : "sql_database_uri",
-          keys: {
-            connectionString: activeTab === "sql" ? sqlString : activeTab === "custom" ? customApiToken : "sheet_token",
-          }
-        }),
+      const data = await apiClient.post<any>("/api/v1/integrations/sync", {
+        platform: platformKey,
+        url: activeTab === "sheets" ? sheetsUrl : activeTab === "custom" ? customApiUrl : "sql_database_uri",
+        keys: {
+          connectionString: activeTab === "sql" ? sqlString : activeTab === "custom" ? customApiToken : "sheet_token",
+        }
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to connect to database");
 
       toast.success("Database connected successfully!")
       onDataReady(data)

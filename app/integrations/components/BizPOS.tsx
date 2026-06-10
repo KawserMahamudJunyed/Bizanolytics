@@ -9,7 +9,6 @@ import { toast } from "sonner"
 import type { SMEDataRow } from "@/contexts/DataContext"
 import { formatCurrency, CURRENCY_SYMBOLS, CurrencyCode } from "@/utils/currency"
 import Papa from "papaparse"
-import { createClient } from "@/utils/supabase/client"
 
 const QUICK_PRODUCTS = [
   { name: "Vintage T-Shirt", price: 25, category: "Apparel" },
@@ -86,31 +85,7 @@ export function BizPOS({ onComplete }: { onComplete: () => void }) {
     setUnitPrice("")
     setStockLeft("")
 
-    // Cloud Backup via Dedicated Table
-    try {
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      const user = session?.user
-      if (user) {
-        await supabase.from('bizpos_sales').insert({
-          user_id: user.id,
-          product_id: newRecord.Product_ID,
-          product_name: newRecord.Product_Name,
-          category: newRecord.Category,
-          units_sold: newRecord.Units_Sold,
-          unit_price: newRecord.Unit_Price,
-          revenue_bdt: newRecord.Revenue_BDT,
-          cost_price: newRecord.Cost_Price,
-          current_stock: newRecord.Current_Stock,
-          location: newRecord.Location,
-          sales_channel: newRecord.Sales_Channel,
-          customer_segment: newRecord.Customer_Segment,
-          date: newRecord.Date
-        })
-      }
-    } catch (e) {
-      console.error("Failed to backup BizPOS data to table", e)
-    }
+    // In-memory data has been updated; DataBox upload handled separately if needed
   }
 
   return (

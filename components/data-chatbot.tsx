@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { MessageCircle, X, Send, User, Bot, Loader2, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
-import { createClient } from "@/utils/supabase/client"
+import { apiClient } from "@/lib/api"
 import ReactMarkdown from "react-markdown"
 
 interface Message {
@@ -20,31 +20,11 @@ export function DataChatbot() {
   ])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [userId, setUserId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   
   const { rawData, isDataUploaded } = useData()
 
-  useEffect(() => {
-    async function loadHistory() {
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      const user = session?.user
-      if (user) {
-        setUserId(user.id)
-        const { data } = await supabase
-          .from('chat_messages')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: true })
-        
-        if (data && data.length > 0) {
-          setMessages(data.map(m => ({ role: m.role as "user" | "assistant", content: m.content })))
-        }
-      }
-    }
-    loadHistory()
-  }, [])
+  // Chat history is in-memory for this session
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -63,29 +43,15 @@ export function DataChatbot() {
     setMessages(prev => [...prev, { role: "user", content: userMsg }])
     setIsLoading(true)
 
-    const supabase = createClient()
-    if (userId) {
-      await supabase.from('chat_messages').insert({ user_id: userId, role: 'user', content: userMsg })
-    }
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: userMsg,
-          history: messages.slice(-5), // Send last 5 messages for context
-          rawData: isDataUploaded ? rawData : null
-        })
+      const data = await apiClient.post<any>("/api/v1/ai/chat", {
+        message: userMsg,
+        history: messages.slice(-5),
+        rawData: isDataUploaded ? rawData : null
       })
-
-      const data = await response.json()
       const reply = data.reply
       setMessages(prev => [...prev, { role: "assistant", content: reply }])
-      
-      if (userId) {
-        await supabase.from('chat_messages').insert({ user_id: userId, role: 'assistant', content: reply })
-      }
     } catch (error) {
       setMessages(prev => [...prev, { role: "assistant", content: "Sorry, I had trouble processing that request." }])
     } finally {
@@ -93,12 +59,8 @@ export function DataChatbot() {
     }
   }
 
-  const clearHistory = async () => {
+  const clearHistory = () => {
     setMessages([{ role: "assistant", content: "Hi! I'm Bizanolytics Intelligence. Ask me anything about the data you just uploaded!" }])
-    if (userId) {
-      const supabase = createClient()
-      await supabase.from('chat_messages').delete().eq('user_id', userId)
-    }
   }
 
   return (
@@ -140,15 +102,13 @@ export function DataChatbot() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                {userId && (
-                  <button
-                    onClick={clearHistory}
-                    title="Clear Chat History"
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                )}
+                <button
+                  onClick={clearHistory}
+                  title="Clear Chat History"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"

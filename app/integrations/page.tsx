@@ -21,6 +21,7 @@ import {
   Plus
 } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { useData } from "@/contexts/DataContext"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -137,7 +138,7 @@ export default function IntegrationsPage() {
               <div>
                 <h2 className="text-xl font-bold text-foreground">{t('active_connection')}</h2>
                 <p className="text-sm text-muted-foreground">
-                  {data.integrationType === 'custom' ? 'Custom API' : 'Manual API'} • Last synced {new Date(data.lastSync || Date.now()).toLocaleString()}
+                  {data.source === 'custom_api' ? 'Custom API' : 'Manual API'} • Last synced {new Date(data.scrapedAt || Date.now()).toLocaleString()}
                 </p>
               </div>
             </div>

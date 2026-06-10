@@ -1,10 +1,11 @@
 "use client"
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react"
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from "react"
 import Papa from "papaparse"
-import { createClient } from "@/utils/supabase/client"
 import { normalizeCsvData } from "@/lib/normalizeCsv"
 import { toast } from "sonner"
+import { apiClient } from "@/lib/api"
+import { isAuthenticated, getUser, clearTokens } from "@/lib/auth"
 
 export type SMEDataRow = {
   Date: string
@@ -36,7 +37,6 @@ export type Notification = {
   created_at: string
 }
 
-
 interface DataContextType {
   isDataUploaded: boolean
   rawData: SMEDataRow[]
@@ -64,6 +64,8 @@ interface DataContextType {
   markAllNotificationsAsRead: () => Promise<void>
   addNotification: (title: string, message: string) => Promise<void>
   recordPipelineRun: (records: number, sourceName: string) => Promise<void>
+  /** Upload a CSV File object to the DataBox backend */
+  uploadCsvFile: (file: File, type?: string) => Promise<void>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -79,188 +81,81 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [aiInsights, setAiInsights] = useState<string>()
   const [userCurrency, setUserCurrency] = useState<string>("BDT")
   const [notifications, setNotifications] = useState<Notification[]>([])
-  
+
   const unreadNotificationsCount = notifications.filter(n => !n.is_read).length
 
-  const loadDatasetData = async (dataset: any, supabase: any) => {
-    setDatasetId(dataset.id)
-    if (dataset.ai_insights) {
-      setAiInsights(dataset.ai_insights)
-    } else {
-      setAiInsights(undefined)
-    }
-    setActiveIntegrationName(undefined)
-
-    const { data: fileData, error: downloadError } = await supabase.storage
-      .from('user_datasets')
-      .download(dataset.file_path)
-
-    if (downloadError || !fileData) return []
-
-    const text = await fileData.text()
-    return new Promise<SMEDataRow[]>((resolve) => {
-      Papa.parse(text, {
-        header: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          if (results.data && results.data.length > 0) {
-            const normalized = normalizeCsvData(results.data)
-            resolve(normalized as SMEDataRow[])
-          } else {
-            resolve([])
-          }
-        }
-      })
-    })
-  }
-
-  const loadBizPOSData = async (currentData: SMEDataRow[], supabase: any, userId: string) => {
-    const { data } = await supabase.from('bizpos_sales').select('*').eq('user_id', userId).order('created_at', { ascending: false })
-    if (!data || data.length === 0) return currentData
-    
-    const bizposRows: SMEDataRow[] = data.map((row: any) => ({
-      Date: row.date || row.created_at.split('T')[0],
-      Product_ID: row.product_id,
-      Product_Name: row.product_name,
-      Category: row.category,
-      Location: row.location || "Main Register",
-      Sales_Channel: row.sales_channel || "In-Store",
-      Units_Sold: row.units_sold,
-      Revenue_BDT: Number(row.revenue_bdt),
-      Unit_Price: Number(row.unit_price),
-      Cost_Price: Number(row.cost_price),
-      Current_Stock: row.current_stock || 0,
-      Customer_Segment: row.customer_segment || "Walk-in"
-    }))
-    
-    // Check if any bizpos row is already in currentData (by ID) to avoid duplicates if they were manually baked in
-    const existingIds = new Set(currentData.map(d => d.Product_ID))
-    const uniqueBizpos = bizposRows.filter(r => !existingIds.has(r.Product_ID))
-    
-    return [...uniqueBizpos, ...currentData]
-  }
-
-  const refreshIntegrationHistory = async () => {
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user) return
-      const { data: integrations } = await supabase
-      .from('user_integrations')
-      .select('*')
-      .eq('user_id', session.user.id)
-    
-    if (integrations) {
-      setIntegrationHistory(integrations)
-    }
-  }
-
+  // ── Load raw data from DataBox on mount (if user is authenticated) ──────────
   useEffect(() => {
-    async function fetchHistory() {
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      const user = session?.user
-      if (!user) return
+    if (!isAuthenticated()) return
 
-      // Fetch user profile for currency
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('currency')
-        .eq('id', user.id)
-        .single()
-      
-      if (profile?.currency) {
-        setUserCurrency(profile.currency)
-      }
-
-      await refreshIntegrationHistory()
-
-      // Fetch Notifications
-      const { data: notifs } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20)
-        
-      if (notifs) {
-        setNotifications(notifs)
-      }
-
-      const { data: datasets, error } = await supabase
-        .from('datasets')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (error || !datasets || datasets.length === 0) return
-      
-      setDatasetHistory(datasets)
-      
-      // Load the latest dataset by default but wait to set it active
-      let defaultDataset = null;
-      if (datasets.length > 0) {
-        defaultDataset = datasets[0];
-      }
-
-      // Check if integration is active
-      const storedIntegration = localStorage.getItem("bizanolytics_integration_data")
-      const activeViewMode = localStorage.getItem("bizanolytics_active_view_mode")
-
-      if (activeViewMode === 'integration' && storedIntegration) {
-        try {
-          const parsed = JSON.parse(storedIntegration)
-          const { mapIntegrationToSMEData } = await import("@/app/integrations/utils/normalize")
-          let finalData = mapIntegrationToSMEData(parsed)
-          
-          let platform = parsed.source || 'woocommerce'
-          if (platform === 'custom_api') platform = 'custom'
-          const historyMatch = integrationHistory?.find(i => i.platform === platform)
-          const dbName = historyMatch?.display_name
-
-          finalData = await loadBizPOSData(finalData, supabase, user.id)
-          
-          setRawData(finalData)
-          setActiveIntegrationName(dbName || parsed?.business?.name)
-          setConnectedIntegrationName(dbName || parsed?.business?.name)
+    async function loadInitialData() {
+      try {
+        const res = await apiClient.get<{ data: SMEDataRow[]; pagination: any }>(
+          '/api/v1/dashboard/raw-data'
+        )
+        if (res.data && res.data.length > 0) {
+          setRawData(res.data)
           setIsDataUploaded(true)
-          
-          // Restore AI Insights for Integration
-          const storedInsights = localStorage.getItem("bizanolytics_integration_insights")
-          if (storedInsights) {
-            setAiInsights(storedInsights)
-          }
-        } catch (e) {
-          if (defaultDataset) {
-            const data = await loadDatasetData(defaultDataset, supabase)
-            const finalData = await loadBizPOSData(data || [], supabase, user.id)
-            if (finalData.length > 0) {
-              setRawData(finalData)
-              setIsDataUploaded(true)
-            }
-          }
         }
-      } else {
-        if (defaultDataset) {
-          const data = await loadDatasetData(defaultDataset, supabase)
-          const finalData = await loadBizPOSData(data || [], supabase, user.id)
-          if (finalData.length > 0) {
-            setRawData(finalData)
-            setIsDataUploaded(true)
-          }
-        } else {
-          // Even with no dataset, load any BizPOS sales they might have
-          const finalData = await loadBizPOSData([], supabase, user.id)
-          if (finalData.length > 0) {
-            setRawData(finalData)
-            setIsDataUploaded(true)
-          }
+      } catch (err) {
+        console.error('Failed to load raw data from DataBox:', err)
+      }
+
+      // Notifications
+      try {
+        const notifRes = await apiClient.get<{ notifications: any[]; unreadCount: number }>(
+          '/api/v1/notifications'
+        )
+        if (notifRes.notifications) {
+          // Map backend shape to local Notification type
+          const mapped: Notification[] = notifRes.notifications.map((n: any) => ({
+            id: n.id,
+            title: n.title ?? n.type ?? 'Notification',
+            message: n.message ?? '',
+            is_read: n.read ?? false,
+            created_at: n.createdAt ?? new Date().toISOString(),
+          }))
+          setNotifications(mapped)
         }
+      } catch (err) {
+        console.error('Failed to load notifications:', err)
       }
     }
-    fetchHistory()
+
+    loadInitialData()
   }, [])
 
+  // ── Upload CSV to DataBox ────────────────────────────────────────────────────
+  const uploadCsvFile = useCallback(async (file: File, type = 'sales') => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('type', type)
+
+    const toastId = toast.loading('Uploading data...')
+    try {
+      const res = await apiClient.upload<{
+        rowsInserted: number
+        rowsSkipped: number
+        message: string
+      }>('/api/v1/data/upload', formData)
+
+      toast.success(
+        `${res.message} (${res.rowsInserted} rows inserted, ${res.rowsSkipped} skipped)`,
+        { id: toastId }
+      )
+
+      // Re-fetch raw data after upload
+      const fresh = await apiClient.get<{ data: SMEDataRow[] }>('/api/v1/dashboard/raw-data')
+      if (fresh.data) {
+        setRawData(fresh.data)
+        setIsDataUploaded(true)
+      }
+    } catch (err: any) {
+      toast.error(`Upload failed: ${err.message}`, { id: toastId })
+    }
+  }, [])
+
+  // ── Integration helpers (data stored in localStorage for compatibility) ──────
   const loadIntegrationData = async () => {
     const stored = localStorage.getItem("bizanolytics_integration_data")
     if (stored) {
@@ -271,63 +166,38 @@ export function DataProvider({ children }: { children: ReactNode }) {
         setDatasetId(undefined)
         let platform = parsed.source || 'woocommerce'
         if (platform === 'custom_api') platform = 'custom'
-        
-        // Find if we have a display name in DB history
-        const historyMatch = integrations?.find(i => i.platform === platform)
+        const historyMatch = integrationHistory?.find((i: any) => i.platform === platform)
         const dbName = historyMatch?.display_name
-        
         setActiveIntegrationName(dbName || parsed.business?.name)
         setConnectedIntegrationName(dbName || parsed.business?.name)
         setIsDataUploaded(true)
         localStorage.setItem("bizanolytics_active_view_mode", "integration")
-        
         const storedInsights = localStorage.getItem("bizanolytics_integration_insights")
-        if (storedInsights) {
-          setAiInsights(storedInsights)
-        }
+        if (storedInsights) setAiInsights(storedInsights)
       } catch (e) {}
     }
   }
 
   const loadIntegrationByPlatform = async (platform: string) => {
+    const toastId = toast.loading("Fetching data from integration...")
     try {
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      const toastId = toast.loading("Fetching data from integration...")
-      
-      const res = await fetch(`/api/integrations/sync?platform=${platform}`, {
-        headers: { ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}) }
-      })
-      if (res.ok) {
-        const freshData = await res.json()
-        localStorage.setItem("bizanolytics_integration_data", JSON.stringify(freshData))
-        await loadIntegrationData()
-        toast.success("Successfully loaded integration data!", { id: toastId })
-      } else {
-        throw new Error("Failed to load")
-      }
+      // Integration sync goes through DataBox
+      const freshData = await apiClient.get<any>(`/api/v1/integrations/${platform}`)
+      localStorage.setItem("bizanolytics_integration_data", JSON.stringify(freshData))
+      await loadIntegrationData()
+      toast.success("Successfully loaded integration data!", { id: toastId })
     } catch (e) {
-      toast.error("Failed to load integration data")
+      toast.error("Failed to load integration data", { id: toastId })
     }
+  }
+
+  const refreshIntegrationHistory = async () => {
+    // Integration history is local for now; can be wired to a DataBox endpoint later
   }
 
   const renameIntegration = async (platform: string, newName: string) => {
     try {
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user) return
-
-      const { error } = await supabase
-        .from('user_integrations')
-        .update({ display_name: newName })
-        .eq('user_id', session.user.id)
-        .eq('platform', platform)
-
-      if (error) throw error
-
-      await refreshIntegrationHistory()
       setActiveIntegrationName(newName)
-      
       const stored = localStorage.getItem("bizanolytics_integration_data")
       if (stored) {
         const parsed = JSON.parse(stored)
@@ -335,100 +205,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
         parsed.business.name = newName
         localStorage.setItem("bizanolytics_integration_data", JSON.stringify(parsed))
       }
-      
       toast.success("Integration renamed successfully")
     } catch (e) {
       toast.error("Failed to rename integration")
     }
   }
 
-  // --- Auto Sync Logic ---
-  useEffect(() => {
-    if (!isDataUploaded || !activeIntegrationName) return;
-    
-    const syncFreq = localStorage.getItem("bizanolytics_sync_freq") || "daily";
-    const stored = localStorage.getItem("bizanolytics_integration_data");
-    if (!stored) return;
-    
-    try {
-      const parsed = JSON.parse(stored);
-      let source = parsed.source || "woocommerce";
-      if (source === "custom_api") source = "custom"; // Map to the DB platform name
-
-      const lastScrapedAt = new Date(parsed.scrapedAt || 0).getTime();
-      const now = Date.now();
-      
-      const doSync = async () => {
-        try {
-          const supabase = createClient()
-          const { data: { session } } = await supabase.auth.getSession()
-          const res = await fetch(`/api/integrations/sync?platform=${source}`, {
-            headers: {
-              ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {})
-            }
-          });
-          if (res.ok) {
-            const freshData = await res.json();
-            localStorage.setItem("bizanolytics_integration_data", JSON.stringify(freshData));
-            // Invalidate old insights since data changed
-            localStorage.removeItem("bizanolytics_integration_insights");
-            loadIntegrationData(); // Reload UI
-            console.log("Background sync completed for", source);
-          }
-        } catch (err) {
-          console.error("Background sync failed", err);
-        }
-      };
-
-      if (syncFreq === "instant") {
-        // Fetch now and set interval for every 3 minutes
-        doSync();
-        const intervalId = setInterval(doSync, 3 * 60 * 1000);
-        return () => clearInterval(intervalId);
-      } else if (syncFreq === "hourly") {
-        if (now - lastScrapedAt > 60 * 60 * 1000) {
-          doSync();
-        }
-        const intervalId = setInterval(() => {
-          if (Date.now() - new Date(JSON.parse(localStorage.getItem("bizanolytics_integration_data") || "{}").scrapedAt || 0).getTime() > 60 * 60 * 1000) {
-            doSync();
-          }
-        }, 5 * 60 * 1000); // check every 5 minutes if an hour has passed
-        return () => clearInterval(intervalId);
-      } else if (syncFreq === "daily") {
-        if (now - lastScrapedAt > 24 * 60 * 60 * 1000) {
-          doSync();
-        }
-      }
-    } catch (e) {}
-  }, [isDataUploaded, activeIntegrationName]);
-
-
   const loadDatasetById = async (id: string) => {
-    const supabase = createClient()
-    const dataset = datasetHistory.find(d => d.id === id)
-    if (!dataset) return
+    // Datasets are identified by rawData fetched from DataBox; this is kept for API compatibility
     localStorage.setItem("bizanolytics_active_view_mode", "dataset")
-    
-    const { data: { session } } = await supabase.auth.getSession()
-    const data = await loadDatasetData(dataset, supabase)
-    
-    if (session?.user) {
-      const finalData = await loadBizPOSData(data || [], supabase, session.user.id)
-      setRawData(finalData)
-      setIsDataUploaded(true)
-    } else if (data) {
-      setRawData(data)
-      setIsDataUploaded(true)
-    }
+    setDatasetId(id)
   }
 
   const renameDataset = async (id: string, newName: string) => {
-    const supabase = createClient()
-    const { error } = await supabase.from('datasets').update({ file_name: newName }).eq('id', id)
-    if (!error) {
-      setDatasetHistory(prev => prev.map(d => d.id === id ? { ...d, file_name: newName } : d))
-    }
+    setDatasetHistory(prev => prev.map(d => d.id === id ? { ...d, file_name: newName } : d))
   }
 
   const setUploadedData = (data: SMEDataRow[], id?: string, integrationName?: string) => {
@@ -439,21 +229,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
     if (integrationName) {
       setConnectedIntegrationName(integrationName)
       localStorage.setItem("bizanolytics_active_view_mode", "integration")
-      refreshIntegrationHistory() // Re-fetch integrations so new ones appear in header
     } else {
       localStorage.setItem("bizanolytics_active_view_mode", "dataset")
     }
     setAiInsights(undefined)
-    
-    // Refresh history if a new dataset was uploaded
-    if (id) {
-      const supabase = createClient()
-      supabase.from('datasets').select('*').eq('id', id).single().then(({ data: newDataset }) => {
-        if (newDataset) {
-          setDatasetHistory(prev => [newDataset, ...prev])
-        }
-      })
-    }
   }
 
   const resetData = () => {
@@ -465,76 +244,65 @@ export function DataProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("bizanolytics_active_view_mode")
   }
 
-  const saveAiInsights = async (insights: string) => {
-    setAiInsights(insights)
-    if (datasetId) {
-      const supabase = createClient()
-      await supabase.from('datasets').update({ ai_insights: insights }).eq('id', datasetId)
-    } else if (activeIntegrationName) {
-      localStorage.setItem("bizanolytics_integration_insights", insights)
-    }
-    addNotification("AI Forecast Generated", "Your new business forecast and AI insights are ready to view.")
-  }
 
+  // ── Notifications ────────────────────────────────────────────────────────────
   const markNotificationAsRead = async (id: string) => {
-    const supabase = createClient()
-    const { error } = await supabase.from('notifications').update({ is_read: true }).eq('id', id)
-    if (!error) {
+    try {
+      await apiClient.patch(`/api/v1/notifications/${id}/read`)
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+    } catch (e) {
+      console.error('Failed to mark notification as read', e)
     }
   }
 
   const markAllNotificationsAsRead = async () => {
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user) return
-    const { error } = await supabase.from('notifications').update({ is_read: true }).eq('user_id', session.user.id)
-    if (!error) {
+    try {
+      await apiClient.patch('/api/v1/notifications/all/read')
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+    } catch (e) {
+      console.error('Failed to mark all notifications as read', e)
     }
   }
 
-  const addNotification = async (title: string, message: string) => {
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session?.user) {
-      const { data, error } = await supabase.from('notifications').insert({
-        user_id: session.user.id,
-        title,
-        message
-      }).select().single()
-      
-      if (data && !error) {
-        setNotifications(prev => [data, ...prev])
-        toast.info(title, { description: message })
-      }
-    } else {
-      // For anonymous users testing locally
-      const mockId = `mock-${Date.now()}`
-      setNotifications(prev => [{ id: mockId, title, message, is_read: false, created_at: new Date().toISOString() }, ...prev])
-      toast.info(title, { description: message })
+  const addNotification = useCallback(async (title: string, message: string) => {
+    const mockId = `local-${Date.now()}`
+    const newNotif: Notification = {
+      id: mockId,
+      title,
+      message,
+      is_read: false,
+      created_at: new Date().toISOString(),
     }
-  }
+    setNotifications(prev => [newNotif, ...prev])
+    toast.info(title, { description: message })
 
-  const recordPipelineRun = async (records: number, sourceName: string) => {
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session?.user) {
-      const processingMs = Math.floor(400 + Math.random() * 200)
-      await supabase.from('pipeline_runs').insert({
-        user_id: session.user.id,
-        run_id: `RUN-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
-        source: sourceName,
-        status: "success",
-        duration: `${processingMs}ms`,
-        records
-      })
+    // Persist to DataBox if authenticated
+    if (isAuthenticated()) {
+      try {
+        const saved = await apiClient.post<any>('/api/v1/notifications', { title, message })
+        // Replace temp entry with server-assigned id
+        setNotifications(prev =>
+          prev.map(n => n.id === mockId ? { ...n, id: saved.id } : n)
+        )
+      } catch (e) {}
     }
+  }, [])
+
+  const saveAiInsights = useCallback((insights: string) => {
+    setAiInsights(insights)
+    if (activeIntegrationName) {
+      localStorage.setItem("bizanolytics_integration_insights", insights)
+    }
+    addNotification("AI Forecast Generated", "Your new business forecast and AI insights are ready to view.")
+  }, [activeIntegrationName, addNotification])
+
+  const recordPipelineRun = async (_records: number, _sourceName: string) => {
+    // Can wire to POST /api/v1/dashboard/pipeline/trigger if needed
   }
 
   return (
-    <DataContext.Provider value={{ 
-      isDataUploaded, rawData, setUploadedData, resetData, 
+    <DataContext.Provider value={{
+      isDataUploaded, rawData, setUploadedData, resetData,
       datasetId, datasetHistory, loadDatasetById, renameDataset,
       aiInsights, saveAiInsights,
       userCurrency, setUserCurrency,
@@ -544,7 +312,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       connectedIntegrationName, loadIntegrationData,
       integrationHistory, loadIntegrationByPlatform,
       refreshIntegrationHistory, renameIntegration,
-      recordPipelineRun
+      recordPipelineRun,
+      uploadCsvFile,
     }}>
       {children}
     </DataContext.Provider>

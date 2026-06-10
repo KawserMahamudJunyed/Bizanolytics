@@ -26,7 +26,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { logout } from "@/app/login/actions"
-import { createClient } from "@/utils/supabase/client"
+import { getUser, clearTokens } from "@/lib/auth"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { Language } from "@/lib/i18n"
 
@@ -55,7 +55,8 @@ export function Sidebar({
   user: any
 }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [displayName, setDisplayName] = useState(user?.user_metadata?.full_name || "User")
+  const storedUser = getUser()
+  const [displayName, setDisplayName] = useState(storedUser?.name || user?.user_metadata?.full_name || "User")
   const pathname = usePathname()
   const { language, setLanguage, t } = useLanguage()
 
@@ -72,32 +73,14 @@ export function Sidebar({
   }, [setIsCollapsed])
 
   useEffect(() => {
-    if (!user) return;
-    const fetchLatestName = async () => {
-      const supabase = createClient()
-      const { data } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
-      if (data?.full_name) {
-        setDisplayName(data.full_name)
-      } else {
-        const { data: sessionData } = await supabase.auth.getSession()
-        if (sessionData?.session?.user?.user_metadata?.full_name) {
-          setDisplayName(sessionData.session.user.user_metadata.full_name)
-        }
-      }
-    }
-    fetchLatestName()
-  }, [user])
+    const u = getUser()
+    if (u?.name) setDisplayName(u.name)
+  }, [])
 
   const handleLogout = async () => {
-    // 1. Clear client-side local storage session
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    
-    // 2. Clear server-side HTTP cookies
+    clearTokens()
     await logout()
-    
-    // 3. Hard reload to homepage
-    window.location.href = '/'
+    window.location.href = '/login'
   }
 
   return (

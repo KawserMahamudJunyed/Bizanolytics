@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { createClient } from '@/utils/supabase/client'
 import { Loader2, ArrowRight, Eye, EyeOff, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { useLanguage } from '@/contexts/LanguageContext'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
 
 export default function SignupPage() {
   const { t, language, setLanguage } = useLanguage()
@@ -13,9 +14,7 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [password, setPassword] = useState('')
-  const supabase = createClient()
 
-  // Calculate password strength
   const getPasswordStrength = (pass: string) => {
     let strength = 0
     if (pass.length >= 8) strength++
@@ -30,48 +29,33 @@ export default function SignupPage() {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    
+
     const formData = new FormData(e.currentTarget)
+    const name = formData.get('fullName') as string
     const email = formData.get('email') as string
     const pass = formData.get('password') as string
-    const fullName = formData.get('fullName') as string
-    const companyName = formData.get('companyName') as string
-    const industry = formData.get('industry') as string
-    const salesChannel = formData.get('salesChannel') as string
-    
+
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password: pass,
-        options: {
-          data: {
-            full_name: fullName,
-            company_name: companyName,
-            industry: industry,
-            sales_channel: salesChannel,
-          }
-        }
+      const res = await fetch(`${API_URL}/api/v1/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password: pass }),
       })
-      
-      if (error) {
-        setError(error.message)
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data?.error ?? 'Registration failed. Please try again.')
         setLoading(false)
-      } else {
-        if (data.user) {
-          // Insert a welcome notification
-          await supabase.from('notifications').insert({
-            user_id: data.user.id,
-            title: "Welcome to Bizanolytics!",
-            message: "Your account has been successfully created. Get started by connecting your e-commerce data or uploading a sales CSV.",
-            is_read: false
-          })
-        }
-        setTimeout(() => {
-          window.location.href = '/login?signup=success'
-        }, 500)
+        return
       }
+
+      // Registration successful — redirect to login
+      setTimeout(() => {
+        window.location.href = '/login?signup=success'
+      }, 300)
     } catch (err) {
-      setError("An unexpected error occurred.")
+      setError('An unexpected error occurred. Is the backend running?')
       setLoading(false)
     }
   }
@@ -80,7 +64,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4 relative overflow-hidden">
       <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-primary/5 blur-[128px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-secondary/20 blur-[128px] pointer-events-none" />
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -171,13 +155,13 @@ export default function SignupPage() {
               placeholder="you@example.com"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">{t('password')}</label>
             <div className="relative">
               <input
                 name="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -207,7 +191,7 @@ export default function SignupPage() {
                   ))}
                 </div>
                 <p className="text-[10px] text-muted-foreground text-right">
-                  {strength === 0 ? "Very weak" : strength === 1 ? "Weak" : strength === 2 ? "Fair" : strength === 3 ? "Good" : "Strong"}
+                  {strength === 0 ? 'Very weak' : strength === 1 ? 'Weak' : strength === 2 ? 'Fair' : strength === 3 ? 'Good' : 'Strong'}
                 </p>
               </div>
             )}
@@ -230,12 +214,12 @@ export default function SignupPage() {
         </form>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          {t('already_account')}{" "}
+          {t('already_account')}{' '}
           <Link href="/login" className="text-foreground hover:underline font-medium">
             {t('log_in')}
           </Link>
         </div>
-        
+
         <div className="mt-8 pt-6 border-t border-border/50 text-center">
           <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             {t('guest_mode')}

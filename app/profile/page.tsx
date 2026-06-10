@@ -2,17 +2,17 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Save, User, Building2, Loader2, ArrowLeft, Settings, CheckCircle } from "lucide-react"
-import { createClient } from "@/utils/supabase/client"
+import { Save, User, Building2, Loader2, Settings, CheckCircle } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { getUser, saveUser } from "@/lib/auth"
 
 export default function ProfilePage() {
   const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  
+
   const [profile, setProfile] = useState({
     full_name: "",
     company_name: "",
@@ -20,84 +20,27 @@ export default function ProfilePage() {
   const [syncFreq, setSyncFreq] = useState("daily")
 
   useEffect(() => {
-    async function loadProfile() {
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      
-      if (!session?.user) {
-        setIsLoading(false)
-        return
-      }
-
-      const { data } = await supabase
-        .from("profiles")
-        .select("full_name, company_name")
-        .eq("id", session.user.id)
-        .single()
-
-      if (data) {
-        setProfile({
-          full_name: data.full_name || session.user.user_metadata?.full_name || "",
-          company_name: data.company_name || "",
-        })
-      } else {
-        setProfile(p => ({
-          ...p,
-          full_name: session.user.user_metadata?.full_name || ""
-        }))
-      }
-      
-      const freq = localStorage.getItem("bizanolytics_sync_freq") || "daily"
-      setSyncFreq(freq)
-      
-      setIsLoading(false)
+    const storedUser = getUser()
+    if (storedUser) {
+      setProfile({
+        full_name: storedUser.name || "",
+        company_name: "",
+      })
     }
-    loadProfile()
+    const freq = localStorage.getItem("bizanolytics_sync_freq") || "daily"
+    setSyncFreq(freq)
+    setIsLoading(false)
   }, [])
 
   const handleSave = async () => {
     setIsSaving(true)
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    
-    if (!session?.user) {
-      toast.error("You must be logged in to save profile.")
-      setIsSaving(false)
-      return
+    const storedUser = getUser()
+    if (storedUser) {
+      saveUser({ ...storedUser, name: profile.full_name })
     }
-
-    // Update auth metadata so the sidebar automatically gets the new name
-    const { error: authError } = await supabase.auth.updateUser({
-      data: { full_name: profile.full_name, company_name: profile.company_name }
-    })
-
-    // Also try updating the public profiles table (if it exists)
-    const { error: dbError } = await supabase
-      .from("profiles")
-      .upsert({
-        id: session.user.id,
-        full_name: profile.full_name,
-        company_name: profile.company_name
-      }, { onConflict: 'id' })
-
     setIsSaving(false)
-    
-    if (authError || dbError) {
-      if (dbError) console.error("Supabase Profiles Error:", dbError);
-      if (authError) console.error("Supabase Auth Error:", authError);
-      
-      if (!authError && dbError) {
-        toast.warning(`${t('profile_saved_db_failed')}: ${dbError.message}`)
-        // Auth succeeded, so we still want to reload the UI to reflect the new Auth name!
-        setTimeout(() => window.location.reload(), 2500)
-      } else {
-        toast.error(t('error_saving'))
-      }
-    } else {
-      toast.success(t('profile_saved'))
-      // Hard refresh to ensure the sidebar component re-fetches the auth session
-      setTimeout(() => window.location.reload(), 1000)
-    }
+    toast.success(t('profile_saved'))
+    setTimeout(() => window.location.reload(), 800)
   }
 
   if (isLoading) {
@@ -113,7 +56,7 @@ export default function ProfilePage() {
       <Link href="/settings" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
         <Settings className="w-4 h-4" /> {t('go_to_account_settings')}
       </Link>
-      
+
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('your_profile')}</h1>
         <p className="text-muted-foreground mt-2">{t('manage_profile')}</p>
@@ -134,7 +77,7 @@ export default function ProfilePage() {
               <p className="text-sm text-muted-foreground">{profile.company_name || "Configure your details below"}</p>
             </div>
           </div>
-          
+
           <div className="sm:ml-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-secondary/50 text-xs font-medium text-foreground">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -142,7 +85,7 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">{t('full_name')}</label>
@@ -151,7 +94,7 @@ export default function ProfilePage() {
               <input
                 type="text"
                 value={profile.full_name}
-                onChange={e => setProfile({...profile, full_name: e.target.value})}
+                onChange={e => setProfile({ ...profile, full_name: e.target.value })}
                 className="w-full rounded-xl border border-border bg-secondary/50 py-3 pl-10 pr-4 text-sm text-foreground focus:ring-2 focus:ring-primary/30 outline-none transition-all"
               />
             </div>
@@ -164,7 +107,7 @@ export default function ProfilePage() {
               <input
                 type="text"
                 value={profile.company_name}
-                onChange={e => setProfile({...profile, company_name: e.target.value})}
+                onChange={e => setProfile({ ...profile, company_name: e.target.value })}
                 className="w-full rounded-xl border border-border bg-secondary/50 py-3 pl-10 pr-4 text-sm text-foreground focus:ring-2 focus:ring-primary/30 outline-none transition-all"
               />
             </div>

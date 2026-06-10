@@ -7,28 +7,21 @@ import { Header } from "@/components/header"
 import { DataGuard } from "@/components/data-guard"
 import { DataChatbot } from "@/components/data-chatbot"
 import { cn } from "@/lib/utils"
-import { createClient } from "@/utils/supabase/client"
-
+import { getUser } from "@/lib/auth"
 import { AlertCircle } from "lucide-react"
 
-export function AppLayout({ children, user: serverUser }: { children: React.ReactNode, user: any }) {
+export function AppLayout({ children, user: _serverUser }: { children: React.ReactNode, user: any }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const pathname = usePathname()
-  const [user, setUser] = useState(serverUser)
+  // Read user from localStorage (set during login via lib/auth.ts)
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    const supabase = createClient()
-    
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
-    return () => subscription.unsubscribe()
+    const stored = getUser()
+    if (stored) {
+      setUser({ id: stored.id, email: stored.email, user_metadata: { full_name: stored.name } })
+    }
   }, [])
 
   if (pathname === '/login' || pathname === '/signup' || pathname === '/') {
@@ -37,7 +30,7 @@ export function AppLayout({ children, user: serverUser }: { children: React.Reac
 
   return (
     <div className="relative flex min-h-screen bg-background">
-      <Sidebar 
+      <Sidebar
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
         isHovered={isHovered}
@@ -55,7 +48,8 @@ export function AppLayout({ children, user: serverUser }: { children: React.Reac
           <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-3 flex items-center gap-3 text-sm text-amber-500">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <p>
-              <strong>You are not logged in.</strong> Your data is stored in memory and will vanish upon reload. <a href="/login" className="underline font-medium hover:text-amber-400">Log in</a> to save your analysis permanently.
+              <strong>You are not logged in.</strong> Your data is stored in memory and will vanish upon reload.{' '}
+              <a href="/login" className="underline font-medium hover:text-amber-400">Log in</a> to save your analysis permanently.
             </p>
           </div>
         )}

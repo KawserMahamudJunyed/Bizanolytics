@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-
+import Papa from "papaparse"
 import { motion } from "framer-motion"
 import { ArrowUpRight, AlertTriangle, CheckCircle, Clock, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -38,6 +38,7 @@ const statusConfig = {
 
 import { useData } from "@/contexts/DataContext"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { apiClient } from "@/lib/api"
 
 export function AIInsights() {
   const { rawData, aiInsights: cachedInsights, saveAiInsights } = useData()
@@ -73,12 +74,7 @@ export function AIInsights() {
 
       setLoading(true)
       try {
-        const res = await fetch("/api/forecast-insight", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ rawData, language })
-        })
-        const data = await res.json()
+        const data = await apiClient.post<any>("/api/v1/ai/forecast-insight", { rawData, language })
         setAiInsight(data.insight)
         
         // Merge into JSON
@@ -153,6 +149,20 @@ import { useMemo } from "react";
 export function BangladeshForecastTable() {
   const { rawData } = useData();
   const { t } = useLanguage();
+
+  const handleExport = () => {
+    if (!rawData || rawData.length === 0) return;
+    const csv = Papa.unparse(rawData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'sales_data_export.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   
   const bgdForecastData = useMemo(() => {
     if (!rawData || rawData.length === 0) return [];
@@ -202,7 +212,9 @@ export function BangladeshForecastTable() {
           </h3>
           <p className="mt-0.5 text-xs text-muted-foreground">{t('regional_desc')}</p>
         </div>
-        <button className="group flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary">
+        <button 
+          onClick={handleExport}
+          className="group flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary">
           {t('export_report')}
           <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
         </button>
@@ -282,7 +294,7 @@ export function BangladeshForecastTable() {
                         )}
                       >
                         <StatusIcon className="h-3 w-3" />
-                        <span>{t(status.label.toLowerCase().replace(' ', '_'))}</span>
+                        <span>{t(status.label.toLowerCase().replace(' ', '_') as any)}</span>
                       </div>
                     </td>
                   </motion.tr>

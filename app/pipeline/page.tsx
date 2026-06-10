@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 
 import { useData } from "@/contexts/DataContext"
 import { useLanguage } from "@/contexts/LanguageContext"
-import { createClient } from "@/utils/supabase/client"
+import { apiClient } from "@/lib/api"
 import { toast } from "sonner"
 
 type PipelineRun = {
@@ -40,45 +40,24 @@ export default function PipelinePage() {
   const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([])
   const prevDataLenRef = useRef(0)
   const [, forceUpdate] = useState(0)
-  const supabase = createClient()
-  
   const recordCount = isDataUploaded ? rawData.length : 0
 
-  // Fetch initial data
   useEffect(() => {
     async function loadRuns() {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        const { data } = await supabase
-          .from('pipeline_runs')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(10)
-        
-        if (data) {
-          setPipelineRuns(data.map((r: any) => {
-            // Check if source column exists, otherwise fallback to parsing legacy run_id or default
-            let source = r.source
-            let actualId = r.run_id
-            
-            if (!source && r.run_id && r.run_id.includes('|')) {
-              const parts = r.run_id.split('|')
-              actualId = parts[0]
-              source = parts.slice(1).join('|')
-            } else if (!source) {
-              source = "CSV Upload"
-            }
-            
-            return {
-              id: actualId,
-              source: source,
-              status: r.status as any,
-              duration: r.duration,
-              records: r.records,
-              timestamp: new Date(r.created_at)
-            }
-          }))
+      try {
+        const res = await apiClient.get<{ events: any[] }>('/api/v1/dashboard/pipeline/events')
+        if (res.events && res.events.length > 0) {
+          setPipelineRuns(res.events.map((r: any) => ({
+            id: r.runId || r.id || generateRunId(),
+            source: r.source || 'CSV Upload',
+            status: (r.status as any) || 'success',
+            duration: r.duration || '0ms',
+            records: r.recordsProcessed || r.records || 0,
+            timestamp: new Date(r.createdAt || r.timestamp || Date.now()),
+          })))
         }
+      } catch (e) {
+        // Not authenticated or no runs yet — that's fine
       }
     }
     loadRuns()
