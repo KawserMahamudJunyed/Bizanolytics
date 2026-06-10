@@ -18,6 +18,7 @@ function LoginContent() {
   const [password, setPassword] = useState('')
   const searchParams = useSearchParams()
   const isSignupSuccess = searchParams.get('signup') === 'success'
+  const isSessionExpired = searchParams.get('session') === 'expired'
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -76,6 +77,12 @@ function LoginContent() {
           {t('login_desc')}
         </p>
       </div>
+
+      {isSessionExpired && (
+        <div className="mb-6 rounded-lg bg-amber-500/10 p-4 text-sm text-amber-500 border border-amber-500/20">
+          Your session has expired. Please log in again.
+        </div>
+      )}
 
       {isSignupSuccess && (
         <div className="mb-6 rounded-lg bg-emerald-500/10 p-4 text-sm text-emerald-500 border border-emerald-500/20">

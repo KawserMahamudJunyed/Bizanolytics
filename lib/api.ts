@@ -48,6 +48,14 @@ async function request<T = unknown>(path: string, opts: RequestOptions = {}): Pr
 
   if (!res.ok) {
     const errText = await res.text().catch(() => res.statusText);
+    if (res.status === 401 && errText.includes('INVALID_TOKEN')) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('biz_access_token');
+        localStorage.removeItem('biz_refresh_token');
+        localStorage.removeItem('biz_user');
+        window.location.href = '/login?session=expired';
+      }
+    }
     throw new Error(`API error ${res.status}: ${errText}`);
   }
 
