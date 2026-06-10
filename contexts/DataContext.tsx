@@ -24,9 +24,8 @@ export type SMEDataRow = {
 
 export type DatasetMeta = {
   id: string
-  file_name: string
-  file_path: string
-  created_at: string
+  fileName: string
+  createdAt: string
 }
 
 export type Notification = {
@@ -64,8 +63,10 @@ interface DataContextType {
   markAllNotificationsAsRead: () => Promise<void>
   addNotification: (title: string, message: string) => Promise<void>
   recordPipelineRun: (records: number, sourceName: string) => Promise<void>
-  /** Upload a CSV File object to the DataBox backend */
-  uploadCsvFile: (file: File, type?: string) => Promise<void>
+  uploadCsvFile: (file: File, type?: string) => Promise<any>
+  deleteDataset: (id: string) => Promise<void>
+  activeViewMode: 'dataset' | 'integration'
+  setViewMode: (mode: 'dataset' | 'integration') => Promise<void>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -73,6 +74,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined)
 export function DataProvider({ children }: { children: ReactNode }) {
   const [rawData, setRawData] = useState<SMEDataRow[]>([])
   const [isDataUploaded, setIsDataUploaded] = useState(false)
+  const [activeViewMode, setActiveViewModeState] = useState<'dataset' | 'integration'>('dataset')
   const [datasetId, setDatasetId] = useState<string>()
   const [datasetHistory, setDatasetHistory] = useState<DatasetMeta[]>([])
   const [integrationHistory, setIntegrationHistory] = useState<any[]>([])
@@ -84,11 +86,36 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const unreadNotificationsCount = notifications.filter(n => !n.is_read).length
 
-  // ── Load raw data from DataBox on mount (if user is authenticated) ──────────
-  useEffect(() => {
-    if (!isAuthenticated()) return
+  // ── Integration helpers (data stored in localStorage for compatibility) ──────
+  const loadIntegrationData = async () => {
+    const stored = localStorage.getItem("bizanolytics_integration_data")
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored)
+        const { mapIntegrationToSMEData } = await import("@/app/integrations/utils/normalize")
+        setRawData(mapIntegrationToSMEData(parsed))
+        setDatasetId(undefined)
+        let platform = parsed.source || 'woocommerce'
+        if (platform === 'custom_api') platform = 'custom'
+        const historyMatch = integrationHistory?.find((i: any) => i.platform === platform)
+        const dbName = historyMatch?.display_name
+        setActiveIntegrationName(dbName || parsed.business?.name)
+        setConnectedIntegrationName(dbName || parsed.business?.name)
+        setIsDataUploaded(true)
+        localStorage.setItem("bizanolytics_active_view_mode", "integration")
+        const storedInsights = localStorage.getItem("bizanolytics_integration_insights")
+        if (storedInsights) setAiInsights(storedInsights)
+      } catch (e) {}
+    }
+  }
 
-    async function loadInitialData() {
+  // Set view mode with side effects
+  const setViewMode = async (mode: 'dataset' | 'integration') => {
+    setActiveViewModeState(mode)
+    localStorage.setItem("bizanolytics_active_view_mode", mode)
+    if (mode === "integration") {
+      await loadIntegrationData()
+    } else {
       try {
         const res = await apiClient.get<{ data: SMEDataRow[]; pagination: any }>(
           '/api/v1/dashboard/raw-data'
@@ -96,9 +123,46 @@ export function DataProvider({ children }: { children: ReactNode }) {
         if (res.data && res.data.length > 0) {
           setRawData(res.data)
           setIsDataUploaded(true)
+        } else {
+          setRawData([])
+          setIsDataUploaded(false)
         }
       } catch (err) {
         console.error('Failed to load raw data from DataBox:', err)
+      }
+    }
+  }
+
+  // ── Load raw data from DataBox on mount (if user is authenticated) ──────────
+  useEffect(() => {
+    if (!isAuthenticated()) return
+
+    async function loadInitialData() {
+      const activeMode = (localStorage.getItem("bizanolytics_active_view_mode") as 'dataset' | 'integration') || 'dataset'
+      setActiveViewModeState(activeMode)
+      if (activeMode === "integration") {
+        await loadIntegrationData()
+      } else {
+        try {
+          const res = await apiClient.get<{ data: SMEDataRow[]; pagination: any }>(
+            '/api/v1/dashboard/raw-data'
+          )
+          if (res.data && res.data.length > 0) {
+            setRawData(res.data)
+            setIsDataUploaded(true)
+          }
+        } catch (err) {
+          console.error('Failed to load raw data from DataBox:', err)
+        }
+      }
+
+      try {
+        const dRes = await apiClient.get<{ datasets: any[] }>('/api/v1/data/datasets')
+        if (dRes.datasets) {
+          setDatasetHistory(dRes.datasets)
+        }
+      } catch (err) {
+        console.error('Failed to load datasets:', err)
       }
 
       // Notifications
@@ -137,6 +201,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         rowsInserted: number
         rowsSkipped: number
         message: string
+        datasetId?: string
       }>('/api/v1/data/upload', formData)
 
       toast.success(
@@ -150,33 +215,23 @@ export function DataProvider({ children }: { children: ReactNode }) {
         setRawData(fresh.data)
         setIsDataUploaded(true)
       }
+      
+      const freshDataRes = await apiClient.get<{ datasets: any[] }>('/api/v1/data/datasets')
+      if (freshDataRes.datasets) {
+        setDatasetHistory(freshDataRes.datasets)
+      }
+
+      if (res.datasetId) {
+        setDatasetId(res.datasetId)
+      }
+      return res
     } catch (err: any) {
       toast.error(`Upload failed: ${err.message}`, { id: toastId })
+      throw err
     }
   }, [])
 
-  // ── Integration helpers (data stored in localStorage for compatibility) ──────
-  const loadIntegrationData = async () => {
-    const stored = localStorage.getItem("bizanolytics_integration_data")
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored)
-        const { mapIntegrationToSMEData } = await import("@/app/integrations/utils/normalize")
-        setRawData(mapIntegrationToSMEData(parsed))
-        setDatasetId(undefined)
-        let platform = parsed.source || 'woocommerce'
-        if (platform === 'custom_api') platform = 'custom'
-        const historyMatch = integrationHistory?.find((i: any) => i.platform === platform)
-        const dbName = historyMatch?.display_name
-        setActiveIntegrationName(dbName || parsed.business?.name)
-        setConnectedIntegrationName(dbName || parsed.business?.name)
-        setIsDataUploaded(true)
-        localStorage.setItem("bizanolytics_active_view_mode", "integration")
-        const storedInsights = localStorage.getItem("bizanolytics_integration_insights")
-        if (storedInsights) setAiInsights(storedInsights)
-      } catch (e) {}
-    }
-  }
+
 
   const loadIntegrationByPlatform = async (platform: string) => {
     const toastId = toast.loading("Fetching data from integration...")
@@ -218,7 +273,29 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }
 
   const renameDataset = async (id: string, newName: string) => {
-    setDatasetHistory(prev => prev.map(d => d.id === id ? { ...d, file_name: newName } : d))
+    setDatasetHistory(prev => prev.map(d => d.id === id ? { ...d, fileName: newName } : d))
+  }
+
+  const deleteDataset = async (id: string) => {
+    const toastId = toast.loading('Deleting dataset...')
+    try {
+      await apiClient.delete(`/api/v1/data/datasets/${id}`)
+      toast.success('Dataset deleted successfully!', { id: toastId })
+      
+      const dRes = await apiClient.get<{ datasets: any[] }>('/api/v1/data/datasets')
+      setDatasetHistory(dRes.datasets || [])
+      
+      const res = await apiClient.get<{ data: SMEDataRow[] }>('/api/v1/dashboard/raw-data')
+      if (res.data && res.data.length > 0) {
+        setRawData(res.data)
+        setIsDataUploaded(true)
+      } else {
+        setRawData([])
+        setIsDataUploaded(false)
+      }
+    } catch (err: any) {
+      toast.error(`Failed to delete dataset: ${err.message}`, { id: toastId })
+    }
   }
 
   const setUploadedData = (data: SMEDataRow[], id?: string, integrationName?: string) => {
@@ -228,8 +305,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setActiveIntegrationName(integrationName)
     if (integrationName) {
       setConnectedIntegrationName(integrationName)
+      setActiveViewModeState('integration')
       localStorage.setItem("bizanolytics_active_view_mode", "integration")
     } else {
+      setActiveViewModeState('dataset')
       localStorage.setItem("bizanolytics_active_view_mode", "dataset")
     }
     setAiInsights(undefined)
@@ -241,6 +320,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setDatasetId(undefined)
     setAiInsights(undefined)
     setActiveIntegrationName(undefined)
+    setActiveViewModeState('dataset')
     localStorage.removeItem("bizanolytics_active_view_mode")
   }
 
@@ -314,6 +394,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
       refreshIntegrationHistory, renameIntegration,
       recordPipelineRun,
       uploadCsvFile,
+      deleteDataset,
+      activeViewMode,
+      setViewMode
     }}>
       {children}
     </DataContext.Provider>

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Plus, Edit2, Check, X, Database, Bell, Menu } from "lucide-react"
+import { Plus, Check, X, Database, Bell, Menu } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -50,8 +50,6 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
     markAllNotificationsAsRead 
   } = useData()
   const { t } = useLanguage()
-  const [isRenaming, setIsRenaming] = useState(false)
-  const [editName, setEditName] = useState("")
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -71,45 +69,6 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
   // System emergency message override
   const emergencyMessage = null; // Set this string to broadcast an emergency message to all users
   const finalGreeting = emergencyMessage ? emergencyMessage : displayGreeting
-
-  const activeDataset = datasetHistory.find(d => d.id === datasetId)
-
-  const handleRenameStart = () => {
-    if (activeIntegrationName) {
-      setEditName(activeIntegrationName)
-      setIsRenaming(true)
-    } else if (activeDataset) {
-      setEditName(activeDataset.file_name)
-      setIsRenaming(true)
-    }
-  }
-
-  const handleRenameSave = () => {
-    if (!editName.trim()) {
-      setIsRenaming(false)
-      return
-    }
-    
-    if (activeIntegrationName) {
-      const stored = localStorage.getItem("bizanolytics_integration_data")
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored)
-          let platform = parsed.source || 'woocommerce'
-          if (platform === 'custom_api') platform = 'custom'
-          
-          if (renameIntegration) {
-            renameIntegration(platform, editName.trim())
-          } else {
-            setActiveIntegrationName(editName.trim())
-          }
-        } catch(e) {}
-      }
-    } else if (datasetId) {
-      renameDataset(datasetId, editName.trim())
-    }
-    setIsRenaming(false)
-  }
 
   return (
     <motion.header
@@ -137,120 +96,9 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
         </motion.p>
       </div>
 
-      {datasetHistory.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          {isRenaming ? (
-            <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-md border border-border">
-              <input 
-                type="text" 
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleRenameSave()}
-                className="bg-transparent px-2 py-1 text-sm outline-none text-foreground w-48"
-                autoFocus
-              />
-              <button onClick={handleRenameSave} className="p-1 hover:text-emerald-500 transition-colors">
-                <Check className="w-4 h-4" />
-              </button>
-              <button onClick={() => setIsRenaming(false)} className="p-1 hover:text-red-500 transition-colors">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 border-dashed">
-                  <Database className="w-4 h-4 text-muted-foreground" />
-                  <span className="truncate max-w-[150px] flex items-center">
-                    {activeIntegrationName ? (
-                      <>
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mr-2" />
-                        {activeIntegrationName}
-                      </>
-                    ) : activeDataset ? activeDataset.file_name : t('select_dataset')}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
-                <DropdownMenuLabel>{t('live_integrations')}</DropdownMenuLabel>
-                {integrationHistory && integrationHistory.length > 0 ? (
-                  integrationHistory.map((integration) => {
-                    const customName = integration.display_name
-                    
-                    // Check if this integration is the active one
-                    const isActive = activeIntegrationName && (activeIntegrationName === customName || activeIntegrationName.toLowerCase().includes(integration.platform) || activeIntegrationName === integration.platform);
-                    // Generate a human readable name
-                    const defaultName = integration.platform === 'woocommerce' ? 'WooCommerce' : 
-                                 integration.platform === 'shopify' ? 'Shopify' :
-                                 integration.platform === 'custom' ? 'Custom API' :
-                                 integration.platform === 'sheets' ? 'Google Sheets' :
-                                 integration.platform === 'sql' ? 'SQL Database' :
-                                 integration.platform.charAt(0).toUpperCase() + integration.platform.slice(1);
-                    
-                    const name = customName || defaultName;
-                    return (
-                      <DropdownMenuItem 
-                        key={integration.id}
-                        onClick={() => !isActive && loadIntegrationByPlatform(integration.platform)}
-                        className={cn(
-                          "flex justify-between items-center cursor-pointer",
-                          isActive ? "text-emerald-500" : "text-foreground hover:bg-secondary"
-                        )}
-                      >
-                        <span className="truncate flex-1 pr-2 flex items-center">
-                          <span className={cn("w-2 h-2 rounded-full shrink-0 mr-2", isActive ? "bg-emerald-500" : "bg-transparent")} />
-                          {name}
-                        </span>
-                        <span className="text-xs text-muted-foreground shrink-0">{formatTimeAgo(integration.updated_at || integration.created_at)}</span>
-                      </DropdownMenuItem>
-                    )
-                  })
-                ) : (
-                  <DropdownMenuItem className="text-muted-foreground cursor-default">
-                    {t('no_active_integration')}
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={() => router.push('/integrations')} className="cursor-pointer text-muted-foreground focus:text-emerald-500 focus:bg-emerald-500/10 hover:text-emerald-500 hover:bg-emerald-500/10 mt-1">
-                  <Plus className="w-4 h-4 mr-2" /> {t('connect_new_integration')}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel>{t('your_datasets')}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {datasetHistory.map((dataset) => {
-                  const isDatasetActive = !activeIntegrationName && dataset.id === datasetId;
-                  return (
-                    <DropdownMenuItem 
-                      key={dataset.id}
-                      onClick={() => loadDatasetById(dataset.id)}
-                      className={cn(
-                        "flex justify-between items-center cursor-pointer",
-                        isDatasetActive ? "text-emerald-500" : "text-foreground hover:bg-secondary"
-                      )}
-                    >
-                      <span className="truncate flex-1 pr-2 flex items-center">
-                        <span className={cn("w-2 h-2 rounded-full shrink-0 mr-2", isDatasetActive ? "bg-emerald-500" : "bg-transparent")} />
-                        {dataset.file_name}
-                      </span>
-                      <span className="text-xs text-muted-foreground shrink-0">{formatTimeAgo(dataset.created_at)}</span>
-                    </DropdownMenuItem>
-                  )
-                })}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={resetData} className="cursor-pointer text-muted-foreground focus:text-emerald-500 focus:bg-emerald-500/10 hover:text-emerald-500 hover:bg-emerald-500/10">
-                  <Plus className="w-4 h-4 mr-2" /> {t('upload_new_dataset')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-
-          <div className="flex items-center gap-2 shrink-0">
-            {(activeDataset || activeIntegrationName) && !isRenaming && (
-              <Button variant="ghost" size="icon" onClick={handleRenameStart} className="h-9 w-9 shrink-0" title="Rename">
-                <Edit2 className="w-4 h-4 text-muted-foreground" />
-              </Button>
-            )}
-
-            {/* Notifications */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Notifications */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 relative">
@@ -320,7 +168,6 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
             </Button>
           </div>
         </div>
-      )}
     </motion.header>
   )
 }

@@ -11,6 +11,8 @@ import {
   Coins, 
   TrendingUp, 
   Users,
+  Database,
+  Globe
 } from "lucide-react"
 import { useData } from "@/contexts/DataContext"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -18,7 +20,15 @@ import { cn } from "@/lib/utils"
 import { formatCurrency } from "@/utils/currency"
 
 export default function Dashboard() {
-  const { rawData, isDataUploaded, userCurrency } = useData()
+  const { 
+    rawData, 
+    isDataUploaded, 
+    userCurrency,
+    activeViewMode,
+    setViewMode,
+    connectedIntegrationName,
+    datasetHistory
+  } = useData()
   const { t } = useLanguage()
 
   // Calculate dynamic metrics
@@ -77,6 +87,37 @@ export default function Dashboard() {
       transition={{ duration: 0.2 }}
       className="space-y-6"
     >
+      {connectedIntegrationName && datasetHistory.length > 0 && (
+        <div className="flex justify-end">
+          <div className="inline-flex rounded-xl bg-secondary/50 p-1 border border-border">
+            <button
+              onClick={() => setViewMode('dataset')}
+              className={cn(
+                "rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 flex items-center gap-1.5",
+                activeViewMode === 'dataset'
+                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Database className="w-3.5 h-3.5" />
+              Database (CSVs)
+            </button>
+            <button
+              onClick={() => setViewMode('integration')}
+              className={cn(
+                "rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 flex items-center gap-1.5",
+                activeViewMode === 'integration'
+                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Globe className="w-3.5 h-3.5" />
+              Integration ({connectedIntegrationName})
+            </button>
+          </div>
+        </div>
+      )}
+
       <section className="mb-8">
         <MetricsGrid metrics={metrics} />
       </section>

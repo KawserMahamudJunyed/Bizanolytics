@@ -104,7 +104,7 @@ export function DataFlowVisualization() {
   const { rawData, isDataUploaded, activeIntegrationName, datasetId, datasetHistory } = useData()
   const { t } = useLanguage()
   
-  const activeDatasetName = datasetHistory?.find(d => d.id === datasetId)?.file_name
+  const activeDatasetName = datasetHistory?.find(d => d.id === datasetId)?.fileName;
   
   // Calculate real metrics based on the uploaded data
   const recordCount = isDataUploaded ? rawData.length : 0

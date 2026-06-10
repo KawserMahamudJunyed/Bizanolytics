@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Upload, FileText, CheckCircle, AlertCircle, RefreshCw, Brain } from "lucide-react"
+import { Upload, FileText, CheckCircle, AlertCircle, RefreshCw, Brain, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Papa from "papaparse"
 import * as XLSX from "xlsx"
@@ -19,7 +19,7 @@ export function DataUpload() {
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "processing" | "imputing" | "success" | "error" | "insufficient">("idle")
   const [progress, setProgress] = useState(0)
   const [errorMessage, setErrorMessage] = useState("")
-  const { setUploadedData, uploadCsvFile } = useData()
+  const { setUploadedData, uploadCsvFile, datasetHistory, deleteDataset } = useData()
   const { t } = useLanguage()
   const router = useRouter()
 
@@ -84,8 +84,10 @@ export function DataUpload() {
     }
 
     // Upload to DataBox and persist in Neon via /api/v1/data/upload
+    let uploadSucceeded = false
     try {
       await uploadCsvFile(currentFile, 'sales')
+      uploadSucceeded = true
     } catch (err: any) {
       console.warn('DataBox upload failed, continuing with local display:', err.message)
     }
@@ -94,7 +96,9 @@ export function DataUpload() {
     setProgress(100)
 
     setTimeout(() => {
-      setUploadedData(normalizedData as any, undefined)
+      if (!uploadSucceeded) {
+        setUploadedData(normalizedData as any, undefined)
+      }
       router.push("/dashboard")
     }, 1000)
   }
@@ -333,6 +337,34 @@ export function DataUpload() {
           )}
         </AnimatePresence>
       </div>
+
+      {datasetHistory && datasetHistory.length > 0 && (
+        <div className="mt-8 border-t border-border pt-6">
+          <h4 className="text-sm font-semibold text-foreground mb-4">Uploaded Datasets</h4>
+          <div className="space-y-3">
+            {datasetHistory.map((ds) => (
+              <div key={ds.id} className="flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-3">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-md bg-primary/10 p-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{ds.fileName}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(ds.createdAt).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => deleteDataset(ds.id)}
+                  className="rounded-md p-2 text-muted-foreground hover:bg-red-500/10 hover:text-red-500 transition-colors"
+                  title="Delete Dataset"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </motion.div>
   )
 }

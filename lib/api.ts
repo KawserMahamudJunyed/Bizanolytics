@@ -38,6 +38,7 @@ async function request<T = unknown>(path: string, opts: RequestOptions = {}): Pr
       ...contentHeaders,
       ...headers,
     },
+    cache: 'no-store',
     body: isFormData
       ? (body as FormData)
       : body !== undefined
