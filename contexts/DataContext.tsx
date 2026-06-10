@@ -384,8 +384,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
     addNotification("AI Forecast Generated", "Your new business forecast and AI insights are ready to view.")
   }, [activeIntegrationName, addNotification])
 
-  const recordPipelineRun = async (_records: number, _sourceName: string) => {
-    // Can wire to POST /api/v1/dashboard/pipeline/trigger if needed
+  const recordPipelineRun = async (records: number, sourceName: string) => {
+    if (isAuthenticated()) {
+      try {
+        await apiClient.post('/api/v1/dashboard/pipeline/trigger', { source: sourceName, records });
+      } catch (e) {
+        console.error("Failed to record pipeline run", e);
+      }
+    }
   }
 
   return (
