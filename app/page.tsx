@@ -9,17 +9,17 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 backdrop-blur-md border-b border-border/50 bg-background/50">
-        <div className="flex items-center">
-        <Link href="/">
-          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-[52px] w-auto cursor-pointer" />
-        </Link>
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-6 py-3 md:py-4 backdrop-blur-md border-b border-border/50 bg-background/50">
+        <div className="flex items-center shrink-0">
+          <Link href="/">
+            <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-8 md:h-[52px] w-auto cursor-pointer" />
+          </Link>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+        <div className="flex items-center gap-2 md:gap-4 shrink-0">
+          <Link href="/login" className="text-xs md:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             Log in
           </Link>
-          <Link href="/signup" className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-primary/90 transition-colors">
+          <Link href="/signup" className="text-xs md:text-sm font-medium bg-primary text-primary-foreground px-3 py-1.5 md:px-4 md:py-2 rounded-full hover:bg-primary/90 transition-colors">
             Get Started
           </Link>
         </div>
