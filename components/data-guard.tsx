@@ -8,11 +8,29 @@ import { FileSearch } from "lucide-react"
 import { usePathname } from "next/navigation"
 
 export function DataGuard({ children }: { children: React.ReactNode }) {
-  const { isDataUploaded } = useData()
+  const { isDataUploaded, isInitializing } = useData()
   const pathname = usePathname()
 
   if (pathname.startsWith('/integrations') || pathname.startsWith('/profile') || pathname.startsWith('/settings')) {
     return <>{children}</>
+  }
+
+  if (isInitializing) {
+    return (
+      <div className="flex min-h-[80vh] flex-col items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <div className="relative flex h-16 w-16 items-center justify-center">
+            <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
+            <div className="relative h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+          </div>
+          <p className="text-sm font-medium text-muted-foreground animate-pulse">Loading workspace data...</p>
+        </motion.div>
+      </div>
+    )
   }
 
   if (!isDataUploaded) {

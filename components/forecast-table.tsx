@@ -133,7 +133,9 @@ export function AIInsights() {
               <p 
                 className="text-sm leading-relaxed text-foreground whitespace-pre-wrap"
                 dangerouslySetInnerHTML={{ 
-                  __html: (aiInsight || "").replace(/\*\*(.*?)\*\*/g, "<strong class='font-semibold text-white'>$1</strong>") 
+                  __html: (aiInsight || "")
+                    .replace(/### (.*?)(?:\n|$)/g, "<h4 class='text-emerald-400 font-semibold mt-4 mb-2'>$1</h4>")
+                    .replace(/\*\*(.*?)\*\*/g, "<strong class='font-semibold text-white'>$1</strong>") 
                 }}
               />
             )}

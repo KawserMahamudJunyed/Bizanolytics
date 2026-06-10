@@ -67,6 +67,7 @@ interface DataContextType {
   deleteDataset: (id: string) => Promise<void>
   activeViewMode: 'dataset' | 'integration'
   setViewMode: (mode: 'dataset' | 'integration') => Promise<void>
+  isInitializing: boolean
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -85,6 +86,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([])
 
   const unreadNotificationsCount = notifications.filter(n => !n.is_read).length
+
+  const [isInitializing, setIsInitializing] = useState(true)
 
   // ── Integration helpers (data stored in localStorage for compatibility) ──────
   const loadIntegrationData = async () => {
@@ -135,7 +138,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   // ── Load raw data from DataBox on mount (if user is authenticated) ──────────
   useEffect(() => {
-    if (!isAuthenticated()) return
+    if (!isAuthenticated()) {
+      setIsInitializing(false)
+      return
+    }
 
     async function loadInitialData() {
       const activeMode = (localStorage.getItem("bizanolytics_active_view_mode") as 'dataset' | 'integration') || 'dataset'
@@ -184,6 +190,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         console.error('Failed to load notifications:', err)
       }
+      
+      setIsInitializing(false)
     }
 
     loadInitialData()
@@ -396,7 +404,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       uploadCsvFile,
       deleteDataset,
       activeViewMode,
-      setViewMode
+      setViewMode,
+      isInitializing
     }}>
       {children}
     </DataContext.Provider>
