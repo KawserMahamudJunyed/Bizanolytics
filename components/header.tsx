@@ -205,7 +205,7 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
                         </span>
                         <div className="flex items-center gap-2 shrink-0">
                           <span className="text-xs text-muted-foreground">{formatTimeAgo(integration.updated_at || integration.created_at)}</span>
-                          <button onClick={(e) => { e.stopPropagation(); deleteIntegration(integration.platform) }} className="p-1 hover:text-red-500 text-muted-foreground/50 transition-colors">
+                          <button onClick={(e) => { e.stopPropagation(); deleteIntegration(integration.platform) }} className="p-1.5 rounded-md hover:bg-red-500/10 hover:text-red-500 active:bg-red-500/20 text-muted-foreground/50 transition-colors">
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
@@ -240,7 +240,7 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
                       </span>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="text-xs text-muted-foreground">{formatTimeAgo(dataset.created_at)}</span>
-                        <button onClick={(e) => { e.stopPropagation(); deleteDataset(dataset.id) }} className="p-1 hover:text-red-500 text-muted-foreground/50 transition-colors">
+                        <button onClick={(e) => { e.stopPropagation(); deleteDataset(dataset.id) }} className="p-1.5 rounded-md hover:bg-red-500/10 hover:text-red-500 active:bg-red-500/20 text-muted-foreground/50 transition-colors">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
