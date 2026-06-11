@@ -27,18 +27,20 @@ export async function POST(req: Request) {
   // Summarize the data for the LLM
   const totalRevenue = rawData.reduce((acc: number, row: any) => acc + (row.Revenue_BDT || 0), 0);
   const totalUnits = rawData.reduce((acc: number, row: any) => acc + (row.Units_Sold || 0), 0);
+  const uniqueProducts = new Set(rawData.map((row: any) => row.Product_ID || row.Product_Name)).size;
   
   const summary = `
     Recent Sales Data Summary:
     - Total Revenue (BDT): ${totalRevenue}
     - Total Units Sold: ${totalUnits}
     - Total Records Analyzed: ${rawData.length}
+    - Unique Products: ${uniqueProducts}
     - Sample Data (first 3 rows): ${JSON.stringify(rawData.slice(0, 3))}
   `;
 
   const systemPrompt = language === 'bn' 
-    ? "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Provide an ultra-concise, high-impact forecasting insight based on the data. MAX 15-20 words. No fluff. YOU MUST WRITE YOUR ENTIRE RESPONSE IN BENGALI (BANGLA)."
-    : "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Provide an ultra-concise, high-impact forecasting insight based on the data. MAX 15-20 words. No fluff.";
+    ? "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Provide an ultra-concise, high-impact forecasting insight based on the data. MAX 15-20 words. No fluff. DO NOT HALLUCINATE NUMBERS. Only use metrics provided. YOU MUST WRITE YOUR ENTIRE RESPONSE IN BENGALI (BANGLA)."
+    : "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Provide an ultra-concise, high-impact forecasting insight based on the data. MAX 15-20 words. No fluff. DO NOT HALLUCINATE NUMBERS. Only use metrics provided.";
 
   try {
     const chatCompletion = await groq.chat.completions.create({
