@@ -54,6 +54,8 @@ interface DataContextType {
   renameIntegration: (platform: string, newName: string) => Promise<void>
   loadDatasetById: (id: string) => Promise<void>
   renameDataset: (id: string, newName: string) => Promise<void>
+  deleteDataset: (id: string) => Promise<void>
+  deleteIntegration: (platform: string) => Promise<void>
   aiInsights?: string
   saveAiInsights: (insights: string) => void
   userCurrency: string
@@ -431,6 +433,58 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const deleteDataset = async (id: string) => {
+    try {
+      const supabase = createClient()
+      const dataset = datasetHistory.find(d => d.id === id)
+      if (!dataset) return
+      
+      const { error } = await supabase.from('datasets').delete().eq('id', id)
+      if (error) throw error
+
+      await supabase.storage.from('user_datasets').remove([dataset.file_path])
+
+      setDatasetHistory(prev => prev.filter(d => d.id !== id))
+      if (datasetId === id) {
+        resetData()
+      }
+      toast.success("Dataset removed")
+    } catch (e) {
+      toast.error("Failed to remove dataset")
+    }
+  }
+
+  const deleteIntegration = async (platform: string) => {
+    try {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) return
+
+      const { error } = await supabase
+        .from('user_integrations')
+        .delete()
+        .eq('user_id', session.user.id)
+        .eq('platform', platform)
+
+      if (error) throw error
+
+      setIntegrationHistory(prev => prev.filter(i => i.platform !== platform))
+      
+      const stored = localStorage.getItem("bizanolytics_integration_data")
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        let storedPlatform = parsed.source || 'woocommerce'
+        if (storedPlatform === 'custom_api') storedPlatform = 'custom'
+        if (storedPlatform === platform) {
+          resetData()
+        }
+      }
+      toast.success("Integration removed")
+    } catch (e) {
+      toast.error("Failed to remove integration")
+    }
+  }
+
   const setUploadedData = (data: SMEDataRow[], id?: string, integrationName?: string) => {
     setRawData(data)
     setIsDataUploaded(true)
@@ -495,6 +549,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }
 
   const addNotification = async (title: string, message: string) => {
+    if (notifications.length > 0 && notifications[0].title === title && notifications[0].message === message) {
+      const timeDiff = Date.now() - new Date(notifications[0].created_at).getTime()
+      if (timeDiff < 10000) return; // Deduplicate identical notifications within 10s
+    }
+
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     if (session?.user) {
@@ -543,8 +602,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       activeIntegrationName, setActiveIntegrationName,
       connectedIntegrationName, loadIntegrationData,
       integrationHistory, loadIntegrationByPlatform,
-      refreshIntegrationHistory, renameIntegration,
-      recordPipelineRun
+      refreshIntegrationHistory, renameIntegration, deleteIntegration,
+      deleteDataset, recordPipelineRun
     }}>
       {children}
     </DataContext.Provider>

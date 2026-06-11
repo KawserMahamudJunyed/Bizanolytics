@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Plus, Edit2, Check, X, Database, Bell, Menu } from "lucide-react"
+import { Plus, Edit2, Check, X, Database, Bell, Menu, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -43,6 +43,8 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
     renameIntegration,
     loadDatasetById,
     renameDataset,
+    deleteDataset,
+    deleteIntegration,
     resetData,
     notifications,
     unreadNotificationsCount,
@@ -201,7 +203,12 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
                           <span className={cn("w-2 h-2 rounded-full shrink-0 mr-2", isActive ? "bg-emerald-500" : "bg-transparent")} />
                           {name}
                         </span>
-                        <span className="text-xs text-muted-foreground shrink-0">{formatTimeAgo(integration.updated_at || integration.created_at)}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs text-muted-foreground">{formatTimeAgo(integration.updated_at || integration.created_at)}</span>
+                          <button onClick={(e) => { e.stopPropagation(); deleteIntegration(integration.platform) }} className="p-1 hover:text-red-500 text-muted-foreground/50 transition-colors">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </DropdownMenuItem>
                     )
                   })
@@ -231,7 +238,12 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
                         <span className={cn("w-2 h-2 rounded-full shrink-0 mr-2", isDatasetActive ? "bg-emerald-500" : "bg-transparent")} />
                         {dataset.file_name}
                       </span>
-                      <span className="text-xs text-muted-foreground shrink-0">{formatTimeAgo(dataset.created_at)}</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-xs text-muted-foreground">{formatTimeAgo(dataset.created_at)}</span>
+                        <button onClick={(e) => { e.stopPropagation(); deleteDataset(dataset.id) }} className="p-1 hover:text-red-500 text-muted-foreground/50 transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </DropdownMenuItem>
                   )
                 })}

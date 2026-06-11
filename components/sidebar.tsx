@@ -123,7 +123,7 @@ export function Sidebar({
         animate={{ x: 0, opacity: 1, width: isEffectivelyCollapsed ? 64 : 256 }}
         transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
         className={cn(
-          "fixed left-0 top-0 z-50 flex h-screen flex-col border-r border-border bg-sidebar transition-all duration-300 lg:translate-x-0",
+          "fixed left-0 top-0 z-50 flex h-[100dvh] flex-col border-r border-border bg-sidebar transition-all duration-300 lg:translate-x-0",
           isOpen ? "translate-x-0 w-64" : "-translate-x-full",
           "lg:w-auto"
         )}

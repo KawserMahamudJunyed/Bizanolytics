@@ -37,8 +37,8 @@ export async function POST(req: Request) {
   `;
 
   const systemPrompt = language === 'bn' 
-    ? "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Keep it very professional and direct. Provide a concise, actionable, 2-3 sentence forecasting insight based on the data summary provided. YOU MUST WRITE YOUR ENTIRE RESPONSE IN BENGALI (BANGLA)."
-    : "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Keep it very professional and direct. Provide a concise, actionable, 2-3 sentence forecasting insight based on the data summary provided.";
+    ? "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Provide an ultra-concise, high-impact forecasting insight based on the data. MAX 15-20 words. No fluff. YOU MUST WRITE YOUR ENTIRE RESPONSE IN BENGALI (BANGLA)."
+    : "You are an expert commerce intelligence assistant for SMEs in Bangladesh. Provide an ultra-concise, high-impact forecasting insight based on the data. MAX 15-20 words. No fluff.";
 
   try {
     const chatCompletion = await groq.chat.completions.create({

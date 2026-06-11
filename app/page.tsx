@@ -12,7 +12,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 backdrop-blur-md border-b border-border/50 bg-background/50">
         <div className="flex items-center">
         <Link href="/">
-          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-[52px] w-auto cursor-pointer" />
+          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-8 md:h-[52px] w-auto max-w-[200px] md:max-w-none cursor-pointer" />
         </Link>
         </div>
         <div className="flex items-center gap-4">
@@ -227,7 +227,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center">
           <Link href="/">
-            <img src="/logo-full.svg" alt="Bizanolytics" className="h-[56px] w-auto opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer" />
+            <img src="/logo-full.svg" alt="Bizanolytics" className="h-8 md:h-[56px] w-auto max-w-[200px] md:max-w-none opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer" />
           </Link>
           </div>
           <p className="text-sm text-muted-foreground">
