@@ -70,6 +70,8 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
 
+const recentNotifications = new Set<string>();
+
 export function DataProvider({ children }: { children: ReactNode }) {
   const [rawData, setRawData] = useState<SMEDataRow[]>([])
   const [isDataUploaded, setIsDataUploaded] = useState(false)
@@ -219,12 +221,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
           if (platform === 'custom_api') platform = 'custom'
           const historyMatch = integrationHistory?.find(i => i.platform === platform)
           const dbName = historyMatch?.display_name
+          const fallbackName = platform.charAt(0).toUpperCase() + platform.slice(1)
 
           finalData = await loadBizPOSData(finalData, supabase, user.id)
           
           setRawData(finalData)
-          setActiveIntegrationName(dbName || parsed?.business?.name)
-          setConnectedIntegrationName(dbName || parsed?.business?.name)
+          setActiveIntegrationName(dbName || parsed?.business?.name || fallbackName)
+          setConnectedIntegrationName(dbName || parsed?.business?.name || fallbackName)
           setIsDataUploaded(true)
           
           // Restore AI Insights for Integration
@@ -275,11 +278,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
         if (platform === 'custom_api') platform = 'custom'
         
         // Find if we have a display name in DB history
-        const historyMatch = integrations?.find(i => i.platform === platform)
+        const historyMatch = integrationHistory?.find(i => i.platform === platform)
         const dbName = historyMatch?.display_name
+        const fallbackName = platform.charAt(0).toUpperCase() + platform.slice(1)
         
-        setActiveIntegrationName(dbName || parsed.business?.name)
-        setConnectedIntegrationName(dbName || parsed.business?.name)
+        setActiveIntegrationName(dbName || parsed.business?.name || fallbackName)
+        setConnectedIntegrationName(dbName || parsed.business?.name || fallbackName)
         setIsDataUploaded(true)
         localStorage.setItem("bizanolytics_active_view_mode", "integration")
         
@@ -549,10 +553,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }
 
   const addNotification = async (title: string, message: string) => {
-    if (notifications.length > 0 && notifications[0].title === title && notifications[0].message === message) {
-      const timeDiff = Date.now() - new Date(notifications[0].created_at).getTime()
-      if (timeDiff < 10000) return; // Deduplicate identical notifications within 10s
-    }
+    const notifKey = `${title}-${message}`;
+    if (recentNotifications.has(notifKey)) return;
+    recentNotifications.add(notifKey);
+    setTimeout(() => recentNotifications.delete(notifKey), 10000);
 
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()

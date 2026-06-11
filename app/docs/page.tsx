@@ -32,36 +32,10 @@ export default function DocsPage() {
   const searchParams = useSearchParams()
   const isAdmin = searchParams?.get("admin") === "true"
   
-  const [isAvailable, setIsAvailable] = useState(false)
   const [activeTab, setActiveTab] = useState("pitch")
 
-  useEffect(() => {
-    // Check Date Window (June 10 - June 14, 2026)
-    const now = new Date()
-    const startDate = new Date('2026-06-10T00:00:00')
-    const endDate = new Date('2026-06-14T23:59:59')
-    
-    // Auto visibility OR Admin override
-    if ((now >= startDate && now <= endDate) || isAdmin) {
-      setIsAvailable(true)
-    }
-  }, [isAdmin])
-
-  if (!isAvailable) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-6">
-        <div className="max-w-md w-full text-center space-y-6 bg-card p-8 rounded-2xl border border-border shadow-xl">
-          <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto">
-            <Lock className="w-8 h-8 text-muted-foreground" />
-          </div>
-          <h1 className="text-2xl font-bold">Documentation Restricted</h1>
-          <p className="text-muted-foreground">
-            The live documentation and pitch deck are currently restricted to the scheduled judging window (June 10 - June 14).
-          </p>
-        </div>
-      </div>
-    )
-  }
+  // The restriction has been lifted per user request
+  // Everyone can now view the documentation freely.
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row">
