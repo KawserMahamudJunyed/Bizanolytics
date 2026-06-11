@@ -8,12 +8,11 @@ import { cn } from "@/lib/utils"
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex flex-wrap items-center justify-between px-4 sm:px-6 py-4 backdrop-blur-md border-b border-border/50 bg-background/50 gap-y-4">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex flex-wrap items-center justify-between px-3 sm:px-6 py-2 sm:py-3 backdrop-blur-md border-b border-border/50 bg-background/50">
         <Link href="/" className="flex-shrink-0">
-          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-7 sm:h-8 md:h-10 w-auto object-contain cursor-pointer" />
+          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-10 sm:h-12 md:h-14 w-auto object-contain cursor-pointer" />
         </Link>
-        <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Log in
           </Link>

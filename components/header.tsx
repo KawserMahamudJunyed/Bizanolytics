@@ -139,9 +139,10 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
         </motion.p>
       </div>
 
-      {datasetHistory.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          {isRenaming ? (
+      <div className="flex flex-wrap items-center gap-2">
+        {datasetHistory.length > 0 && (
+          <>
+            {isRenaming ? (
             <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-md border border-border">
               <input 
                 type="text" 
@@ -253,9 +254,10 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
+          </>
+        )}
 
-          <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
             {(activeDataset || activeIntegrationName) && !isRenaming && (
               <Button variant="ghost" size="icon" onClick={handleRenameStart} className="h-9 w-9 shrink-0" title="Rename">
                 <Edit2 className="w-4 h-4 text-muted-foreground" />
@@ -332,7 +334,6 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
             </Button>
           </div>
         </div>
-      )}
     </motion.header>
   )
 }
