@@ -9,17 +9,15 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 backdrop-blur-md border-b border-border/50 bg-background/50">
-        <div className="flex items-center shrink">
-        <Link href="/">
-          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-7 sm:h-8 md:h-10 w-auto max-w-[150px] sm:max-w-none cursor-pointer object-contain" />
+      <nav className="fixed top-0 left-0 right-0 z-50 flex flex-wrap items-center justify-between px-4 sm:px-6 py-4 backdrop-blur-md border-b border-border/50 bg-background/50 gap-y-4">
+        <Link href="/" className="flex-shrink-0">
+          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-7 sm:h-8 md:h-10 w-auto object-contain cursor-pointer" />
         </Link>
-        </div>
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-          <Link href="/login" className="text-sm sm:text-base font-medium text-muted-foreground hover:text-foreground transition-colors">
+        <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Log in
           </Link>
-          <Link href="/signup" className="text-sm sm:text-base font-medium bg-primary text-primary-foreground px-4 py-2 sm:px-5 sm:py-2.5 rounded-full hover:bg-primary/90 transition-colors">
+          <Link href="/signup" className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-primary/90 transition-colors">
             Get Started
           </Link>
         </div>
@@ -227,7 +225,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center">
           <Link href="/">
-            <img src="/logo-full.svg" alt="Bizanolytics" className="h-7 sm:h-8 md:h-10 w-auto max-w-[150px] sm:max-w-none opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer object-contain" />
+            <img src="/logo-full.svg" alt="Bizanolytics" className="h-7 sm:h-8 md:h-10 w-auto opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer object-contain" />
           </Link>
           </div>
           <p className="text-sm text-muted-foreground">
