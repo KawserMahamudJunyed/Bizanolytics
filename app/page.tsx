@@ -12,14 +12,14 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 backdrop-blur-md border-b border-border/50 bg-background/50">
         <div className="flex items-center">
         <Link href="/">
-          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-8 md:h-[52px] w-auto max-w-[200px] md:max-w-none cursor-pointer" />
+          <img src="/logo-full.svg" alt="Bizanolytics Logo" className="h-6 sm:h-8 md:h-[52px] w-auto max-w-[140px] sm:max-w-[200px] md:max-w-none cursor-pointer object-contain" />
         </Link>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/login" className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Log in
           </Link>
-          <Link href="/signup" className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-primary/90 transition-colors">
+          <Link href="/signup" className="text-xs sm:text-sm font-medium bg-primary text-primary-foreground px-3 py-1.5 sm:px-4 sm:py-2 rounded-full hover:bg-primary/90 transition-colors">
             Get Started
           </Link>
         </div>
@@ -41,14 +41,14 @@ export default function LandingPage() {
               <span>AI-Powered Analytics</span>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]">
               Transform Raw Data Into <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">
                 Actionable Foresight.
               </span>
             </h1>
             
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
               Bizanolytics automatically cleans your data, predicts future demand, and generates stunning interactive dashboards—all in seconds.
             </p>
             
@@ -227,7 +227,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center">
           <Link href="/">
-            <img src="/logo-full.svg" alt="Bizanolytics" className="h-8 md:h-[56px] w-auto max-w-[200px] md:max-w-none opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer" />
+            <img src="/logo-full.svg" alt="Bizanolytics" className="h-6 sm:h-8 md:h-[56px] w-auto max-w-[140px] sm:max-w-[200px] md:max-w-none opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer object-contain" />
           </Link>
           </div>
           <p className="text-sm text-muted-foreground">
