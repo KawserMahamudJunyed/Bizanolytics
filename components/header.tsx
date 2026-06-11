@@ -254,6 +254,7 @@ export function Header({ isCollapsed, user }: { isCollapsed?: boolean, user?: an
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          )}
           </>
         )}
 
